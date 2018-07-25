@@ -1,14 +1,14 @@
 {
-  "name": "shoptet-microsite-design-guide",
+  "name": "shoptet-microsite-obchodiste",
   "version": "1.0.0",
   "author": "Shoptet s.r.o. , https://www.shoptet.cz/",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shoptet/microsite-design-guide.git"
+    "url": "https://github.com/Shoptet/microsite-obchodiste.git"
   },
   "bugs": {
-    "url": "https://github.com/Shoptet/microsite-design-guide/issues"
+    "url": "https://github.com/Shoptet/microsite-obchodiste/issues"
   },
   "devDependencies": {
     "grunt": "^1.0.2",

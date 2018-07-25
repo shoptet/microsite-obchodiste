@@ -1,4 +1,4 @@
-# Shoptet "design guide" microsite template
+# Shoptet "obchodiste" microsite template
 
 ## Prerequisities
 
@@ -16,7 +16,7 @@
 - `cd shoptet-wp-theme`
 - `git submodule init`
 - `git submodule update`
-- `git clone git@github.com:Shoptet/microsite-design-guide.git src`
+- `git clone git@github.com:Shoptet/microsite-obchodiste.git src`
 - `cd src`
 - `npm install` - only for first time
 - `grunt` - enable watch mode for SCSS & JS files
