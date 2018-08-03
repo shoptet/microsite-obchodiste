@@ -1,0 +1,9 @@
+.required-asterisk {
+  color: $body-color;
+
+  &::after {
+    display: inline;
+    content: " *";
+    color: $danger;
+  }
+}

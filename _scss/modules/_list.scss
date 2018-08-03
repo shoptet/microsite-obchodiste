@@ -1,0 +1,39 @@
+.dl-pair-inline {
+
+  dt, dd {
+    display: inline;
+  }
+
+  dt {
+    &::before {
+      content: "";
+      display: block;
+    }
+    &::after {
+      content: ":";
+      margin-right: .2rem;
+    }
+  }
+
+  dd {
+    margin-bottom: 0;
+  }
+
+}
+
+.list-horizontal {
+
+  > li {
+    margin-bottom: .25rem;
+  }
+
+  @include media-breakpoint-up(xl) {
+    display: flex;
+    flex-wrap: wrap;
+
+    > li {
+      width: percentage(1/3);
+      padding-right: 2rem;
+    }
+  }
+}

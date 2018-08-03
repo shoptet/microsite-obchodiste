@@ -1,0 +1,51 @@
+.wholesaler {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    margin-top: 0;
+  }
+}
+
+
+.wholesaler-block {
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+  border-top: 1px solid $gray-300;
+}
+
+.wholesaler-contact {
+  position: sticky;
+  top: 1rem;
+  padding: 1rem;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius;
+  background-color: lighten($shoptet-blue, 47%);
+
+  @include media-breakpoint-up(lg) {
+    padding: 1.5rem;
+  }
+}
+
+.wholesaler-logo {
+  float: right;
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  margin-left: .5rem;
+  margin-bottom: .5rem;
+  border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(lg) {
+    width: 8rem;
+    height: 8rem;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

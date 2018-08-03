@@ -1,0 +1,21 @@
+.h-heavy {
+  font-family: $font-family-sans-serif;
+  font-size: 1.3rem;
+  font-weight: $font-weight-bold;
+}
+
+.link-facebook {
+  color: $facebook-color;
+
+  &:hover {
+    color: darken($facebook-color, 14%);
+  }
+}
+
+.link-twitter {
+  color: $twitter-color;
+
+  &:hover {
+    color: darken($twitter-color, 14%);
+  }
+}
