@@ -1,6 +1,28 @@
+$fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
+
 @import "../../scaffolding/shoptet/variables-bootstrap";
 @import "../../scaffolding/vendor/bs/scss/functions";
 @import "../../scaffolding/vendor/bs/scss/variables";
+@import "../../scaffolding/vendor/bs/scss/mixins";
+@import "../../scaffolding/vendor/bs/scss/utilities";
 @import "../../scaffolding/shoptet/variables-shoptet";
 @import "../../scaffolding/vendor/bs/scss/mixins";
+
+@import '../../scaffolding/vendor/fa/scss/variables';
+@import '../../scaffolding/vendor/fa/scss/core';
+@import '../../scaffolding/vendor/fa/scss/list';
+@import '../../scaffolding/vendor/fa/scss/icons';
+@import '../../scaffolding/vendor/fa/scss/fa-brands';
+
 @import "modules/variables";
+@import "modules/wholesaler";
+@import "modules/badge";
+@import "modules/list";
+@import "modules/fontawesome";
+@import "modules/text";
+@import "modules/required-asterisk";
+@import "modules/font-size";
+@import "modules/border";
+@import "modules/sticky";
+@import "modules/type";
+@import "modules/grid";
