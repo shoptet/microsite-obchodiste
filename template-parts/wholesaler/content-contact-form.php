@@ -36,7 +36,7 @@
       printf(
         __( 'Vložením e-mailu souhlasím s <a href="%s" target="_blank">podmínkami ochrany osobních údajů</a>.', '' ),
         'https://www.shoptet.cz/podminky-ochrany-osobnich-udaju/'
-      )
+      );
       ?>
     </p>
 

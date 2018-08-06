@@ -17,17 +17,17 @@ function is_post_new(): bool
  */
 function display_url( $url ): string
 {
-	// Romove protocol
+  // Romove protocol
   if ( substr( $url, 0, 7 ) === 'http://' ) {
-		$url = substr( $url, 7 );
+    $url = substr( $url, 7 );
   } else if ( substr( $url, 0, 8 ) === 'https://' ) {
-		$url = substr( $url, 8 );
-	} else if ( substr( $url, 0, 2 ) === '//' ) {
-	 	$url = substr( $url, 2 );
- 	}
-	// Remove last slash
-	if ( substr( $url, -1 ) === '/' ) {
-		$url = substr( $url, 0, -1 );
-	}
+    $url = substr( $url, 8 );
+  } else if ( substr( $url, 0, 2 ) === '//' ) {
+    $url = substr( $url, 2 );
+  }
+  // Remove last slash
+  if ( substr( $url, -1 ) === '/' ) {
+    $url = substr( $url, 0, -1 );
+  }
   return $url;
 }
