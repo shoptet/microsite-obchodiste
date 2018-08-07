@@ -3,7 +3,7 @@
   <h2 class="h-heavy mb-1">
     <?php _e( 'Krátce o naší nabídce', '' ); ?>
   </h2>
-  <p>
+  <p itemprop="description">
     <?php the_field( "short_about" ); ?>
   </p>
 </div>
@@ -51,6 +51,8 @@
     <?php the_field( "about_products" ); ?>
   </p>
   <?php endif; ?>
+
+  <?php get_template_part( 'src/template-parts/wholesaler/content', 'gallery' ); ?>
 
   <?php if ( get_field( "video" ) ): ?>
   <div class="embed-responsive embed-responsive-16by9 mt-3">
