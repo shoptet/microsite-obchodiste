@@ -33,13 +33,15 @@
           <a href="mailto:<?php the_field( "contact_email" ); ?>">
             <?php the_field( "contact_email" ); ?>
           </a>
+          <meta itemprop="email" content="<?php the_field( "contact_email" ); ?>">
         </li>
         <?php endif; ?>
         <?php if ( get_field( "contact_tel" ) ): ?>
         <li>
-          <a href="tel:<?php the_field( "contact_tel" ); ?>">
+          <a href="tel:<?php the_field( "contact_tel" ); ?>" itemprop="telephone">
             <?php the_field( "contact_tel" ); ?>
           </a>
+          <meta itemprop="telephone" content="<?php the_field( "contact_tel" ); ?>">
         </li>
         <?php endif; ?>
       </ul>

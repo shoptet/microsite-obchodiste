@@ -1,6 +1,6 @@
 <div class="d-md-flex justify-content-between">
 
-  <h1 class="mt-1 mb-1">
+  <h1 class="mt-1 mb-1" itemprop="name">
     <?php the_title(); ?>
   </h1>
 

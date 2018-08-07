@@ -1,4 +1,4 @@
-<div class="row wholesaler">
+<div class="row wholesaler" itemscope itemtype="http://schema.org/Organization">
   <div class="col-12 col-lg-7 col-xl-8">
 
     <?php get_template_part( 'src/template-parts/wholesaler/content', 'header' ); ?>
