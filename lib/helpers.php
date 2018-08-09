@@ -83,3 +83,19 @@ function nl2p( $text ): string
 {
   return '<p>' . str_replace( [ "\r\n\r\n", "\n\n" ], '</p><p>', $text ) . '</p>';
 }
+
+/**
+ * Get not empty wholesaler regions
+ */
+function get_used_regions(): array
+{
+  $used_regions = [];
+  foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ) {
+    $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+    if ( $region_post_count > 0 ) $used_regions[] = [
+      'id' => $region_id,
+      'name' => $region_name,
+    ];
+  }
+  return $used_regions;
+}

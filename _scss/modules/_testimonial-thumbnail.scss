@@ -1,0 +1,31 @@
+.testimonial-thumbnail {
+  position: relative;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius;
+  background: $white;
+  text-align: center;
+
+  @include media-breakpoint-up(xl) {
+    text-align: left;
+  }
+}
+
+.testimonial-thumbnail-image {
+  width: 65px;
+  height: 65px;
+  margin-bottom: 1rem;
+  border-radius: $border-radius;
+
+  @include media-breakpoint-up(xl) {
+    position: absolute;
+  }
+}
+
+.testimonial-thumbnail-body {
+  @include media-breakpoint-up(xl) {
+    margin-top: .5rem;
+    padding-left: 82px;
+  }
+}

@@ -1,5 +1,6 @@
 $(function() {
 
+  var $heroForm = $('#heroForm');
   var $archiveForm = $('#archiveForm');
 
   var initOrderSelect = function () {
@@ -22,24 +23,23 @@ $(function() {
     });
   };
 
-  var createUrl = function () {
-    var formData = $archiveForm.serializeArray();
+  var createUrl = function (data) {
     var categoryCount = 0;
     var lastCategoryId = null;
     var queryString = '';
     var skipSingleCategory = false;
     var skipDefaultOrderBy = false;
-    formData.forEach(function (item) {
+    data.forEach(function (item) {
       if (item.name !== 'category[]') return;
       lastCategoryId = item.value;
       categoryCount++;
     });
-    formData = formData.filter(function (item) {
+    data = data.filter(function (item) {
       skipSingleCategory = (categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
       return !skipSingleCategory && !skipDefaultOrderBy;
     });
-    formData.forEach(function (item, i) {
+    data.forEach(function (item, i) {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.wholesalerArchiveUrl;
@@ -59,13 +59,18 @@ $(function() {
 
   $archiveForm.on('submit', function (e) {
     e.preventDefault();
-    url = createUrl();
+    url = createUrl($archiveForm.serializeArray());
     sendData(url, false);
   });
 
-
   $('#archiveForm input[type=checkbox]').on('change', function () {
     $archiveForm.submit();
+  });
+
+  $heroForm.on('submit', function (e) {
+    e.preventDefault();
+    url = createUrl($heroForm.serializeArray());
+    window.location.href = url;
   });
 
   // Refresh browser after state popped

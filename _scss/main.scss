@@ -16,6 +16,7 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import '../../scaffolding/vendor/fa/scss/list';
 @import '../../scaffolding/vendor/fa/scss/icons';
 @import '../../scaffolding/vendor/fa/scss/fa-brands';
+@import '../../scaffolding/vendor/fa/scss/fa-regular';
 
 @import "modules/variables";
 @import "modules/wholesaler";
@@ -33,3 +34,9 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/is-loading";
 @import "modules/filters";
 @import "modules/custom-forms";
+@import "modules/hero";
+@import "modules/row-status";
+@import "modules/white-space";
+@import "modules/post-thumbnail";
+@import "modules/testimonial-thumbnail";
+@import "modules/section";

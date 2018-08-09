@@ -59,24 +59,22 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
-      <?php // TODO: use get_used_regions() hepler after homepage merge ?>
-      <?php foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ): ?>
-        <?php $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' ); ?>
-        <?php if ( ! $region_post_count ) continue; // Skip empty region ?>
+      <?php foreach ( get_used_regions() as $region ): ?>
+        <?php $region_post_count = get_post_count_by_meta( 'region', $region[ 'id' ], 'custom' ); ?>
         <div class="custom-control custom-checkbox">
           <input
             class="custom-control-input"
             type="checkbox"
-            value="<?php echo $region_id; ?>"
-            id="filterCategory<?php echo $region_id; ?>"
+            value="<?php echo $region[ 'id' ]; ?>"
+            id="filterCategory<?php echo $region[ 'id' ]; ?>"
             name="region[]"
-            <?php if ( in_array ( $region_id, $checked_regions ) ) echo "checked"; ?>
+            <?php if ( in_array ( $region[ 'id' ], $checked_regions ) ) echo "checked"; ?>
           >
           <label
             class="custom-control-label"
-            for="filterCategory<?php echo $region_id; ?>"
+            for="filterCategory<?php echo $region[ 'id' ]; ?>"
           >
-            <?php echo $region_name; ?>
+            <?php echo $region[ 'name' ]; ?>
             <span class="text-semilight">
               (<?php echo $region_post_count; ?>)
             </span>
