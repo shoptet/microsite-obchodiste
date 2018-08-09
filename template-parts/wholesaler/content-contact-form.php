@@ -27,7 +27,7 @@
       <textarea class="form-control" name="message" rows="5" id="wholesalerContactFormMessage" required></textarea>
     </div>
 
-    <input type="hidden" name="wholesaler_id" value="">
+    <input type="hidden" name="wholesaler_id" value="<?php the_ID(); ?>">
 
     <p class="text-danger d-none" id="wholesalerContactFormError"></p>
 
