@@ -71,3 +71,50 @@ function get_cpt_wholesaler_taxonomy_args(): array
   ];
   return $args;
 }
+
+/**
+ * Returns wholesaler message custom post type arguments
+ */
+function get_cpt_wholesaler_message_args(): array
+{
+  $labels = [
+    'name' => __( 'Zprávy', '' ),
+    'singular_name' => __( 'Zpráva', '' ),
+    'menu_name' => __( 'Zprávy', '' ),
+    'all_items' => __( 'Všechny zprávy', '' ),
+    'add_new' => __( 'Přidat novou', '' ),
+    'add_new_item' => __( 'Přidat novou zprávu', '' ),
+    'edit_item' => __( 'Upravit zprávu', '' ),
+    'new_item' => __( 'Nová zpráva', '' ),
+    'view_item' => __( 'Zobrazit zprávu', '' ),
+    'view_items' => __( 'Zobrazit zprávy', '' ),
+    'search_items' => __( 'Vyhledat zprávu', '' ),
+    'not_found' => __( 'Nebyla nalezena žádná zpráva', '' ),
+    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná zpráva', '' ),
+    'archives' => __( 'Archiv zpráv', '' ),
+    'items_list' => __( 'Výpis zpráv', '' ),
+  ];
+  $args = [
+    'label' => __( 'Zprávy', '' ),
+    'labels' => $labels,
+    'description' => '',
+    'public' => false,
+    'publicly_queryable' => false,
+    'show_ui' => true,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'has_archive' => false,
+    'show_in_menu' => true,
+    'exclude_from_search' => true,
+    'capabilities' => [
+      'create_posts' => 'do_not_allow',
+    ],
+    'map_meta_cap' => true,
+    'hierarchical' => false,
+    'rewrite' => false,
+    'query_var' => true,
+    'menu_icon' => 'dashicons-testimonial',
+    'supports' => [ 'title' ],
+  ];
+  return $args;
+}
