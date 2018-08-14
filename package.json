@@ -24,9 +24,11 @@
     "../scaffolding/vendor/bs/js/util.js",
     "../scaffolding/vendor/bs/js/util.js",
     "../scaffolding/vendor/bs/js/dropdown.js",
+    "../scaffolding/vendor/bs/js/toggle.js",
     "../scaffolding/vendor/jquery.colorbox-min.js",
     "../scaffolding/shoptet/js/shoptet.js",
     "_js/wholesaler-message.js",
+    "_js/filters.js",
     "_js/main.js"
   ]
 }

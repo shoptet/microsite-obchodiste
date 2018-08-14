@@ -10,14 +10,82 @@ add_action( 'init', function() {
 } );
 
 /**
- * Pass wordpress ajax url to javascript
+ * Pass data to javascript
  */
 add_action( 'wp_footer', function() {
-  printf(
-    '<script>window.ajaxurl = \'%s\';</script>',
-    admin_url( 'admin-ajax.php' )
-  );
+  echo '<script>';
+  // wordpress ajax url
+  printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
+  // wholesaler terms by id
+  printf( 'window.wholesalerTerms = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
+  // wholesaler terms by id
+  printf( 'window.wholesalerArchiveUrl = \'%s\';', get_post_type_archive_link( 'custom' ) );
+  echo '</script>';
 } );
+
+
+/**
+ * Handle filtering and ordering wholesaler archive and category
+ */
+add_action('pre_get_posts', function ( $wp_query ){
+	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not e-shop
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->get( 'post_type' ) !== 'custom' ) return;
+
+	$meta_query = $wp_query->get( 'meta_query' );
+
+	if ( $meta_query == '' ) {
+		$meta_query = [];
+	}
+
+	$wp_query->set( 'posts_per_page', 12 );
+
+	/**
+	 * Handle searching
+	 */
+
+	if( isset( $_GET[ 'q' ] ) ) {
+		$wp_query->set( 's', $_GET[ 'q' ] );
+	}
+
+	/**
+	 * Handle ordering queries
+	 */
+
+	if( isset( $_GET[ 'orderby' ] ) ) {
+		$query = explode( '_', $_GET[ 'orderby' ] );
+
+		// skip default ordering by post_date DESC
+		// e.g. '?orderby=date_asc'
+		if ( $query != [ 'date', 'desc' ] ) {
+			$wp_query->set( 'orderby', 'meta_value_num' );
+			$wp_query->set( 'meta_key', $query[0] );
+			$wp_query->set( 'order', $query[1] );
+		}
+	}
+
+	/**
+	 * Handle filtering queries
+	 */
+
+	 // Get array meta query
+	 // e.g. '?query[]=0&query[]=1...'
+	$get_array_meta_query = function($query) {
+		$result = [];
+		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
+			$result[] = [
+				'key' => $query,
+				'value' => $_GET[ $query ],
+				'compare'	=> 'IN',
+			];
+		}
+		return $result;
+	};
+
+	$meta_query[] = $get_array_meta_query( 'category' );
+	$meta_query[] = $get_array_meta_query( 'region' );
+
+	$wp_query->set( 'meta_query', $meta_query );
+});
 
 /**
  * Handle ajax wholesaler message request
@@ -108,4 +176,4 @@ add_action( 'save_post', function( $post_id ) {
 	// Not the correct post type, bail out
 	if ( 'custom' !== get_post_type( $post_id ) ) return;
 	update_post_meta( $post_id, 'contact_count', 0 );
-});
+} );

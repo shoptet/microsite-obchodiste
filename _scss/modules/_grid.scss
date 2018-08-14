@@ -1,3 +1,28 @@
 .row {
   max-width: none !important; // fix https://github.com/Shoptet/microsite-styles/blob/master/shoptet/_section.scss#L49
 }
+
+.row-bordered {
+
+  > [class*="col-"] {
+
+    border-bottom: 1px solid #e5e5e5;
+
+    &:nth-of-type(-n+1) {
+      border-top: 1px solid #e5e5e5;
+    }
+
+    @include media-breakpoint-up(lg) {
+      &:nth-of-type(-n+2) {
+        border-top: 1px solid #e5e5e5;
+      }
+    }
+
+    &:not(:nth-child(2n)) {
+      @include media-breakpoint-up(lg) {
+        border-right: 1px solid #e5e5e5;
+      }
+    }
+
+  }
+}

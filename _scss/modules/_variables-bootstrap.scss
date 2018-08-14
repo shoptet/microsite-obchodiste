@@ -1,0 +1,5 @@
+$semilight:         $gray-500;
+
+$theme-colors: map-merge((
+  "semilight": $semilight,
+), $theme-colors);

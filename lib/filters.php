@@ -5,8 +5,8 @@
  */
 add_filter( 'add_meta_boxes', function() {
    // Hide category meta box
-  remove_meta_box( 'tagsdiv-wholesaler_category', 'custom', 'side' );
-  remove_meta_box( 'wholesaler_categorydiv', 'custom', 'side' ); // if taxonomy is hierarchical
+  remove_meta_box( 'tagsdiv-customtaxonomy', 'custom', 'side' );
+  remove_meta_box( 'customtaxonomydiv', 'custom', 'side' ); // if taxonomy is hierarchical
    // Hide featured image metabox
   remove_meta_box( 'postimagediv', 'custom', 'side' );
 } );

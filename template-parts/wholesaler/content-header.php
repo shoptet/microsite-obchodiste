@@ -18,9 +18,14 @@
 
 </div>
 
+<?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
+<?php if ( ! empty( $terms ) ):  ?>
 <p class="text-muted">
   <?php _e( 'Kategorie:', '' ); ?>
-  <a href="#">
-    Kosmetika a parfémy
+  <?php foreach ( $terms as $term ): ?>
+  <a href="<?php echo get_term_link( $term ); ?>">
+    <?php echo $term->name; ?>
   </a>
+  <?php endforeach; ?>
 </p>
+<?php endif; ?>
