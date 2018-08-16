@@ -1,4 +1,4 @@
-<div class="d-lg-flex w-100 align-items-center justify-content-between mb-3">
+<div class="d-lg-flex w-100 align-items-center justify-content-between mb-4">
   <div class="form-inline">
     <div class="form-group mb-0">
       <label for="orderSelect">
@@ -8,7 +8,7 @@
         <?php
         $order_choices = [
         	'date_desc' => __( 'Nejnověji přidáno', '' ),
-          'favorite_asc' => __( 'Nejoblíbenější', '' ),
+          'favorite_desc' => __( 'Nejoblíbenější', '' ),
           'title_asc' => __( 'Dle jména A-Z', '' ),
           'title_desc' => __( 'Dle jména Z-A', '' ),
         ];

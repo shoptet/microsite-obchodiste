@@ -5,26 +5,20 @@
 >
   <div class="d-flex align-items-center">
 
-    <?php if ( get_field( "logo" ) ): ?>
-    <div class="wholesaler-tease-logo mr-2">
+    <div class="wholesaler-tease-logo mr-3 <?php if ( ! get_field( "logo" ) ) echo "wholesaler-tease-logo-empty" ?>">
+      <?php if ( get_field( "logo" ) ): ?>
       <img
         src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
         alt="<?php echo the_title(); ?>"
       >
+      <?php endif; ?>
     </div>
-    <?php endif; ?>
 
     <div>
 
-      <h3 class="wholesaler-tease-title h5 mb-1">
+      <h3 class="wholesaler-tease-title h5 mb-2">
         <?php the_title(); ?>
       </h3>
-
-      <?php if ( get_field( "region" ) ): ?>
-      <p class="fs-90 mb-0">
-        <?php echo get_field( "region" )['label']; ?>
-      </p>
-      <?php endif; ?>
 
       <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
       <?php if ( ! empty( $terms ) ):  ?>
@@ -32,6 +26,12 @@
         <?php foreach ( $terms as $term ): ?>
         <?php echo $term->name; ?>
         <?php endforeach; ?>
+      </p>
+      <?php endif; ?>
+
+      <?php if ( get_field( "region" ) ): ?>
+      <p class="fs-90 mb-0">
+        <?php echo get_field( "region" )['label']; ?>
       </p>
       <?php endif; ?>
 

@@ -2,7 +2,7 @@
   <?php _e( 'Kontaktní údaje', '' ); ?>
 </h2>
 
-<div class="mb-2 clearfix">
+<div class="mb-4 clearfix">
 
   <?php if ( get_field( "logo" ) ): ?>
   <div class="wholesaler-logo">

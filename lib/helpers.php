@@ -75,3 +75,11 @@ function truncate( $string, $limit, $separator = '...' ): string
   $s = substr( $string, 0, $newlimit + 1 );
   return substr( $s, 0, strrpos( $s, ' ' ) ) . $separator;
 }
+
+/**
+ * New line to paragraph
+ */
+function nl2p( $text ): string
+{
+  return '<p>' . str_replace( [ "\r\n\r\n", "\n\n" ], '</p><p>', $text ) . '</p>';
+}

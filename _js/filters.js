@@ -27,19 +27,23 @@ $(function() {
     var categoryCount = 0;
     var lastCategoryId = null;
     var queryString = '';
+    var skipSingleCategory = false;
+    var skipDefaultOrderBy = false;
     formData.forEach(function (item) {
       if (item.name !== 'category[]') return;
       lastCategoryId = item.value;
       categoryCount++;
     });
-    if (categoryCount === 1) {
-      formData = formData.filter(function (item) { return item.name !== 'category[]' });
-    }
+    formData = formData.filter(function (item) {
+      skipSingleCategory = (categoryCount === 1 && item.name === 'category[]');
+      skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
+      return !skipSingleCategory && !skipDefaultOrderBy;
+    });
     formData.forEach(function (item, i) {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.wholesalerArchiveUrl;
-    url += ( categoryCount === 1 ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' );
+    url += ( categoryCount === 1 ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' );
     return url;
   };
@@ -47,7 +51,7 @@ $(function() {
   // Hide filter submit button if javascript is loaded
   $('#filterSubmit').addClass('d-none');
 
-  $archiveForm.on('click', '#archivePagination a', function (e) {
+  $archiveForm.on('click', '.pagination a', function (e) {
     e.preventDefault();
     var url = $(e.currentTarget).attr('href');
     sendData(url, true);

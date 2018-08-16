@@ -14,7 +14,7 @@
   <div class="collapse d-md-block" id="filtersCollapse">
     <div class="mt-3 mt-md-0">
 
-      <p class="h5 h-heavy">
+      <p class="h5 h-heavy mb-2">
         <?php _e( 'Kategorie', '' ); ?>
       </p>
 
@@ -22,7 +22,7 @@
       if ( is_tax() ) {
         $checked_categories[] = $wp_query->get_queried_object()->term_id;
       } else {
-        $checked_categories = ( isset($_GET[ 'category' ]) && is_array($_GET[ 'category' ]) ) ? $_GET[ 'category' ] : [];
+        $checked_categories = ( isset( $_GET[ 'category' ]) && is_array($_GET[ 'category' ] ) ) ? $_GET[ 'category' ] : [];
       }
       ?>
 
@@ -51,7 +51,7 @@
 
       <div class="filters-divider"></div>
 
-      <p class="h5 h-heavy mt-0">
+      <p class="h5 h-heavy mt-0 mb-2">
         <?php _e( 'Lokalita', '' ); ?>
       </p>
 
@@ -59,8 +59,7 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
-      <?php // TODO: rewrite get_field_object( 'region' )[ 'choices' ] to field name function ?>
-      <?php foreach ( get_field_object( 'region' )[ 'choices' ] as $region_id => $region_name ): ?>
+      <?php foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ): ?>
         <?php $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' ); ?>
         <?php if ( ! $region_post_count ) continue; // Skip empty region ?>
         <div class="custom-control custom-checkbox">

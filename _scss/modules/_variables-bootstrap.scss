@@ -1,5 +1,12 @@
-$semilight:         $gray-500;
+$white:             #fff;
+$semilight:         #adb5bd;
 
-$theme-colors: map-merge((
+$theme-colors: (
   "semilight": $semilight,
-), $theme-colors);
+);
+
+$spacer: 1rem;
+
+$custom-control-indicator-bg:           $white;
+$custom-control-indicator-checked-bg:           $white;
+$custom-checkbox-indicator-icon-checked:        str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3E%3Crect width='4' height='4' fill='#{$primary}'/%3E%3C/svg%3E"), "#", "%23");

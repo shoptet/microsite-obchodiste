@@ -2,13 +2,14 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 
 @import "../../scaffolding/vendor/bs/scss/functions";
 @import "../../scaffolding/shoptet/variables-bootstrap";
-@import "../../scaffolding/vendor/bs/scss/variables";
 @import "modules/variables-bootstrap";
+@import "../../scaffolding/vendor/bs/scss/variables";
 @import "../../scaffolding/vendor/bs/scss/mixins";
 @import "../../scaffolding/vendor/bs/scss/utilities";
 @import "../../scaffolding/shoptet/variables-shoptet";
 @import "../../scaffolding/vendor/bs/scss/mixins";
 @import "../../scaffolding/vendor/bs/scss/transitions";
+@import "../../scaffolding/vendor/bs/scss/custom-forms";
 
 @import '../../scaffolding/vendor/fa/scss/variables';
 @import '../../scaffolding/vendor/fa/scss/core';
@@ -31,3 +32,4 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/gallery";
 @import "modules/is-loading";
 @import "modules/filters";
+@import "modules/custom-forms";
