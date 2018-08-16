@@ -24,6 +24,10 @@
           <?php endwhile; ?>
         </div>
 
+        <div class="mt-3">
+          <?php get_template_part( 'template-parts/utils/content', 'pagination' ); ?>
+        </div>
+
       </div>
 
     </div>

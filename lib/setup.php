@@ -28,8 +28,8 @@ add_action( 'wp_footer', function() {
  * Handle filtering and ordering wholesaler archive and category
  */
 add_action('pre_get_posts', function ( $wp_query ){
-	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not e-shop
-	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->get( 'post_type' ) !== 'custom' ) return;
+	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
+	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
 
 	$meta_query = $wp_query->get( 'meta_query' );
 
