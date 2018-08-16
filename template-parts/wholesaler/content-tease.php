@@ -21,14 +21,14 @@
       </h3>
 
       <?php if ( get_field( "region" ) ): ?>
-      <p class="small mb-0">
+      <p class="fs-90 mb-0">
         <?php echo get_field( "region" )['label']; ?>
       </p>
       <?php endif; ?>
 
       <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
       <?php if ( ! empty( $terms ) ):  ?>
-      <p class="small mb-0">
+      <p class="fs-90 mb-0">
         <?php foreach ( $terms as $term ): ?>
         <?php echo $term->name; ?>
         <?php endforeach; ?>
