@@ -35,7 +35,7 @@
             id="filterCategory<?php echo $term->term_id; ?>"
             name="category[]"
             data-slug="<?php echo $term->slug; ?>"
-            <?php if ( in_array ( $term->term_id, $checked_categories ) ) { echo "checked"; } ?>
+            <?php if ( in_array ( $term->term_id, $checked_categories ) ) echo "checked"; ?>
           >
           <label
             class="custom-control-label"
@@ -70,7 +70,7 @@
             value="<?php echo $region_id; ?>"
             id="filterCategory<?php echo $region_id; ?>"
             name="region[]"
-            <?php if ( in_array ( $region_id, $checked_regions ) ) { echo "checked"; } ?>
+            <?php if ( in_array ( $region_id, $checked_regions ) ) echo "checked"; ?>
           >
           <label
             class="custom-control-label"

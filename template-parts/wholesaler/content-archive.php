@@ -14,6 +14,8 @@
 
       <div id="archiveList">
 
+        <?php get_template_part( 'src/template-parts/wholesaler/content', 'archive-sort' ); ?>
+
         <div class="row row-bordered no-gutters">
           <?php while ( have_posts() ) : the_post(); ?>
             <div class="col-12 col-lg-6">

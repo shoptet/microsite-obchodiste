@@ -57,8 +57,12 @@ add_action('pre_get_posts', function ( $wp_query ){
 		// skip default ordering by post_date DESC
 		// e.g. '?orderby=date_asc'
 		if ( $query != [ 'date', 'desc' ] ) {
-			$wp_query->set( 'orderby', 'meta_value_num' );
-			$wp_query->set( 'meta_key', $query[0] );
+      if ( $query[0] == 'title' ) {
+        $wp_query->set( 'orderby', 'title' );
+      } else if ( $query[0] == 'favorite' ) {
+        $wp_query->set( 'orderby', 'meta_value_num' );
+        $wp_query->set( 'meta_key', 'contact_count' );
+      }
 			$wp_query->set( 'order', $query[1] );
 		}
 	}
