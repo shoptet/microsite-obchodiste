@@ -21,21 +21,6 @@
               <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
 
             </div>
-            <div class="col-12 col-lg-6">
-
-              <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
-
-            </div>
-            <div class="col-12 col-lg-6">
-
-              <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
-
-            </div>
-            <div class="col-12 col-lg-6">
-
-              <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
-
-            </div>
           <?php endwhile; ?>
         </div>
 
