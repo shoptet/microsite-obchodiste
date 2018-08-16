@@ -45,6 +45,14 @@ function handle_wholesaler_message() {
   ];
   wp_insert_post( $postarr );
 
+  // Increase wholesaler contact count
+  $wholesaler_contact_count = get_post_meta( $wholesaler_id, 'contact_count', true );
+  if ( is_numeric( $wholesaler_contact_count ) ) {
+    update_post_meta( $wholesaler_id, 'contact_count', $wholesaler_contact_count + 1 );
+  } else {
+    update_post_meta( $wholesaler_id, 'contact_count', 1 );
+  }
+
   // Get wholesaler post fields
   $wholesaler_title = get_the_title( $wholesaler_id );
   $wholesaler_contact_email = get_post_meta( $wholesaler_id, 'contact_email' );
@@ -92,3 +100,12 @@ function handle_wholesaler_message() {
 
   wp_die();
 }
+
+/**
+ * Initialize wholesaler contact count meta
+ */
+add_action( 'save_post', function( $post_id ) {
+	// Not the correct post type, bail out
+	if ( 'custom' !== get_post_type( $post_id ) ) return;
+	update_post_meta( $post_id, 'contact_count', 0 );
+});
