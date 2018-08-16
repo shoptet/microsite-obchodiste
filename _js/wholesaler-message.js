@@ -75,7 +75,7 @@ $(function() {
         {
           action: 'wholesaler_message',
         },
-        data,
+        data
       ),
       success: onSuccess,
       error: onError,
