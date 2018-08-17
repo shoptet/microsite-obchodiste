@@ -43,7 +43,8 @@
           if ( is_tax() ) {
             echo nl2p( $taxonomy->description );
           } else {
-            // TODO: Add general description
+            $options = get_fields( 'options' );
+            echo $options[ 'archive_description' ];
           }
           ?>
 
