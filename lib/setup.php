@@ -12,6 +12,17 @@ add_action( 'init', function() {
 /**
  * Pass data to javascript
  */
+add_action( 'wp_head', function() {
+  // Add noindex, follow to paged (../page/2/, .../page/3/)
+  // via https://blog.bloxxter.cz/jak-spravne-na-strankovani-z-pohledu-seo/ Solution #3
+  if ( is_paged() ) {
+    echo '<meta name="robots“ content=“noindex,follow">';
+  }
+}, 1 );
+
+/**
+ * Pass data to javascript
+ */
 add_action( 'wp_footer', function() {
   echo '<script>';
   // wordpress ajax url
@@ -37,7 +48,7 @@ add_action('pre_get_posts', function ( $wp_query ){
 		$meta_query = [];
 	}
 
-	$wp_query->set( 'posts_per_page', 12 );
+	$wp_query->set( 'posts_per_page', 2 );
 
 	/**
 	 * Handle searching
