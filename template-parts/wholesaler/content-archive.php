@@ -1,4 +1,4 @@
-<form class="mt-2" method="get" id="archiveForm">
+<form class="wholesaler-archive mt-2" method="get" id="archiveForm">
 
   <?php if ( get_search_query() ): ?>
     <input type="hidden" name="q" value="<?php echo get_search_query(); ?>">
@@ -14,7 +14,7 @@
 
       <div id="archiveList">
 
-        <h1 class="h2 mb-4">
+        <h1 class="h2 mb-3">
           <?php
           if ( is_tax() ) {
             $taxonomy = get_queried_object();
@@ -23,6 +23,8 @@
           _e( 'Velkoobchody', '' );
           ?>
         </h1>
+
+        <?php get_template_part( 'template-parts/utils/content', 'breadcrumb' ); ?>
 
         <?php get_template_part( 'src/template-parts/wholesaler/content', 'archive-sort' ); ?>
 

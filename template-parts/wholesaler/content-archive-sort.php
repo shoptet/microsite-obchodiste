@@ -1,4 +1,4 @@
-<div class="d-lg-flex w-100 align-items-center justify-content-between mb-4">
+<div class="d-lg-flex w-100 align-items-center justify-content-between mt-3 mb-4">
   <div class="form-inline">
     <div class="form-group mb-0">
       <label for="orderSelect">
