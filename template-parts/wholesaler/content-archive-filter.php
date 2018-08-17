@@ -59,6 +59,7 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
+      <?php // TODO: use get_used_regions() hepler after homepage merge ?>
       <?php foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ): ?>
         <?php $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' ); ?>
         <?php if ( ! $region_post_count ) continue; // Skip empty region ?>
