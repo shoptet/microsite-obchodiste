@@ -14,6 +14,8 @@
 
       <div id="archiveList">
 
+        <?php if ( have_posts() ): ?>
+
         <h1 class="h2 mb-3">
           <?php
           if ( is_tax() ) {
@@ -50,6 +52,17 @@
 
           <?php get_template_part( 'template-parts/utils/content', 'pagination' ); ?>
         </div>
+
+        <?php else: ?>
+
+        <p class="h3 mb-2">
+          <?php _e( 'Nemůžeme najít žádné velkoobchody s těmito požadavky', '' ); ?>
+        </p>
+        <p>
+          <?php _e( 'Zkuste prosím snížit vaše požadavky pomocí filtrů.', '' ); ?>
+        </p>
+
+        <?php endif; ?>
 
       </div>
 
