@@ -3,13 +3,9 @@
   <h2 class="h-heavy mb-1">
     <?php _e( 'Krátce o naší nabídce', '' ); ?>
   </h2>
-<<<<<<< HEAD
-  <p itemprop="description">
+  <div itemprop="description">
     <?php the_field( "short_about" ); ?>
-  </p>
-=======
-  <?php the_field( "short_about" ); ?>
->>>>>>> Add wholesaler filter and tease
+  </div>
 </div>
 <?php endif; ?>
 
