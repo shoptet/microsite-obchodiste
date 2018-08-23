@@ -192,3 +192,8 @@ add_action( 'save_post', function( $post_id ) {
 	if ( 'custom' !== get_post_type( $post_id ) ) return;
 	update_post_meta( $post_id, 'contact_count', 0 );
 } );
+
+/**
+ * Enable custom part of header
+ */
+define('CUSTOM_PART_OF_HEADER', TRUE);
