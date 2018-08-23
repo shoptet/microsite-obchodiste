@@ -63,7 +63,7 @@ function get_cpt_wholesaler_taxonomy_args(): array
     'show_in_menu' => true,
     'show_in_nav_menus' => true,
     'query_var' => true,
-    'rewrite' => [ 'slug' => 'wholesaler_category', 'with_front' => true ],
+    'rewrite' => [ 'slug' => 'velkoobchody', 'with_front' => true ],
     'show_admin_column' => false,
     'show_in_rest' => false,
     'rest_base' => '',

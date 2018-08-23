@@ -3,9 +3,9 @@
   <h2 class="h-heavy mb-1">
     <?php _e( 'Krátce o naší nabídce', '' ); ?>
   </h2>
-  <p itemprop="description">
+  <div itemprop="description">
     <?php the_field( "short_about" ); ?>
-  </p>
+  </div>
 </div>
 <?php endif; ?>
 
@@ -35,9 +35,7 @@
   <h2 class="h-heavy mb-1">
     <?php _e( 'O naší firmě', '' ); ?>
   </h2>
-  <p>
-    <?php the_field( "about_company" ); ?>
-  </p>
+  <?php the_field( "about_company" ); ?>
 </div>
 <?php endif; ?>
 
@@ -47,9 +45,7 @@
   <h2 class="h-heavy mb-1">
     <?php _e( 'O našich produktech', '' ); ?>
   </h2>
-  <p>
-    <?php the_field( "about_products" ); ?>
-  </p>
+  <?php the_field( "about_products" ); ?>
   <?php endif; ?>
 
   <?php get_template_part( 'src/template-parts/wholesaler/content', 'gallery' ); ?>

@@ -4,7 +4,7 @@
   <?php _e( 'Kontaktní osoba', '' ); ?>
 </h2>
 
-<div class="card mb-2">
+<div class="card mb-4">
   <div class="d-flex align-items-center">
 
     <?php if ( get_field( "contact_photo" ) ): ?>

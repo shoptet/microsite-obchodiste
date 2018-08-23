@@ -31,3 +31,55 @@ function display_url( $url ): string
   }
   return $url;
 }
+
+/**
+ * Get post count by meta key and value
+ */
+function get_post_count_by_meta( $meta_key, $meta_value, $post_type ): int
+{
+  $args = [
+    'post_type' => $post_type,
+    'numberposts' => -1,
+    'post_status' => 'publish',
+  ];
+  $args[ 'meta_query' ][] = [
+    'key' => $meta_key,
+    'value' => $meta_value,
+  ];
+  $posts = get_posts( $args );
+  $count = count( $posts );
+  return $count;
+}
+
+
+/**
+ * Get terms by id
+ */
+function get_terms_by_id( $taxonomy ): array
+{
+  $terms = get_terms( $taxonomy );
+  $terms_by_id = array_reduce( $terms, function( $result, $term ) {
+    $result[ $term->term_id ] = $term->slug;
+    return $result;
+  }, [] );
+  return $terms_by_id;
+}
+
+/**
+ * Get truncated string
+ */
+function truncate( $string, $limit, $separator = '...' ): string
+{
+  if ( strlen( $string ) <= $limit ) return $string;
+  $newlimit = $limit - strlen( $separator );
+  $s = substr( $string, 0, $newlimit + 1 );
+  return substr( $s, 0, strrpos( $s, ' ' ) ) . $separator;
+}
+
+/**
+ * New line to paragraph
+ */
+function nl2p( $text ): string
+{
+  return '<p>' . str_replace( [ "\r\n\r\n", "\n\n" ], '</p><p>', $text ) . '</p>';
+}
