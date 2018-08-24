@@ -15,8 +15,8 @@ Disallow: /wp-register.php
 Disallow: /*category=*
 Disallow: /*region=*
 Disallow: /*orderby=*
-Disallow: /*q=*
 Disallow: /*p=*
+Disallow: /*s=*
 ';
   return $robots_text;
 });

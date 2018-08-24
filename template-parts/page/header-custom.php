@@ -5,7 +5,7 @@
     <?php if ( is_user_logged_in() ): ?>
       <span class="dropdown">
         <a
-          class="align-middle py-2 ml-sm-3"
+          class="align-middle py-2"
           role="button"
           href="<?php echo admin_url(); ?>"
           id="dropdownMenuButton"

@@ -150,8 +150,8 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle searching
 	 */
 
-	if( isset( $_GET[ 'q' ] ) ) {
-		$wp_query->set( 's', $_GET[ 'q' ] );
+	if( isset( $_GET[ 's' ] ) ) {
+		$wp_query->set( 's', $_GET[ 's' ] );
 	}
 
 	/**
@@ -212,6 +212,17 @@ add_action('pre_get_posts', function( $wp_query ) {
 	$meta_query[] = $get_array_meta_query( 'region' );
 
 	$wp_query->set( 'meta_query', $meta_query );
+} );
+
+/**
+ * Disable default searching
+ */
+add_action( 'parse_query', function( $query ) {
+  if ( is_search() ) {
+    $query->is_search = false;
+    $query->query_vars[ 's' ] = false;
+    $query->query[ 's' ] = false;
+  }
 } );
 
 /**
