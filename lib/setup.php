@@ -34,11 +34,74 @@ add_action( 'wp_footer', function() {
   echo '</script>';
 } );
 
+/**
+ * Hide WP logo on login page
+ */
+add_action( 'login_enqueue_scripts', function() {
+  echo '
+  <style type="text/css">
+		#login h1:first-child { display: none; }
+  </style>
+  ';
+} );
+
+/**
+ * Remove update nag in admin
+ */
+add_action( 'admin_head', function() {
+	remove_action( 'admin_notices', 'update_nag', 3 );
+}, 1 );
+
+/**
+ * Redirect subscriber from admin dashboard to wholesaler list
+ */
+add_action( 'admin_init', function() {
+	global $current_user, $pagenow;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( 'index.php' === $pagenow && user_can( $current_user, 'subscriber' ) ) {
+    wp_redirect( admin_url( 'edit.php?post_type=custom' ), 301 );
+    exit;
+  }
+} );
+
+/**
+ * Show only own wholesaler post for subscriber
+ */
+add_action( 'pre_get_posts', function( $wp_query ) {
+  global $current_user, $pagenow;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+	// Not the correct screen, bail out
+	if( ! is_admin() || 'edit.php' !== $pagenow ) return;
+	// Not the correct post type, bail out
+  if( 'custom' !== $wp_query->query[ 'post_type' ] ) return;
+  if ( user_can( $current_user, 'subscriber' ) )
+    $wp_query->set( 'author', $current_user->ID );
+} );
+
+/**
+ * Disable admin bar for subscriber
+ */
+add_action( 'after_setup_theme', function() {
+	global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+	if ( user_can( $current_user, 'subscriber' ) )
+		show_admin_bar( false );
+} );
+
+/**
+ * Remove admin dashboard for subscriber
+ */
+add_action( 'admin_menu', function() {
+	global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) )
+		remove_menu_page( 'index.php' );
+} );
 
 /**
  * Handle filtering and ordering wholesaler archive and category
  */
-add_action('pre_get_posts', function ( $wp_query ){
+add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
 	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
 
@@ -100,7 +163,7 @@ add_action('pre_get_posts', function ( $wp_query ){
 	$meta_query[] = $get_array_meta_query( 'region' );
 
 	$wp_query->set( 'meta_query', $meta_query );
-});
+} );
 
 /**
  * Handle ajax wholesaler message request
@@ -194,6 +257,70 @@ add_action( 'save_post', function( $post_id ) {
 } );
 
 /**
+ * Send e-mail when new wholesaler is pending for review
+ */
+add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
+
+  // Only new wholesaler post
+	if ( get_post_type( $post ) !== 'custom' || $old_status !== 'draft' || $new_status !== 'pending' ) return;
+
+	$options = get_fields( 'options' );
+
+  // Check e-mail recipients
+	if ( ! isset($options[ 'pending_email_recipients' ] ) || ! is_array( $options[ 'pending_email_recipients' ] ) ) return;
+
+  // Get recipients and wholesaler post id
+	$email_recipients = $options[ 'pending_email_recipients' ];
+	$wholesaler_id = $post->ID;
+
+  // Collect recipient e-mails
+	$email_recipients_emails = [];
+	foreach ( $email_recipients as $user ) {
+		if ( ! isset($user[ 'user_email' ]) ) continue;
+		$email_recipients_emails[] = $user[ 'user_email' ];
+	}
+
+  // Get wholesaler title and ACF options
+	$wholesaler_title = $post->post_title;
+	$email_from = $options[ 'email_from' ];
+	$email_subject = $options[ 'pending_email_subject' ];
+	$email_body = $options[ 'pending_email_body' ];
+
+  // Replace e-mail body variables
+	$to_replace = [
+		'%wholesaler_name%' => $wholesaler_title,
+  ];
+  $email_body = strtr($email_body, $to_replace);
+
+  // Send e-mail
+	wp_mail(
+		$email_recipients_emails,
+		$email_subject,
+		$email_body,
+		[
+			'From: ' . $email_from,
+			'Content-Type: text/html; charset=UTF-8',
+		]
+	);
+}, 10, 3 );
+
+/**
+ * Add class for small and medium acf input field
+ */
+add_action( 'admin_head', function() {
+	echo '
+<style>
+  .acf-field-small .acf-input {
+		max-width: 250px !important;
+  }
+	.acf-field-medium .acf-input {
+		max-width: 450px !important;
+  }
+</style>
+	';
+} );
+
+/**
  * Enable custom part of header
  */
-define('CUSTOM_PART_OF_HEADER', TRUE);
+define( 'CUSTOM_PART_OF_HEADER', TRUE );
