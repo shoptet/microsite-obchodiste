@@ -22,6 +22,40 @@ Disallow: /*p=*
 });
 
 /**
+ * Add wholesaler categories dropdown to main menu
+ */
+add_filter( 'wp_nav_menu_items', function( $items, $args ) {
+  if( $args->menu_id !== 'shp_navigation' ) return $items;
+
+  $taxonomy_items = '
+    <li class="shp_menu-item has-dropdown">
+      <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
+      ' . __( 'Kategorie', '' ) . '
+      </a>
+      <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+      <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
+        <li class="shp_menu-item">
+          <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( 'custom' ) . '">
+          ' . __( 'Všechny kategorie', '' ) . '
+          </a>
+        </li>
+  ';
+
+  foreach ( get_terms( 'customtaxonomy' ) as $term ) {
+    $taxonomy_items .= '
+      <li class="shp_menu-item">
+        <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
+        ' . $term->name . '
+        </a>
+      </li>
+    ';
+  }
+
+  $taxonomy_items .= '</ul></li>';
+  return $taxonomy_items . $items;
+}, 10, 2 );
+
+/**
  * Hide redundant meta boxes in wholesaler edit page
  */
 add_filter( 'add_meta_boxes', function() {
