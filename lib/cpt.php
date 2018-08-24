@@ -34,6 +34,7 @@ function get_cpt_wholesaler_args(): array
     'has_archive' => 'velkoobchody',
     'show_in_menu' => true,
     'exclude_from_search' => false,
+    'capability_type' => 'wholesaler',
     'map_meta_cap' => true,
     'hierarchical' => false,
     'rewrite' => [ 'slug' => 'velkoobchod', 'with_front' => true ],
@@ -106,6 +107,7 @@ function get_cpt_wholesaler_message_args(): array
     'has_archive' => false,
     'show_in_menu' => true,
     'exclude_from_search' => true,
+    'capability_type' => 'message',
     'capabilities' => [
       'create_posts' => 'do_not_allow',
     ],
