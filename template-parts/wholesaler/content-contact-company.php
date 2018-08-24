@@ -23,7 +23,7 @@
     <span itemprop="streetAddress"><?php the_field( "street" ); ?></span>
     <br>
     <?php endif; ?>
-    <span itemprop="streetAddress"><?php the_field( "postalCode" ); ?></span>
+    <span itemprop="streetAddress"><?php the_field( "zip" ); ?></span>
     &nbsp;<span itemprop="addressLocality"><?php the_field( "city" ); ?></span>
   </address>
 

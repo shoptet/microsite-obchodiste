@@ -17,8 +17,14 @@ if( function_exists('acf_add_options_page') ) {
 	]);
 
 	acf_add_options_sub_page([
-		'page_title' 	=> 'Nastavení mailingu',
-		'menu_title' 	=> 'Mailing',
+		'page_title' 	=> __( 'Nastavení domovské stránky', '' ),
+		'menu_title' 	=> __( 'Homepage', '' ),
+		'parent_slug' => 'theme-settings',
+	]);
+
+	acf_add_options_sub_page([
+		'page_title' 	=> __( 'Nastavení mailingu', '' ),
+		'menu_title' 	=> __( 'Mailing', '' ),
 		'parent_slug' => 'theme-settings',
 	]);
 

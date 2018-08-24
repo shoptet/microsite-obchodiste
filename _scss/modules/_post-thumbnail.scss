@@ -1,0 +1,43 @@
+.post-thumbnail {
+  display: block;
+  padding: 1rem 1.25rem;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius;
+  background-color: $white;
+
+  @include media-breakpoint-up(sm) {
+    @include clearfix;
+    height: 100%;
+  }
+
+  @include media-breakpoint-up(lg) {
+    padding: 1.75rem;
+  }
+}
+
+.post-thumbnail-title {
+  font-weight: $font-weight-normal;
+}
+
+.post-thumbnail-image {
+  display: block;
+  margin-bottom: 1.5rem;
+
+  div {
+    padding-bottom: 66.7%;
+    background-position: center;
+    background-size: cover;
+    border-radius: $border-radius;
+  }
+
+  @include media-breakpoint-up(lg) {
+    float: right;
+    width: 37%;
+    margin-bottom: 0;
+    margin-left: 1.5rem;
+
+    div {
+      padding-bottom: 100%;
+    }
+  }
+}

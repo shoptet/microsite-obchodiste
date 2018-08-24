@@ -1,0 +1,9 @@
+.section-faq {
+  @include media-breakpoint-up(lg) {
+
+    background-image: url("../img/shoptetrix-point-up.png");
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 150px 178px;
+  }
+}
