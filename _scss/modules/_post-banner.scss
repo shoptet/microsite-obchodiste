@@ -1,0 +1,18 @@
+.post-banner {
+  display: block;
+  padding: 1.25rem;
+  border-radius: $border-radius;
+  background-color: $gray-100;
+}
+
+.post-banner-image {
+  display: block;
+
+  div {
+    width: 75px;
+    padding-bottom: 100%;
+    background-position: center;
+    background-size: cover;
+    border-radius: $border-radius;
+  }
+}
