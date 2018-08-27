@@ -79,10 +79,15 @@
 
 .wholesaler-tease-logo {
   position: relative;
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   background-color: $white;
   border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(lg) {
+    width: 7rem;
+    height: 7rem;
+  }
 
   // object-fit containt alternative
   img {
