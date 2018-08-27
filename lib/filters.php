@@ -49,6 +49,14 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
 }, 10, 3 );
 
 /**
+ * Remove wholesaler archive link from breadcrumbs
+ */
+add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
+  if ( is_singular( 'custom' ) ) array_splice( $crumbs, 1, 1 );
+  return $crumbs;
+} );
+
+/**
  * Join posts and postmeta tables for searching
  */
 add_filter( 'posts_join', function( $join ) {
