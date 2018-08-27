@@ -10,3 +10,7 @@ $spacer: 1rem;
 $custom-control-indicator-bg:           $white;
 $custom-control-indicator-checked-bg:           $white;
 $custom-checkbox-indicator-icon-checked:        str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3E%3Crect width='4' height='4' fill='#{$primary}'/%3E%3C/svg%3E"), "#", "%23");
+
+$btn-padding-x:               1.5rem;
+$btn-padding-y-lg:            1.15rem;
+$btn-padding-x-lg:            1.9rem;

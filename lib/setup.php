@@ -68,6 +68,13 @@ add_action( 'wp_footer', function() {
 } );
 
 /**
+ * Load addtional fonts
+ */
+add_action( 'wp_footer', function() {
+  echo '<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&amp;subset=latin-ext" rel="stylesheet">';
+} );
+
+/**
  * Hide WP logo on login page
  */
 add_action( 'login_enqueue_scripts', function() {
