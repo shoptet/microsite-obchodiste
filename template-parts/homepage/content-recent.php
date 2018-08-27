@@ -9,7 +9,7 @@ $the_query = new WP_Query( [
   <div class="section-inner container">
 
     <h2 class="text-center h3 mb-5">
-      <?php _e( 'Nové nabídky velkoobchodů', '' ); ?>
+      <?php _e( 'Noví velkoobchodní prodejci', '' ); ?>
     </h2>
 
     <div class="row row-bordered no-gutters">
