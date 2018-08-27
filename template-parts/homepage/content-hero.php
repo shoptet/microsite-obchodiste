@@ -53,7 +53,7 @@
       </div>
 
       <div class="hero-form-action">
-        <button type="submit" class="btn btn-secondary btn-lg">
+        <button type="submit" class="btn btn-primary btn-lg">
           <?php _e( 'Vyhledat dodavatele', '' ); ?>
         </button>
       </div>
