@@ -8,19 +8,19 @@
   <div class="wholesaler-logo">
     <img
       src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
-      alt="<?php echo the_title(); ?>"
+      alt="<?php the_title(); ?>"
       itemprop="logo"
     >
   </div>
   <?php endif; ?>
 
   <address itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-    <?php if ( get_field( "website" ) ): ?>
-      <a href="<?php the_field( "website" ); ?>" target="_blank">
-        <?php echo the_title(); ?>
+    <?php if ( get_field( "in" ) ): ?>
+      <a href="https://or.justice.cz/ias/ui/rejstrik-$firma?ico=<?php the_field( "in" ); ?>" target="_blank">
+        <?php the_title(); ?>
       </a>
     <?php else: ?>
-      <span><?php echo the_title(); ?></span>
+      <span><?php the_title(); ?></span>
     <?php endif; ?>
     <br>
     <?php if ( get_field( "street" ) ): ?>
