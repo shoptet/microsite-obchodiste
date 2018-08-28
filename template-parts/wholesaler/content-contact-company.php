@@ -55,7 +55,7 @@
   <?php endif; ?>
 
   <?php if ( get_field( "facebook" ) || get_field( "twitter" ) || get_field( "instagram" ) ): ?>
-  <ul class="list-inline mb-0">
+  <ul class="list-inline">
     <?php if ( get_field( "facebook" ) ): ?>
     <li class="list-inline-item">
       <a class="link-facebook" href="<?php the_field( "facebook" ); ?>" target="_blank" itemprop="sameAs">
@@ -78,6 +78,10 @@
     </li>
     <?php endif; ?>
   </ul>
+  <?php endif; ?>
+
+  <?php if ( get_post_meta( $post->ID, 'location' ) ): ?>
+    <div class="wholesaler-map" id="wholesalerMap"></div>
   <?php endif; ?>
 
 </div>

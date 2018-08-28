@@ -116,3 +116,13 @@
   font-weight: 300;
   color: $body-color;
 }
+
+.wholesaler-map {
+  height: 15rem;
+
+  // Reset image styles
+  img {
+    max-width: none;
+    vertical-align: baseline;
+  }
+}
