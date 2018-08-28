@@ -19,3 +19,11 @@
     color: darken($twitter-color, 14%);
   }
 }
+
+.link-instagram {
+  color: $instagram-color;
+
+  &:hover {
+    color: darken($instagram-color, 14%);
+  }
+}

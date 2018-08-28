@@ -54,7 +54,7 @@
   </p>
   <?php endif; ?>
 
-  <?php if ( get_field( "facebook" ) || get_field( "twitter" ) ): ?>
+  <?php if ( get_field( "facebook" ) || get_field( "twitter" ) || get_field( "instagram" ) ): ?>
   <ul class="list-inline mb-0">
     <?php if ( get_field( "facebook" ) ): ?>
     <li class="list-inline-item">
@@ -67,6 +67,13 @@
     <li class="list-inline-item">
       <a class="link-twitter" href="<?php the_field( "twitter" ); ?>" target="_blank" itemprop="sameAs">
         <i class="fab fa-2x fa-twitter-square"></i>
+      </a>
+    </li>
+    <?php endif; ?>
+    <?php if ( get_field( "instagram" ) ): ?>
+    <li class="list-inline-item">
+      <a class="link-instagram" href="<?php the_field( "instagram" ); ?>" target="_blank" itemprop="sameAs">
+        <i class="fab fa-2x fa-instagram"></i>
       </a>
     </li>
     <?php endif; ?>
