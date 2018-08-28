@@ -16,9 +16,21 @@ add_action( 'wp_head', function() {
   // Add noindex, follow to paged (../page/2/, .../page/3/)
   // via https://blog.bloxxter.cz/jak-spravne-na-strankovani-z-pohledu-seo/ Solution #3
   if ( is_paged() ) {
-    echo '<meta name="robots“ content=“noindex,follow">';
+    echo '<meta name="robots“ content="noindex,follow">';
   }
 }, 1 );
+
+/**
+ * Add meta and open graph description to wholesaler detail page
+ */
+add_action( 'wp_head', function() {
+  global $post;
+  if ( is_singular( 'custom' ) && get_field( "short_about" ) ) {
+    $description = strip_tags( get_field( "short_about" ) );
+    printf( '<meta name="description" content="%s">;', $description );
+    printf( '<meta property="og:description" content="%s">;', $description );
+  }
+} );
 
 /**
  * Pass data to javascript
