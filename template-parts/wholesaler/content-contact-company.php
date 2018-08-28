@@ -15,9 +15,13 @@
   <?php endif; ?>
 
   <address itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-    <a href="#">
-      <?php echo the_title(); ?>
-    </a>
+    <?php if ( get_field( "website" ) ): ?>
+      <a href="<?php the_field( "website" ); ?>" target="_blank">
+        <?php echo the_title(); ?>
+      </a>
+    <?php else: ?>
+      <span><?php echo the_title(); ?></span>
+    <?php endif; ?>
     <br>
     <?php if ( get_field( "street" ) ): ?>
     <span itemprop="streetAddress"><?php the_field( "street" ); ?></span>

@@ -1,7 +1,7 @@
 <div class="hero">
   <div class="container">
     <h1 class="hero-title mb-5">
-      <?php _e( 'Nabídka velkoobchodů pro maloobchodní prodejce', '' ); ?>
+      <?php _e( 'Nabídky velkoobchodů pro e-shopové prodejce', '' ); ?>
     </h1>
 
     <form action="<?php echo get_post_type_archive_link( 'custom' ); ?>" id="heroForm">
@@ -53,7 +53,7 @@
       </div>
 
       <div class="hero-form-action">
-        <button type="submit" class="btn btn-secondary btn-lg">
+        <button type="submit" class="btn btn-primary btn-lg">
           <?php _e( 'Vyhledat dodavatele', '' ); ?>
         </button>
       </div>

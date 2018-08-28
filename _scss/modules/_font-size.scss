@@ -2,6 +2,13 @@
   font-size: 90%;
 }
 
+.fs-lg-100 {
+  @include media-breakpoint-up(lg) {
+    font-size: 100%;
+  }
+}
+
+
 .fs-110 {
   font-size: 110%;
 }
