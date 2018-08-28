@@ -324,3 +324,4 @@ add_action( 'admin_head', function() {
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
+define( "CUSTOM_SEARCH_ACTION", TRUE );
