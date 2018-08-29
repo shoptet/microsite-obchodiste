@@ -2,10 +2,13 @@
   class="wholesaler-tease"
   href="<?php the_permalink(); ?>"
   title="<?php _e( 'Zobrazit profil', '' ); ?>"
-  itemscope
-  itemtype="http://schema.org/Organization"
 >
-  <meta itemprop="url" content="<?php the_permalink(); ?>">
+  <?php if ( is_post_type_archive( 'custom' ) || is_tax( 'customtaxonomy' ) ): ?>
+    <div itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="url" content="<?php the_permalink(); ?>">
+      <meta itemprop="name" content="<?php the_title(); ?>">
+    </div>
+  <?php endif; ?>
   <div class="d-flex">
 
     <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! get_field( "logo" ) ) echo "wholesaler-tease-logo-empty" ?>">
@@ -19,7 +22,7 @@
 
     <div class="mt-1">
 
-      <h3 class="wholesaler-tease-title h5 mb-2" itemprop="name">
+      <h3 class="wholesaler-tease-title h5 mb-2">
         <?php the_title(); ?>
       </h3>
 
