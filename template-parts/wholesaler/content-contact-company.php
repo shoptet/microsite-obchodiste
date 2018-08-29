@@ -41,8 +41,20 @@
     </dd>
     <?php endif; ?>
     <?php if ( get_field( "tin" ) ): ?>
+    <?php
+    $tin[0] = substr( get_field( "tin" ), 0, 2 ); // Get country code
+    $tin[1] = substr( get_field( "tin" ), 2 ); // Get tin number
+    ?>
     <dt><?php _e( 'DIČ', '' ); ?></dt>
-    <dd  itemprop="taxID"><?php the_field( "tin" ); ?></dd>
+    <dd  itemprop="taxID">
+      <form class="d-inline" action="http://ec.europa.eu/taxation_customs/vies/vatResponse.html" method="post" target="_blank">
+        <button class="btn btn-link p-0 align-baseline" type="submit">
+          <?php the_field( "tin" ); ?>
+        </button>
+        <input type="hidden" name="memberStateCode" value="<?php echo $tin[ 0 ]; ?>">
+        <input type="hidden" name="number" value="<?php echo $tin[ 1 ]; ?>">
+      </form>
+    </dd>
     <?php endif; ?>
   </dl>
 
