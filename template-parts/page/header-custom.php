@@ -1,12 +1,12 @@
 <div class="login header-login">
-    <a href="<?php echo admin_url( 'post-new.php?post_type=custom' ); ?>" class="btn btn-orange btn-add">
-      <i class="fas fa-plus-circle" aria-hidden="true"></i>
+    <a href="<?php echo admin_url( 'post-new.php?post_type=custom' ); ?>" class="btn btn-orange btn-add mx-3">
+      <i class="fas fa-plus-circle"></i>
       <?php _e( 'Přidat velkoobchod', '' ); ?>
     </a>
     <?php if ( is_user_logged_in() ): ?>
       <span class="dropdown">
         <a
-          class="align-middle py-2"
+          class="align-middle py-2 d-inline-block"
           role="button"
           href="<?php echo admin_url(); ?>"
           id="dropdownMenuButton"
