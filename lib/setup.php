@@ -148,22 +148,38 @@ add_action('pre_get_posts', function( $wp_query ) {
 	}
 
 	/**
-	 * Handle ordering queries
+	 * Handle ordering queries – first order by is_shoptet value, then by order query
 	 */
 
-	if( isset( $_GET[ 'orderby' ] ) ) {
-		$query = explode( '_', $_GET[ 'orderby' ] );
-
-		// skip default ordering by post_date DESC
-		// e.g. '?orderby=date_asc'
-		if ( $query != [ 'date', 'desc' ] ) {
+	if( ! isset( $_GET[ 'orderby' ] ) ) {
+    $wp_query->set( 'meta_key', 'is_shoptet' );
+    $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => 'DESC' ] );
+  } else {
+    $query = explode( '_', $_GET[ 'orderby' ] );
+		if ( $query == [ 'date', 'desc' ] ) {
+      $wp_query->set( 'meta_key', 'is_shoptet' );
+      $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => $query[1] ] );
+    } else {
       if ( $query[0] == 'title' ) {
-        $wp_query->set( 'orderby', 'title' );
+        // title is not a meta key
+        $wp_query->set( 'meta_key', 'is_shoptet' );
+        $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
       } else if ( $query[0] == 'favorite' ) {
-        $wp_query->set( 'orderby', 'meta_value_num' );
-        $wp_query->set( 'meta_key', 'contact_count' );
+        $meta_query[ 'is_shoptet_clause' ] = [
+          'key' => 'is_shoptet',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $meta_query[ 'contact_count_clause' ] = [
+          'key' => 'contact_count',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $wp_query->set( 'orderby', [
+          'is_shoptet_clause' => 'DESC',
+          'contact_count_clause' => $query[1],
+        ] );
       }
-			$wp_query->set( 'order', $query[1] );
 		}
 	}
 

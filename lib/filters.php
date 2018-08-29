@@ -49,6 +49,19 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
 }, 10, 3 );
 
 /**
+ * Remove is_shoptet field from subscriber's wholesaler edit page
+ */
+// add_filter( 'acf/get_fields', function( $fields ) {
+//   global $current_user;
+//   wp_get_current_user(); // Make sure global $current_user is set, if not set it
+//   if ( ! user_can( $current_user, 'subscriber' ) ) return $fields;
+//   $subscriber_fields = [];
+//   foreach ( $fields as $field )
+//     if ( $field[ 'name' ] !== 'is_shoptet' ) $subscriber_fields[] = $field;
+//   return $subscriber_fields;
+// }, 20 );
+
+/**
  * Remove wholesaler archive link from breadcrumbs
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
