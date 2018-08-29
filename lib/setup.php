@@ -10,6 +10,13 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Register image sizes
+ */
+add_action( 'after_setup_theme', function() {
+  add_image_size( 'wholesaler-logo-thumb', 150, 150 );
+} );
+
+/**
  * Pass data to javascript
  */
 add_action( 'wp_head', function() {
