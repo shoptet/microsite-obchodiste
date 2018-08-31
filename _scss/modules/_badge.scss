@@ -1,5 +1,6 @@
 .badge {
-  display: inline-block;
+  display: block;
+  float: left;
   padding: .15rem .7rem;
   color: $white;
   text-transform: lowercase;
@@ -9,7 +10,22 @@
   background-color: $shoptet-green;
 }
 
+.badge-shoptet {
+  background-color: $shoptet-blue;
+}
+
 .badge-small {
   padding: .1rem .5rem;
   font-size: 80%;
+}
+
+
+.badge-small {
+  padding: .07rem .3rem;
+  font-size: 65%;
+
+  @include media-breakpoint-up(lg) {
+    padding: .1rem .5rem;
+    font-size: 80%;
+  }
 }

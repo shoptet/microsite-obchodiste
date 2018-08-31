@@ -49,14 +49,20 @@
 
   </div>
 
-  <?php if ( is_post_new() ):  ?>
   <div class="wholesaler-tease-badges">
 
-    <span class="badge badge-new badge-small">
-      <?php _e( 'Nové', '' ); ?>
-    </span>
+    <?php if ( get_field( 'is_shoptet' ) ):  ?>
+      <span class="badge badge-shoptet badge-small">
+        <?php _e( 'Shoptet', '' ); ?>
+      </span>
+    <?php endif; ?>
+
+    <?php if ( is_post_new() ):  ?>
+      <span class="badge badge-new badge-small">
+        <?php _e( 'Nové', '' ); ?>
+      </span>
+    <?php endif; ?>
 
   </div>
-  <?php endif;  ?>
 
 </a>
