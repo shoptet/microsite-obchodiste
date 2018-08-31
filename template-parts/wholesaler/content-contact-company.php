@@ -33,7 +33,7 @@
 
   <dl class="dl-pair-inline">
     <?php if ( get_field( "in" ) ): ?>
-    <dt><?php _e( 'IČO', '' ); ?></dt>
+    <dt><?php _e( 'IČ', '' ); ?></dt>
     <dd>
       <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" itemprop="identifier">
         <?php the_field( "in" ); ?>
