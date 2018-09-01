@@ -5,7 +5,13 @@
   </h1>
 
   <div class="ml-md-3 mb-2 mb-md-0">
-    <div class="badges">
+    <div class="wholesaler-badges">
+
+      <?php if ( get_field( 'is_shoptet' ) ):  ?>
+      <span class="badge badge-shoptet">
+        <?php _e( 'Shoptet', '' ); ?>
+      </span>
+      <?php endif;  ?>
 
       <?php if ( is_post_new() ):  ?>
       <span class="badge badge-new">

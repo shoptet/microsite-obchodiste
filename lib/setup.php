@@ -10,15 +10,41 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Register image sizes
+ */
+add_action( 'after_setup_theme', function() {
+  add_image_size( 'wholesaler-logo-thumb', 150, 150 );
+} );
+
+/**
  * Pass data to javascript
  */
 add_action( 'wp_head', function() {
   // Add noindex, follow to paged (../page/2/, .../page/3/)
   // via https://blog.bloxxter.cz/jak-spravne-na-strankovani-z-pohledu-seo/ Solution #3
   if ( is_paged() ) {
-    echo '<meta name="robots“ content=“noindex,follow">';
+    echo '<meta name="robots“ content="noindex,follow">';
   }
-}, 1 );
+} );
+
+/**
+ * Add meta and open graph description to wholesaler detail page
+ */
+add_action( 'wp_head', function() {
+  global $post;
+  if ( is_singular( 'custom' ) && get_field( "short_about" ) ) {
+    $description = strip_tags( get_field( "short_about" ) );
+    printf( '<meta name="description" content="%s">', $description );
+    printf( '<meta property="og:description" content="%s">', $description );
+  }
+} );
+
+/**
+ * Add Mapy.cz API
+ */
+add_action( 'wp_enqueue_scripts', function() {
+  wp_enqueue_script( 'mapy.cz', '//api.mapy.cz/loader.js' );
+} );
 
 /**
  * Pass data to javascript
@@ -31,6 +57,13 @@ add_action( 'wp_footer', function() {
   printf( 'window.wholesalerTerms = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
   // wholesaler terms by id
   printf( 'window.wholesalerArchiveUrl = \'%s\';', get_post_type_archive_link( 'custom' ) );
+
+  // wholesaler location
+  if ( is_singular( 'custom' ) && get_post_meta( get_queried_object_id(), 'location' ) ) {
+    $location = get_post_meta( get_queried_object_id(), 'location' );
+    printf( 'window.wholesalerLocation = %s;', json_encode( $location[ 0 ] ) );
+  }
+
   echo '</script>';
 } );
 
@@ -122,22 +155,38 @@ add_action('pre_get_posts', function( $wp_query ) {
 	}
 
 	/**
-	 * Handle ordering queries
+	 * Handle ordering queries – first order by is_shoptet value, then by order query
 	 */
 
-	if( isset( $_GET[ 'orderby' ] ) ) {
-		$query = explode( '_', $_GET[ 'orderby' ] );
-
-		// skip default ordering by post_date DESC
-		// e.g. '?orderby=date_asc'
-		if ( $query != [ 'date', 'desc' ] ) {
+	if( ! isset( $_GET[ 'orderby' ] ) ) {
+    $wp_query->set( 'meta_key', 'is_shoptet' );
+    $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => 'DESC' ] );
+  } else {
+    $query = explode( '_', $_GET[ 'orderby' ] );
+		if ( $query == [ 'date', 'desc' ] ) {
+      $wp_query->set( 'meta_key', 'is_shoptet' );
+      $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => $query[1] ] );
+    } else {
       if ( $query[0] == 'title' ) {
-        $wp_query->set( 'orderby', 'title' );
+        // title is not a meta key
+        $wp_query->set( 'meta_key', 'is_shoptet' );
+        $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
       } else if ( $query[0] == 'favorite' ) {
-        $wp_query->set( 'orderby', 'meta_value_num' );
-        $wp_query->set( 'meta_key', 'contact_count' );
+        $meta_query[ 'is_shoptet_clause' ] = [
+          'key' => 'is_shoptet',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $meta_query[ 'contact_count_clause' ] = [
+          'key' => 'contact_count',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $wp_query->set( 'orderby', [
+          'is_shoptet_clause' => 'DESC',
+          'contact_count_clause' => $query[1],
+        ] );
       }
-			$wp_query->set( 'order', $query[1] );
 		}
 	}
 
@@ -250,10 +299,31 @@ function handle_wholesaler_message() {
 /**
  * Initialize wholesaler contact count meta
  */
+add_action( 'save_post', function( $post_id, $post, $update ) {
+	// Not the correct post type, bail out
+	if ( 'custom' !== get_post_type( $post_id ) || $update ) return;
+	update_post_meta( $post_id, 'contact_count', 0 );
+}, 10, 3 );
+
+/**
+ * Wholesaler address geocoding
+ */
 add_action( 'save_post', function( $post_id ) {
 	// Not the correct post type, bail out
 	if ( 'custom' !== get_post_type( $post_id ) ) return;
-	update_post_meta( $post_id, 'contact_count', 0 );
+  // Clean location data
+  delete_post_meta( $post_id, 'location' );
+  if ( ! get_field( 'street' ) || ! get_field( 'city' ) || ! get_field( 'zip' ) ) return;
+  $address = get_field( 'street' ) . ',' . get_field( 'city' ) . ',' . get_field( 'zip' );
+  $address = urlencode( $address );
+  $geocode = file_get_contents( 'http://api.mapy.cz/geocode?query=' . $address );
+  if ( ! xml_parse_into_struct( xml_parser_create(), $geocode, $output ) ) return;
+  if ( $output[ 1 ][ 'attributes' ][ 'MESSAGE' ] !== 'OK' ) return;
+  $location = [
+    'lat' => $output[ 2 ][ 'attributes' ][ 'Y' ],
+    'lng' => $output[ 2 ][ 'attributes' ][ 'X' ],
+  ];
+  update_post_meta( $post_id, 'location', $location );
 } );
 
 /**

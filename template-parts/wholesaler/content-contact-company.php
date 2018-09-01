@@ -8,19 +8,19 @@
   <div class="wholesaler-logo">
     <img
       src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
-      alt="<?php echo the_title(); ?>"
+      alt="<?php the_title(); ?>"
       itemprop="logo"
     >
   </div>
   <?php endif; ?>
 
   <address itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-    <?php if ( get_field( "website" ) ): ?>
-      <a href="<?php the_field( "website" ); ?>" target="_blank">
-        <?php echo the_title(); ?>
+    <?php if ( get_field( "in" ) ): ?>
+      <a href="https://or.justice.cz/ias/ui/rejstrik-$firma?ico=<?php the_field( "in" ); ?>" target="_blank">
+        <?php the_title(); ?>
       </a>
     <?php else: ?>
-      <span><?php echo the_title(); ?></span>
+      <span><?php the_title(); ?></span>
     <?php endif; ?>
     <br>
     <?php if ( get_field( "street" ) ): ?>
@@ -33,7 +33,7 @@
 
   <dl class="dl-pair-inline">
     <?php if ( get_field( "in" ) ): ?>
-    <dt><?php _e( 'IČO', '' ); ?></dt>
+    <dt><?php _e( 'IČ', '' ); ?></dt>
     <dd>
       <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" itemprop="identifier">
         <?php the_field( "in" ); ?>
@@ -41,8 +41,20 @@
     </dd>
     <?php endif; ?>
     <?php if ( get_field( "tin" ) ): ?>
+    <?php
+    $tin[0] = substr( get_field( "tin" ), 0, 2 ); // Get country code
+    $tin[1] = substr( get_field( "tin" ), 2 ); // Get tin number
+    ?>
     <dt><?php _e( 'DIČ', '' ); ?></dt>
-    <dd  itemprop="taxID"><?php the_field( "tin" ); ?></dd>
+    <dd  itemprop="taxID">
+      <form class="d-inline" action="http://ec.europa.eu/taxation_customs/vies/vatResponse.html" method="post" target="_blank">
+        <button class="btn btn-link p-0 align-baseline" type="submit">
+          <?php the_field( "tin" ); ?>
+        </button>
+        <input type="hidden" name="memberStateCode" value="<?php echo $tin[ 0 ]; ?>">
+        <input type="hidden" name="number" value="<?php echo $tin[ 1 ]; ?>">
+      </form>
+    </dd>
     <?php endif; ?>
   </dl>
 
@@ -54,8 +66,8 @@
   </p>
   <?php endif; ?>
 
-  <?php if ( get_field( "facebook" ) || get_field( "twitter" ) ): ?>
-  <ul class="list-inline mb-0">
+  <?php if ( get_field( "facebook" ) || get_field( "twitter" ) || get_field( "instagram" ) ): ?>
+  <ul class="list-inline">
     <?php if ( get_field( "facebook" ) ): ?>
     <li class="list-inline-item">
       <a class="link-facebook" href="<?php the_field( "facebook" ); ?>" target="_blank" itemprop="sameAs">
@@ -70,7 +82,18 @@
       </a>
     </li>
     <?php endif; ?>
+    <?php if ( get_field( "instagram" ) ): ?>
+    <li class="list-inline-item">
+      <a class="link-instagram" href="<?php the_field( "instagram" ); ?>" target="_blank" itemprop="sameAs">
+        <i class="fab fa-2x fa-instagram"></i>
+      </a>
+    </li>
+    <?php endif; ?>
   </ul>
+  <?php endif; ?>
+
+  <?php if ( get_post_meta( $post->ID, 'location' ) ): ?>
+    <div class="wholesaler-map" id="wholesalerMap"></div>
   <?php endif; ?>
 
 </div>

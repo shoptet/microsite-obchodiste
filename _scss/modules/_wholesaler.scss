@@ -52,6 +52,10 @@
   }
 }
 
+.wholesaler-badges {
+  @include clearfix;
+}
+
 .wholesaler-tease {
   display: block;
   position: relative;
@@ -108,11 +112,26 @@
 
 .wholesaler-tease-badges {
   position: absolute;
-  top: .5rem;
-  left: .5rem;
+  top: .7rem;
+  left: .4rem;
+
+  @include media-breakpoint-up(lg) {
+    top: .5rem;
+    left: .5rem;
+  }
 }
 
 .wholesaler-tease-description {
   font-weight: 300;
   color: $body-color;
+}
+
+.wholesaler-map {
+  height: 15rem;
+
+  // Reset image styles
+  img {
+    max-width: none;
+    vertical-align: baseline;
+  }
 }

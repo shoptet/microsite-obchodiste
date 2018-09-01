@@ -3,6 +3,12 @@
   href="<?php the_permalink(); ?>"
   title="<?php _e( 'Zobrazit profil', '' ); ?>"
 >
+  <?php if ( is_post_type_archive( 'custom' ) || is_tax( 'customtaxonomy' ) ): ?>
+    <div itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="url" content="<?php the_permalink(); ?>">
+      <meta itemprop="name" content="<?php the_title(); ?>">
+    </div>
+  <?php endif; ?>
   <div class="d-flex">
 
     <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! get_field( "logo" ) ) echo "wholesaler-tease-logo-empty" ?>">
@@ -43,14 +49,20 @@
 
   </div>
 
-  <?php if ( is_post_new() ):  ?>
   <div class="wholesaler-tease-badges">
 
-    <span class="badge badge-new badge-small">
-      <?php _e( 'Nové', '' ); ?>
-    </span>
+    <?php if ( get_field( 'is_shoptet' ) ):  ?>
+      <span class="badge badge-shoptet badge-small">
+        <?php _e( 'Shoptet', '' ); ?>
+      </span>
+    <?php endif; ?>
+
+    <?php if ( is_post_new() ):  ?>
+      <span class="badge badge-new badge-small">
+        <?php _e( 'Nové', '' ); ?>
+      </span>
+    <?php endif; ?>
 
   </div>
-  <?php endif;  ?>
 
 </a>
