@@ -68,6 +68,13 @@ add_action( 'wp_footer', function() {
 } );
 
 /**
+ * Load addtional fonts
+ */
+add_action( 'wp_footer', function() {
+  echo '<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600&amp;subset=latin-ext" rel="stylesheet">';
+} );
+
+/**
  * Hide WP logo on login page
  */
 add_action( 'login_enqueue_scripts', function() {
@@ -150,8 +157,8 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle searching
 	 */
 
-	if( isset( $_GET[ 'q' ] ) ) {
-		$wp_query->set( 's', $_GET[ 'q' ] );
+	if( isset( $_GET[ 's' ] ) ) {
+		$wp_query->set( 's', $_GET[ 's' ] );
 	}
 
 	/**
@@ -212,6 +219,17 @@ add_action('pre_get_posts', function( $wp_query ) {
 	$meta_query[] = $get_array_meta_query( 'region' );
 
 	$wp_query->set( 'meta_query', $meta_query );
+} );
+
+/**
+ * Disable default searching
+ */
+add_action( 'parse_query', function( $query ) {
+  if ( is_search() ) {
+    $query->is_search = false;
+    $query->query_vars[ 's' ] = false;
+    $query->query[ 's' ] = false;
+  }
 } );
 
 /**

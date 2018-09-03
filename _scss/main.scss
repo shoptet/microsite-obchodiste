@@ -10,6 +10,8 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "../../scaffolding/vendor/bs/scss/mixins";
 @import "../../scaffolding/vendor/bs/scss/transitions";
 @import "../../scaffolding/vendor/bs/scss/custom-forms";
+@import "../../scaffolding/vendor/bs/scss/dropdown";
+@import "../../scaffolding/vendor/bs/scss/buttons";
 
 @import '../../scaffolding/vendor/fa/scss/variables';
 @import '../../scaffolding/vendor/fa/scss/core';
@@ -41,3 +43,4 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/testimonial-thumbnail";
 @import "modules/section";
 @import "modules/post-banner";
+@import "modules/button";

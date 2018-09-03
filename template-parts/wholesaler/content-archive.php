@@ -1,7 +1,7 @@
 <form class="wholesaler-archive mt-2" method="get" id="archiveForm">
 
   <?php if ( get_search_query() ): ?>
-    <input type="hidden" name="q" value="<?php echo get_search_query(); ?>">
+    <input type="hidden" name="s" value="<?php echo get_search_query(); ?>">
   <?php endif; ?>
 
   <div class="row">
