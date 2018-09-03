@@ -1,5 +1,5 @@
 <h2 class="h-heavy">
-  <?php _e( 'Kontaktní údaje', '' ); ?>
+  <?php _e( 'Kontaktní údaje', 'shp-obchodiste' ); ?>
 </h2>
 
 <div class="mb-4 clearfix">
@@ -33,7 +33,7 @@
 
   <dl class="dl-pair-inline">
     <?php if ( get_field( "in" ) ): ?>
-    <dt><?php _e( 'IČ', '' ); ?></dt>
+    <dt><?php _e( 'IČ', 'shp-obchodiste' ); ?></dt>
     <dd>
       <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" itemprop="identifier">
         <?php the_field( "in" ); ?>
@@ -45,7 +45,7 @@
     $tin[0] = substr( get_field( "tin" ), 0, 2 ); // Get country code
     $tin[1] = substr( get_field( "tin" ), 2 ); // Get tin number
     ?>
-    <dt><?php _e( 'DIČ', '' ); ?></dt>
+    <dt><?php _e( 'DIČ', 'shp-obchodiste' ); ?></dt>
     <dd  itemprop="taxID">
       <form class="d-inline" action="http://ec.europa.eu/taxation_customs/vies/vatResponse.html" method="post" target="_blank">
         <button class="btn btn-link p-0 align-baseline" type="submit">

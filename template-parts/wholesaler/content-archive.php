@@ -22,7 +22,7 @@
             $taxonomy = get_queried_object();
             echo $taxonomy->name . ' – ';
           }
-          _e( 'Velkoobchody', '' );
+          _e( 'Velkoobchody', 'shp-obchodiste' );
           ?>
         </h1>
 
@@ -70,10 +70,10 @@
         <?php else: ?>
 
         <p class="h3 mb-2">
-          <?php _e( 'Nemůžeme najít žádné velkoobchody s těmito požadavky', '' ); ?>
+          <?php _e( 'Nemůžeme najít žádné velkoobchody s těmito požadavky', 'shp-obchodiste' ); ?>
         </p>
         <p>
-          <?php _e( 'Zkuste prosím snížit vaše požadavky pomocí filtrů.', '' ); ?>
+          <?php _e( 'Zkuste prosím snížit vaše požadavky pomocí filtrů.', 'shp-obchodiste' ); ?>
         </p>
 
         <?php endif; ?>

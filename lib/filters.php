@@ -30,13 +30,13 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   $taxonomy_items = '
     <li class="shp_menu-item has-dropdown">
       <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
-      ' . __( 'Kategorie', '' ) . '
+      ' . __( 'Kategorie', 'shp-obchodiste' ) . '
       </a>
       <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
       <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( 'custom' ) . '">
-          ' . __( 'Všechny kategorie', '' ) . '
+          ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
           </a>
         </li>
   ';
@@ -165,18 +165,18 @@ add_filter( 'login_message', function( $message ) {
 
   // Add title to login pages
   if ( ! isset( $_REQUEST[ 'action' ] ) )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Přihlášení', '' ) . '</h1>';
+    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Přihlášení', 'shp-obchodiste' ) . '</h1>';
   else if ( $_REQUEST[ 'action' ] === 'register' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Registrace', '' ) . '</h1>';
+    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Registrace', 'shp-obchodiste' ) . '</h1>';
   else if ( $_REQUEST[ 'action' ] === 'lostpassword' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Zapomenuté heslo', '' ) . '</h1>';
+    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Zapomenuté heslo', 'shp-obchodiste' ) . '</h1>';
 
   // Add messages to login pages
   if ( ! isset( $_REQUEST[ 'action' ] ) )
     $new_message .= '
       <p class="message">
         ' . sprintf(
-          __( 'Nemáte-li vytvořený účet, nejprve se <a href="%s">registrujte</a>', '' ),
+          __( 'Nemáte-li vytvořený účet, nejprve se <a href="%s">registrujte</a>', 'shp-obchodiste' ),
           wp_registration_url()
         ) . '
       </p>
@@ -184,11 +184,11 @@ add_filter( 'login_message', function( $message ) {
   else if ( $_REQUEST[ 'action' ] === 'register' )
     $new_message .= '
       <p class="message">
-        ' . __( 'Zvolte si uživatelské jméno a vložte svůj e-mail', '' ) . '
+        ' . __( 'Zvolte si uživatelské jméno a vložte svůj e-mail', 'shp-obchodiste' ) . '
       </p>
       <p class="message">
         ' . sprintf(
-          __( 'Pokud již máte vytvořený účet, <a href="%s">přihlašte se</a>', '' ),
+          __( 'Pokud již máte vytvořený účet, <a href="%s">přihlašte se</a>', 'shp-obchodiste' ),
           wp_login_url()
         ) . '
       </p>

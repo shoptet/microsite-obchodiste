@@ -8,14 +8,14 @@
     aria-expanded="false"
     aria-controls="filtersCollapse"
   >
-    <?php _e( 'Zobrazit filtry', '' ); ?>
+    <?php _e( 'Zobrazit filtry', 'shp-obchodiste' ); ?>
   </button>
 
   <div class="collapse d-md-block" id="filtersCollapse">
     <div class="mt-3 mt-md-0">
 
       <p class="h5 h-heavy mb-2">
-        <?php _e( 'Kategorie', '' ); ?>
+        <?php _e( 'Kategorie', 'shp-obchodiste' ); ?>
       </p>
 
       <?php
@@ -52,7 +52,7 @@
       <div class="filters-divider"></div>
 
       <p class="h5 h-heavy mt-0 mb-2">
-        <?php _e( 'Lokalita', '' ); ?>
+        <?php _e( 'Lokalita', 'shp-obchodiste' ); ?>
       </p>
 
       <?php
@@ -90,11 +90,11 @@
         href="<?php echo get_post_type_archive_link( 'custom' ); ?>"
       >
         <i class="fas fa-times text-muted mr-1"></i>
-        <?php _e( 'Zrušit filtry', '' ); ?>
+        <?php _e( 'Zrušit filtry', 'shp-obchodiste' ); ?>
       </a>
 
       <button type="submit" class="btn btn-primary btn-block mt-2" id="filterSubmit">
-        <?php _e( 'Filtrovat', '' ); ?>
+        <?php _e( 'Filtrovat', 'shp-obchodiste' ); ?>
       </button>
 
     </div>

@@ -1,7 +1,7 @@
 <?php if ( get_field( "contact_full_name" ) || get_field( "contact_email" )  || get_field( "contact_tel" ) ): ?>
 
 <h2 class="h-heavy">
-  <?php _e( 'Kontaktní osoba', '' ); ?>
+  <?php _e( 'Kontaktní osoba', 'shp-obchodiste' ); ?>
 </h2>
 
 <div class="card mb-4">

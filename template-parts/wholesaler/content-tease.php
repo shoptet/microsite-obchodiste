@@ -1,7 +1,7 @@
 <a
   class="wholesaler-tease"
   href="<?php the_permalink(); ?>"
-  title="<?php _e( 'Zobrazit profil', '' ); ?>"
+  title="<?php _e( 'Zobrazit profil', 'shp-obchodiste' ); ?>"
 >
   <?php if ( is_post_type_archive( 'custom' ) || is_tax( 'customtaxonomy' ) ): ?>
     <div itemscope itemtype="http://schema.org/Organization">
@@ -53,13 +53,13 @@
 
     <?php if ( get_field( 'is_shoptet' ) ):  ?>
       <span class="badge badge-shoptet badge-small">
-        <?php _e( 'Shoptet', '' ); ?>
+        <?php _e( 'Shoptet', 'shp-obchodiste' ); ?>
       </span>
     <?php endif; ?>
 
     <?php if ( is_post_new() ):  ?>
       <span class="badge badge-new badge-small">
-        <?php _e( 'Nové', '' ); ?>
+        <?php _e( 'Nové', 'shp-obchodiste' ); ?>
       </span>
     <?php endif; ?>
 

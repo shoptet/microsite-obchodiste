@@ -9,7 +9,7 @@ $the_query = new WP_Query( [
   <div class="section-inner container">
 
     <h2 class="text-center h3 mb-5">
-      <?php _e( 'Noví velkoobchodní prodejci', '' ); ?>
+      <?php _e( 'Noví velkoobchodní prodejci', 'shp-obchodiste' ); ?>
     </h2>
 
     <div class="row row-bordered no-gutters">
@@ -27,7 +27,7 @@ $the_query = new WP_Query( [
         href="<?php echo get_post_type_archive_link( 'custom' ); ?>"
         class="btn btn-primary btn-lg ws-normal"
       >
-        <?php _e( 'Zobrazit všechny nabídky velkoobchodů', '' ); ?>
+        <?php _e( 'Zobrazit všechny nabídky velkoobchodů', 'shp-obchodiste' ); ?>
       </a>
     </p>
 
