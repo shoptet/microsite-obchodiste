@@ -9,13 +9,13 @@
 
       <?php if ( get_field( 'is_shoptet' ) ):  ?>
       <span class="badge badge-shoptet">
-        <?php _e( 'Shoptet', '' ); ?>
+        <?php _e( 'Shoptet', 'shp-obchodiste' ); ?>
       </span>
       <?php endif;  ?>
 
       <?php if ( is_post_new() ):  ?>
       <span class="badge badge-new">
-        <?php _e( 'Nové', '' ); ?>
+        <?php _e( 'Nové', 'shp-obchodiste' ); ?>
       </span>
       <?php endif;  ?>
 
@@ -27,7 +27,7 @@
 <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
 <?php if ( ! empty( $terms ) ):  ?>
 <p class="text-muted">
-  <?php _e( 'Kategorie:', '' ); ?>
+  <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
   <?php foreach ( $terms as $term ): ?>
   <a href="<?php echo get_term_link( $term ); ?>">
     <?php echo $term->name; ?>

@@ -18,10 +18,10 @@ $the_query = new WP_Query( [
 <?php if ( $the_query->post_count ): ?>
   <div class="pt-5 pb-4">
     <h2 class="text-center h3 mb-1">
-      <?php _e( 'Nezaujal vás tento dodavatel?', '' ); ?>
+      <?php _e( 'Nezaujal vás tento dodavatel?', 'shp-obchodiste' ); ?>
     </h2>
     <p class="mb-4 text-center mb-5">
-      <?php _e( 'Podívejte se na další ze stejné kategorie', '' ); ?>
+      <?php _e( 'Podívejte se na další ze stejné kategorie', 'shp-obchodiste' ); ?>
     </p>
     <div class="row row-bordered no-gutters">
       <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>

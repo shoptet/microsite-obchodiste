@@ -1,7 +1,7 @@
 <?php if ( get_field( "short_about" ) ): ?>
 <div class="wholesaler-block">
   <h2 class="h-heavy mb-1">
-    <?php _e( 'Krátce o naší nabídce', '' ); ?>
+    <?php _e( 'Krátce o naší nabídce', 'shp-obchodiste' ); ?>
   </h2>
   <div itemprop="description">
     <?php the_field( "short_about" ); ?>
@@ -13,7 +13,7 @@
 <div class="wholesaler-block">
 
   <h2 class="h-heavy mb-2">
-    <?php _e( 'Co vám nabídneme', '' ); ?>
+    <?php _e( 'Co vám nabídneme', 'shp-obchodiste' ); ?>
   </h2>
 
   <ul class="fa-ul list-horizontal">
@@ -33,7 +33,7 @@
 <?php if ( get_field( "about_company" ) ): ?>
 <div class="wholesaler-block">
   <h2 class="h-heavy mb-1">
-    <?php _e( 'O naší firmě', '' ); ?>
+    <?php _e( 'O naší firmě', 'shp-obchodiste' ); ?>
   </h2>
   <?php the_field( "about_company" ); ?>
 </div>
@@ -43,7 +43,7 @@
 <div class="wholesaler-block">
   <?php if ( get_field( "about_products" ) ): ?>
   <h2 class="h-heavy mb-1">
-    <?php _e( 'O našich produktech', '' ); ?>
+    <?php _e( 'O našich produktech', 'shp-obchodiste' ); ?>
   </h2>
   <?php the_field( "about_products" ); ?>
   <?php endif; ?>

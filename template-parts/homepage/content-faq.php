@@ -20,13 +20,13 @@ $the_query_retail = new WP_Query( [
     <div class="container">
 
       <h2 class="text-center h3 mb-5">
-        <?php _e( 'Otázky a odpovědi', '' ); ?>
+        <?php _e( 'Otázky a odpovědi', 'shp-obchodiste' ); ?>
       </h2>
 
       <div class="row">
         <div class="col-12 col-md-6 col-lg-4 offset-xl-1">
           <p class="h-heavy">
-            <?php _e( 'Pro velkoobchody', '' ); ?>
+            <?php _e( 'Pro velkoobchody', 'shp-obchodiste' ); ?>
           </p>
 
           <ul class="fa-ul">
@@ -44,7 +44,7 @@ $the_query_retail = new WP_Query( [
         <div class="col-12 col-md-6 col-lg-4 offset-lg-4 offset-xl-3">
 
           <p class="h-heavy">
-            <?php _e( 'Pro maloobchody', '' ); ?>
+            <?php _e( 'Pro maloobchody', 'shp-obchodiste' ); ?>
           </p>
 
           <ul class="fa-ul">
