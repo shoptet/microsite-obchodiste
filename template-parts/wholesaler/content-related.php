@@ -1,5 +1,6 @@
 <?php
 $terms = get_the_terms( $post->ID, 'customtaxonomy' );
+if ( ! $terms ) return; 
 $term_ids = array_map( function( $term ) {
   return $term->term_id;
 }, $terms );
