@@ -39,7 +39,7 @@
 </div>
 <?php endif; ?>
 
-<?php if ( get_field( "about_products" ) || get_field( "video" ) ): ?>
+<?php if ( get_field( "about_products" ) || get_field( "gallery" ) || get_field( "video" ) ): ?>
 <div class="wholesaler-block">
   <?php if ( get_field( "about_products" ) ): ?>
   <h2 class="h-heavy mb-1">
