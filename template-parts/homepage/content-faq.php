@@ -1,20 +1,14 @@
 <?php
-$the_query_wholesaler = new WP_Query( [
-  'post_type' => 'post',
-  'posts_per_page' => -1,
-  'category_name' => 'velkoobchody',
-] );
+$options = get_fields( 'options' );
+$wholesaler_post = ( isset( $options[ 'homepage_faq_wholesaler_post' ] ) && is_string( $options[ 'homepage_faq_wholesaler_post'] ) ) ? $options[ 'homepage_faq_wholesaler_post'] : '';
+$retail_post = ( isset( $options[ 'homepage_faq_retail_post' ] ) && is_string( $options[ 'homepage_faq_retail_post'] ) ) ? $options[ 'homepage_faq_retail_post'] : '';
+$wholesaler_anchors = ( isset( $options[ 'homepage_faq_wholesaler_anchors' ] ) && is_array( $options[ 'homepage_faq_wholesaler_anchors'] ) ) ? $options[ 'homepage_faq_wholesaler_anchors'] : [];
+$retail_anchors = ( isset( $options[ 'homepage_faq_retail_anchors' ] ) && is_array( $options[ 'homepage_faq_retail_anchors'] ) ) ? $options[ 'homepage_faq_retail_anchors'] : [];
+$show_wholesaler_faq = ( ! empty( $wholesaler_post ) && ! empty( $wholesaler_anchors ) );
+$show_retail_faq = ( ! empty( $retail_post ) && ! empty( $retail_anchors ) );
 ?>
 
-<?php
-$the_query_retail = new WP_Query( [
-  'post_type' => 'post',
-  'posts_per_page' => -1,
-  'category_name' => 'maloobchody',
-] );
-?>
-
-<?php if ( $the_query_wholesaler->post_count && $the_query_retail->post_count ): ?>
+<?php if ( $show_wholesaler_faq || $show_retail_faq ): ?>
 
   <section class="section section-primary section-faq py-5">
     <div class="container">
@@ -25,39 +19,41 @@ $the_query_retail = new WP_Query( [
 
       <div class="row">
         <div class="col-12 col-md-6 col-lg-4 offset-xl-1">
-          <p class="h-heavy">
-            <?php _e( 'Pro velkoobchody', 'shp-obchodiste' ); ?>
-          </p>
+          <?php if ( $show_wholesaler_faq ): ?>
+            <p class="h-heavy">
+              <?php _e( 'Pro velkoobchody', 'shp-obchodiste' ); ?>
+            </p>
 
-          <ul class="fa-ul">
-            <?php while ( $the_query_wholesaler->have_posts() ) : $the_query_wholesaler->the_post(); ?>
-              <li>
-                <span class="fa-li"><i class="far fa-question-circle"></i></span>
-                <a href="<?php the_permalink(); ?>">
-                  <?php the_title(); ?>
-                </a>
-              </li>
-            <?php endwhile; ?>
-          </ul>
-
+            <ul class="fa-ul">
+              <?php foreach ( $wholesaler_anchors as $anchor ): ?>
+                <li>
+                  <span class="fa-li"><i class="far fa-question-circle"></i></span>
+                  <a href="<?php echo $wholesaler_post . '#' . $anchor['anchor']; ?>">
+                    <?php echo $anchor['title']; ?>
+                  </a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php endif; ?>
         </div>
+
         <div class="col-12 col-md-6 col-lg-4 offset-lg-4 offset-xl-3">
+        <?php if ( $show_retail_faq ): ?>
+            <p class="h-heavy">
+              <?php _e( 'Pro maloobchody', 'shp-obchodiste' ); ?>
+            </p>
 
-          <p class="h-heavy">
-            <?php _e( 'Pro maloobchody', 'shp-obchodiste' ); ?>
-          </p>
-
-          <ul class="fa-ul">
-            <?php while ( $the_query_retail->have_posts() ) : $the_query_retail->the_post(); ?>
-              <li>
-                <span class="fa-li"><i class="far fa-question-circle"></i></span>
-                <a href="<?php the_permalink(); ?>">
-                  <?php the_title(); ?>
-                </a>
-              </li>
-            <?php endwhile; ?>
-          </ul>
-
+            <ul class="fa-ul">
+              <?php foreach ( $retail_anchors as $anchor ): ?>
+                <li>
+                  <span class="fa-li"><i class="far fa-question-circle"></i></span>
+                  <a href="<?php echo $retail_post . '#' . $anchor['anchor']; ?>">
+                    <?php echo $anchor['title']; ?>
+                  </a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php endif; ?>
         </div>
       </div>
 
