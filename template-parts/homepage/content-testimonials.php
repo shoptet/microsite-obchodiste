@@ -1,4 +1,4 @@
-<?php if ( isset( get_fields( 'options' )[ 'homepage_testimonial' ] ) && count( get_fields( 'options' )[ 'homepage_testimonial' ] ) > 0 ): ?>
+<?php if ( isset( get_fields( 'options' )[ 'homepage_testimonial' ] ) && get_fields( 'options' )[ 'homepage_testimonial' ] !== false ): ?>
   <?php $testimonials = get_fields( 'options' )[ 'homepage_testimonial' ]; ?>
   <section class="section section-primary py-5">
     <div class="container">
