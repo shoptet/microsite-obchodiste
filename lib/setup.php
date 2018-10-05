@@ -10,6 +10,19 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Disable unwanted admin notification e-mails
+ */
+add_action( 'init', function() {
+  // Disable notifying the admin of a new user registartion
+  remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
+  add_action( 'register_new_user', function( $user_id, $notify = 'user' ) {
+    wp_send_new_user_notifications( $user_id, $notify ); 
+  } );
+  // Disable notifying admin of a user changing password
+  remove_action( 'after_password_reset', 'wp_password_change_notification' );
+} );
+
+/**
  * Register image sizes
  */
 add_action( 'after_setup_theme', function() {
