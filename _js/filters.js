@@ -29,22 +29,26 @@ $(function() {
     var queryString = '';
     var skipSingleCategory = false;
     var skipDefaultOrderBy = false;
+    // Count categories
     data.forEach(function (item) {
-      if (item.name !== 'category[]') return;
+      if (item.name !== 'category[]' || !item.value) return;
       lastCategoryId = item.value;
       categoryCount++;
     });
+    // Remove single category and default ordering
     data = data.filter(function (item) {
       skipSingleCategory = (categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
-      return !skipSingleCategory && !skipDefaultOrderBy;
+      skipEmptyValue = ( item.value ? false : true );
+      return !skipSingleCategory && !skipDefaultOrderBy && !skipEmptyValue;
     });
+    // Create query string
     data.forEach(function (item, i) {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.wholesalerArchiveUrl;
     url += ( categoryCount === 1 ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
-    url += ( queryString.length ? '?' + queryString : '' );
+    url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };
 
