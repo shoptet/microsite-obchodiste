@@ -9,17 +9,17 @@
 
     <?php if ( get_field( "contact_photo" ) ): ?>
     <img
-      class="align-self-start rounded-top-left rounded-bottom-left mr-2"
+      class="align-self-start rounded-top-left rounded-bottom-left"
       src="<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>"
       <?php if ( get_field( "contact_full_name" ) ): ?>
         alt="<?php the_field( "contact_full_name" ); ?>"
       <?php endif; ?>
-      height="100"
-      width="100"
+      height="104"
+      width="104"
     >
     <?php endif; ?>
 
-    <div>
+    <div class="p-3 text-truncate">
 
       <?php if ( get_field( "contact_full_name" ) ): ?>
       <p class="font-weight-bold mb-0">
