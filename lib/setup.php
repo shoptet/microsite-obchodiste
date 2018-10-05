@@ -418,7 +418,29 @@ add_action( 'admin_head', function() {
 		max-width: 450px !important;
   }
 </style>
-	';
+  ';
+} );
+
+/**
+ * Disable wholesaler title, slug and status editing for publish wholesaler post
+ */
+add_action( 'admin_head', function() {
+  global $post, $pagenow, $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( 'post.php' === $pagenow && 'custom' === $post->post_type && 'publish' === $post->post_status && user_can( $current_user, 'subscriber' ) ) {
+    echo '
+<style>
+  #edit-slug-buttons,
+  .edit-post-status {
+    display: none;
+  }
+  #titlediv #title {
+    pointer-events: none;
+    background-color: transparent;
+  }
+</style>
+    ';
+  }
 } );
 
 /**

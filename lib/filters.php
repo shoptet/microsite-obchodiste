@@ -257,3 +257,25 @@ add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
 
   return $email;
 }, 10, 2);
+
+/**
+ * Remove wholesaler quick edit action for subscribers
+ */
+add_filter( 'post_row_actions', function( $actions ) {
+  global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) )
+    unset($actions['inline hide-if-no-js']);
+  return $actions;
+} );
+
+/**
+ * Remove wholesaler bulk actions for subscribers
+ */
+add_filter( 'bulk_actions-edit-custom', function( $actions ) {
+  global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) )
+    return false;
+  return true;
+} );
