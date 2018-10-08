@@ -13,8 +13,8 @@
     <?php if ( get_field( "contact_full_name" ) ): ?>
       alt="<?php the_field( "contact_full_name" ); ?>"
     <?php endif; ?>
-    height="104"
-    width="104"
+    height="105"
+    width="105"
   >
   <?php endif; ?>
 
