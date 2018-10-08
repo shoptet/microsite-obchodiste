@@ -15,19 +15,11 @@ function is_post_new(): bool
 /**
  * Remove protocol and last slash from url
  */
-function display_url( $url ): string
+function display_url( $url, $display_www = true ): string
 {
-  // Romove protocol
-  if ( substr( $url, 0, 7 ) === 'http://' ) {
-    $url = substr( $url, 7 );
-  } else if ( substr( $url, 0, 8 ) === 'https://' ) {
-    $url = substr( $url, 8 );
-  } else if ( substr( $url, 0, 2 ) === '//' ) {
-    $url = substr( $url, 2 );
-  }
-  // Remove last slash
-  if ( substr( $url, -1 ) === '/' ) {
-    $url = substr( $url, 0, -1 );
+  $url = preg_replace( '#^https?://|^//|/$#', '', $url ); // Remove protocol and last slash
+  if ( ! $display_www ) {
+    $url = preg_replace( '#^www\.#', '', $url ); // Remove www.
   }
   return $url;
 }
