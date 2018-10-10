@@ -105,6 +105,8 @@ function get_used_regions_by_country(): array
       ];
     }
 
+    if ( empty( $used_regions ) ) continue;
+    
     $regions_by_country[ $country_code ] = [
       'name' => $country[ 'name' ],
       'used_regions' => $used_regions,
