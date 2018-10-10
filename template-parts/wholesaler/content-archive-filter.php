@@ -59,27 +59,30 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
-      <?php foreach ( get_used_regions() as $region ): ?>
-        <?php $region_post_count = get_post_count_by_meta( 'region', $region[ 'id' ], 'custom' ); ?>
-        <div class="custom-control custom-checkbox">
-          <input
-            class="custom-control-input"
-            type="checkbox"
-            value="<?php echo $region[ 'id' ]; ?>"
-            id="filterCategory<?php echo $region[ 'id' ]; ?>"
-            name="region[]"
-            <?php if ( in_array ( $region[ 'id' ], $checked_regions ) ) echo "checked"; ?>
-          >
-          <label
-            class="custom-control-label"
-            for="filterCategory<?php echo $region[ 'id' ]; ?>"
-          >
-            <?php echo $region[ 'name' ]; ?>
-            <span class="text-semilight">
-              (<?php echo $region_post_count; ?>)
-            </span>
-          </label>
-        </div>
+      <?php foreach ( get_used_regions_by_country() as $country_code => $country ): ?>
+        <p class="font-weight-bold my-2"><?php echo $country[ 'name' ]; ?></p>
+        <?php foreach ( $country[ 'used_regions' ] as $region ): ?>
+          <?php $region_post_count = get_post_count_by_meta( 'region', $region[ 'id' ], 'custom' ); ?>
+          <div class="custom-control custom-checkbox">
+            <input
+              class="custom-control-input"
+              type="checkbox"
+              value="<?php echo $region[ 'id' ]; ?>"
+              id="filterCategory<?php echo $region[ 'id' ]; ?>"
+              name="region[]"
+              <?php if ( in_array ( $region[ 'id' ], $checked_regions ) ) echo "checked"; ?>
+            >
+            <label
+              class="custom-control-label"
+              for="filterCategory<?php echo $region[ 'id' ]; ?>"
+            >
+              <?php echo $region[ 'name' ]; ?>
+              <span class="text-semilight">
+                (<?php echo $region_post_count; ?>)
+              </span>
+            </label>
+          </div>
+        <?php endforeach; ?>
       <?php endforeach; ?>
 
       <div class="filters-divider"></div>

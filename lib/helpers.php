@@ -77,17 +77,39 @@ function nl2p( $text ): string
 }
 
 /**
- * Get not empty wholesaler regions
+ * Get not empty wholesaler regions by country
  */
-function get_used_regions(): array
+function get_used_regions_by_country(): array
 {
-  $used_regions = [];
-  foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ) {
-    $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
-    if ( $region_post_count > 0 ) $used_regions[] = [
-      'id' => $region_id,
-      'name' => $region_name,
+  $countries = [
+    'cz' => [
+      'name' => __( 'Česko', 'shp-obchodiste' ),
+      'field' => 'field_5b5ed2ca0a22d',
+    ],
+    'sk' => [
+      'name' => __( 'Slovensko', 'shp-obchodiste' ),
+      'field' => 'field_5bbdc19430685',
+    ],
+  ];
+  $regions_by_country = [];
+
+  foreach ( $countries as $country_code => $country ) {
+    $regions_in_country = get_field_object( $country[ 'field' ] )[ 'choices' ];
+    $used_regions = [];
+
+    foreach ( $regions_in_country as $region_id => $region_name ) {
+      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+      if ( $region_post_count > 0 ) $used_regions[] = [
+        'id' => $region_id,
+        'name' => $region_name,
+      ];
+    }
+
+    $regions_by_country[ $country_code ] = [
+      'name' => $country[ 'name' ],
+      'used_regions' => $used_regions,
     ];
   }
-  return $used_regions;
+  
+  return $regions_by_country;
 }
