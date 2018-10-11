@@ -35,6 +35,10 @@
     <?php endif; ?>
     <span itemprop="streetAddress"><?php the_field( "zip" ); ?></span>
     &nbsp;<span itemprop="addressLocality"><?php the_field( "city" ); ?></span>
+    <?php if ( get_field( "country" ) && get_field( "country" )[ 'label' ] ): ?>
+      <br>
+      <?php echo get_field( "country" )[ 'label' ]; ?>
+    <?php endif; ?>
   </address>
 
   <dl class="dl-pair-inline">
