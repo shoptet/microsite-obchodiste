@@ -10,6 +10,19 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Disable unwanted admin notification e-mails
+ */
+add_action( 'init', function() {
+  // Disable notifying the admin of a new user registartion
+  remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
+  add_action( 'register_new_user', function( $user_id, $notify = 'user' ) {
+    wp_send_new_user_notifications( $user_id, $notify ); 
+  } );
+  // Disable notifying admin of a user changing password
+  remove_action( 'after_password_reset', 'wp_password_change_notification' );
+} );
+
+/**
  * Register image sizes
  */
 add_action( 'after_setup_theme', function() {
@@ -405,7 +418,29 @@ add_action( 'admin_head', function() {
 		max-width: 450px !important;
   }
 </style>
-	';
+  ';
+} );
+
+/**
+ * Disable wholesaler title, slug and status editing for publish wholesaler post
+ */
+add_action( 'admin_head', function() {
+  global $post, $pagenow, $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( 'post.php' === $pagenow && 'custom' === $post->post_type && 'publish' === $post->post_status && user_can( $current_user, 'subscriber' ) ) {
+    echo '
+<style>
+  #edit-slug-buttons,
+  .edit-post-status {
+    display: none;
+  }
+  #titlediv #title {
+    pointer-events: none;
+    background-color: transparent;
+  }
+</style>
+    ';
+  }
 } );
 
 /**

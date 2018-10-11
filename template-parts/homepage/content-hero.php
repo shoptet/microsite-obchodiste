@@ -15,7 +15,7 @@
               </label>
               <div class="w-100">
                 <select class="custom-select" name="category[]">
-                  <option selected disabled>
+                  <option value="" selected>
                     <?php _e( 'Všechny', 'shp-obchodiste' ); ?>
                   </option>
                   <?php foreach ( get_terms( 'customtaxonomy' ) as $term ): ?>
@@ -36,7 +36,7 @@
               </label>
               <div class="w-100">
                 <select class="custom-select" name="region[]">
-                  <option selected disabled>
+                  <option value="" selected>
                     <?php _e( 'Všechny', 'shp-obchodiste' ); ?>
                   </option>
                   <?php foreach ( get_used_regions() as $region ): ?>

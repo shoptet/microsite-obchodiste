@@ -24,6 +24,14 @@
 
 </div>
 
+<?php if ( get_field( "website" ) ): ?>
+<p class="mb-2">
+  <a href="<?php the_field( "website" ); ?>" target="_blank" itemprop="url">
+    <?php echo display_url( get_field( "website" ) ); ?>
+  </a>
+</p>
+<?php endif; ?>
+
 <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
 <?php if ( ! empty( $terms ) ):  ?>
 <p class="text-muted">
