@@ -26,6 +26,7 @@
         <?php the_title(); ?>
       </h3>
 
+<<<<<<< HEAD
       <p class="fs-90 mb-0">
         <?php if ( get_field( "website" ) ): ?>
         <?php echo display_url( get_field( "website" ), false ); ?>,
@@ -37,6 +38,25 @@
           <?php endforeach; ?>
         <?php endif; ?>
       </p>
+=======
+      <ul class="list-comma fs-90">
+        <?php if ( get_field( "category" ) ): ?>
+        <li><?php echo get_field( "category" )->name; ?></li>
+        <?php endif; ?>
+
+        <?php if ( get_field( "minor_category_1" ) ): ?>
+        <li><?php echo get_field( "minor_category_1" )->name; ?></li>
+        <?php endif; ?>
+
+        <?php if ( get_field( "minor_category_2" ) ): ?>
+        <li><?php echo get_field( "minor_category_2" )->name; ?></li>
+        <?php endif; ?>
+
+        <?php if ( get_field( "region" ) ): ?>
+        <li><?php echo get_field( "region" )['label']; ?></li>
+        <?php endif; ?>
+      </ul>
+>>>>>>> Add multiple wholesaler terms
 
       <?php if ( get_field( "short_about" ) ): ?>
       <p class="wholesaler-tease-description fs-90 fs-lg-100 mt-2 mb-0">

@@ -32,14 +32,23 @@
 </p>
 <?php endif; ?>
 
-<?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
-<?php if ( ! empty( $terms ) ):  ?>
-<p class="text-muted">
-  <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
-  <?php foreach ( $terms as $term ): ?>
-  <a href="<?php echo get_term_link( $term ); ?>">
-    <?php echo $term->name; ?>
-  </a>
-  <?php endforeach; ?>
-</p>
-<?php endif; ?>
+<dl class="dl-inline">
+  <dt class="text-muted mr-1">
+    <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
+  </dt>
+  <dd>
+    <ul class="list-comma">
+      <?php if ( get_field( "category" ) ):  ?>
+      <li><strong><a href="<?php echo get_term_link( get_field( "category" ) ); ?>" title="<?php _e( 'Hlavní kategorie', 'shp-obchodiste' ); ?>"><?php echo get_field( "category" )->name; ?></a></strong></li>
+      <?php endif; ?>
+
+      <?php if ( get_field( "minor_category_1" ) ):  ?>
+      <li><a href="<?php echo get_term_link( get_field( "minor_category_1" ) ); ?>"><?php echo get_field( "minor_category_1" )->name; ?></a></li>
+      <?php endif; ?>
+
+      <?php if ( get_field( "minor_category_2" ) ):  ?>
+      <li><a href="<?php echo get_term_link( get_field( "minor_category_2" ) ); ?>"><?php echo get_field( "minor_category_2" )->name; ?></a></li>
+      <?php endif; ?>
+    </ul>
+  </dd>
+</dl>

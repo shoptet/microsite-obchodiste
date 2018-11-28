@@ -83,10 +83,13 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
 }, 10, 3 );
 
 /**
- * Remove wholesaler archive link from breadcrumbs
+ * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
-  if ( is_singular( 'custom' ) ) array_splice( $crumbs, 1, 1 );
+  if ( ! is_singular( 'custom' ) ) return;
+  array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
+  $term_crumb = [ 'term' => get_field( 'category' )];
+  array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
   return $crumbs;
 } );
 
