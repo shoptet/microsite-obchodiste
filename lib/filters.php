@@ -67,6 +67,17 @@ add_filter( 'add_meta_boxes', function() {
 } );
 
 /**
+ * Remove Yoast meta box
+ */
+add_filter( 'add_meta_boxes', function() {
+ global $current_user;
+ wp_get_current_user(); // Make sure global $current_user is set, if not set it
+ if ( user_can( $current_user, 'subscriber' ) ) {
+   remove_meta_box( 'wpseo_meta', 'custom', 'normal' ); // Remove Yoast meta box
+ }
+} );
+
+/**
  * Set wholesaler logo as featured image
  */
 add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
