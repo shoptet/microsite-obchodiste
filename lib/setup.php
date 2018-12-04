@@ -23,7 +23,7 @@ add_action( 'init', function() {
 } );
 
 /**
- * Remove Yoast page analysis columns from post lists
+ * Remove Yoast page analysis columns from post lists for subscribers
  */
 add_action( 'init', function() {
   global $current_user;

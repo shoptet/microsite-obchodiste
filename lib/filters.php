@@ -67,7 +67,7 @@ add_filter( 'add_meta_boxes', function() {
 } );
 
 /**
- * Remove Yoast meta box
+ * Remove Yoast meta box for subscribers
  */
 add_filter( 'add_meta_boxes', function() {
  global $current_user;
