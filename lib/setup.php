@@ -240,6 +240,18 @@ add_action('pre_get_posts', function( $wp_query ) {
 	};
 
 	$meta_query[] = $get_array_meta_query( 'region' );
+  
+  // Set service meta query
+  // checkbox fields are stored as serialized arrays
+  if( isset( $_GET[ 'services' ] ) && is_array( $_GET[ 'services' ] ) ) {
+    foreach( $_GET[ 'services' ] as $service ) {
+      $meta_query[] = [[
+        'key' => 'services',
+        'value' => $service,
+        'compare' =>  'LIKE',
+      ]];
+    }
+  }
 
   $wp_query->set( 'meta_query', $meta_query );
   
