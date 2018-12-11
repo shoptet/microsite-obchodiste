@@ -416,6 +416,14 @@ add_action( 'save_post', function( $post_id ) {
 } );
 
 /**
+ * Add instructions above custom post title
+ */
+add_action( 'edit_form_top', function( $post ) {
+  if ( 'custom' !== $post->post_type  ) return;
+  echo '<p class="description" style="margin: 1rem 0 0 0;">' . __( 'Zadejte oficiální název firmy dle IČ. Např. „Shoptet s.r.o.“', 'shp-obchodiste' ) . '</p>';
+});
+
+/**
  * Send e-mail when new wholesaler is pending for review
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
