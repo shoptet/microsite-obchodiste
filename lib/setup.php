@@ -99,6 +99,15 @@ add_action( 'wp_footer', function() {
 } );
 
 /**
+ * Make post title required
+ */
+add_action( 'admin_footer', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || 'custom' !== $post->post_type  ) return;
+  echo '<script>document.getElementById("title").required = true;</script>';
+} );
+
+/**
  * Hide WP logo on login page
  */
 add_action( 'login_enqueue_scripts', function() {
