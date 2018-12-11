@@ -88,7 +88,7 @@
       <div class="filters-divider"></div>
 
       <p class="h5 h-heavy mt-0 mb-2">
-        <?php _e( 'Nabízené služby', 'shp-obchodiste' ); ?>
+        <?php _e( 'Co vám nabídneme?', 'shp-obchodiste' ); ?>
       </p>
 
       <?php
