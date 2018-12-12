@@ -238,7 +238,7 @@ add_action('pre_get_posts', function( $wp_query ) {
  * Disable default searching
  */
 add_action( 'parse_query', function( $query ) {
-  if ( is_search() ) {
+  if ( is_search() && ! is_admin() ) {
     $query->is_search = false;
     $query->query_vars[ 's' ] = false;
     $query->query[ 's' ] = false;

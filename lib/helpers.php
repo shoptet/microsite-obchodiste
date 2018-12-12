@@ -15,19 +15,11 @@ function is_post_new(): bool
 /**
  * Remove protocol and last slash from url
  */
-function display_url( $url ): string
+function display_url( $url, $display_www = true ): string
 {
-  // Romove protocol
-  if ( substr( $url, 0, 7 ) === 'http://' ) {
-    $url = substr( $url, 7 );
-  } else if ( substr( $url, 0, 8 ) === 'https://' ) {
-    $url = substr( $url, 8 );
-  } else if ( substr( $url, 0, 2 ) === '//' ) {
-    $url = substr( $url, 2 );
-  }
-  // Remove last slash
-  if ( substr( $url, -1 ) === '/' ) {
-    $url = substr( $url, 0, -1 );
+  $url = preg_replace( '#^https?://|^//|/$#', '', $url ); // Remove protocol and last slash
+  if ( ! $display_www ) {
+    $url = preg_replace( '#^www\.#', '', $url ); // Remove www.
   }
   return $url;
 }
@@ -85,17 +77,41 @@ function nl2p( $text ): string
 }
 
 /**
- * Get not empty wholesaler regions
+ * Get not empty wholesaler regions by country
  */
-function get_used_regions(): array
+function get_used_regions_by_country(): array
 {
-  $used_regions = [];
-  foreach ( get_field_object( 'field_5b5ed2ca0a22d' )[ 'choices' ] as $region_id => $region_name ) {
-    $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
-    if ( $region_post_count > 0 ) $used_regions[] = [
-      'id' => $region_id,
-      'name' => $region_name,
+  $countries = [
+    'cz' => [
+      'name' => __( 'Česko', 'shp-obchodiste' ),
+      'field' => 'field_5b5ed2ca0a22d',
+    ],
+    'sk' => [
+      'name' => __( 'Slovensko', 'shp-obchodiste' ),
+      'field' => 'field_5bbdc19430685',
+    ],
+  ];
+  $regions_by_country = [];
+
+  foreach ( $countries as $country_code => $country ) {
+    $regions_in_country = get_field_object( $country[ 'field' ] )[ 'choices' ];
+    $used_regions = [];
+
+    foreach ( $regions_in_country as $region_id => $region_name ) {
+      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+      if ( $region_post_count > 0 ) $used_regions[] = [
+        'id' => $region_id,
+        'name' => $region_name,
+      ];
+    }
+
+    if ( empty( $used_regions ) ) continue;
+    
+    $regions_by_country[ $country_code ] = [
+      'name' => $country[ 'name' ],
+      'used_regions' => $used_regions,
     ];
   }
-  return $used_regions;
+  
+  return $regions_by_country;
 }

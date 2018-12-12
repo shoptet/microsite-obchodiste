@@ -1,7 +1,7 @@
 <?php
 $the_query = new WP_Query( [
   'post_type' => 'custom',
-  'posts_per_page' => 10,
+  'posts_per_page' => 14,
   'post_status' => 'publish',
 ] );
 ?>

@@ -27,15 +27,14 @@
       </h3>
 
       <p class="fs-90 mb-0">
+        <?php if ( get_field( "website" ) ): ?>
+        <?php echo display_url( get_field( "website" ), false ); ?>,
+        <?php endif; ?>
         <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
         <?php if ( ! empty( $terms ) ):  ?>
           <?php foreach ( $terms as $term ): ?>
-          <?php echo $term->name; ?>,
+          <?php echo $term->name; ?>
           <?php endforeach; ?>
-        <?php endif; ?>
-
-        <?php if ( get_field( "region" ) ): ?>
-          <?php echo get_field( "region" )['label']; ?>
         <?php endif; ?>
       </p>
 

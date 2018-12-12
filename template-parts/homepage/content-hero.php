@@ -39,10 +39,14 @@
                   <option value="" selected>
                     <?php _e( 'Všechny', 'shp-obchodiste' ); ?>
                   </option>
-                  <?php foreach ( get_used_regions() as $region ): ?>
-                    <option value="<?php echo $region[ 'id' ]; ?>">
-                      <?php echo $region[ 'name' ]; ?>
-                    </option>
+                  <?php foreach ( get_used_regions_by_country() as $country_code => $country ): ?>
+                    <optgroup label="<?php echo $country[ 'name' ]; ?>">
+                      <?php foreach ( $country[ 'used_regions' ] as $region ): ?>
+                        <option value="<?php echo $region[ 'id' ]; ?>">
+                          <?php echo $region[ 'name' ]; ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </optgroup>
                   <?php endforeach; ?>
                 </select>
               </div>
