@@ -120,3 +120,48 @@ function get_cpt_wholesaler_message_args(): array
   ];
   return $args;
 }
+
+/**
+ * Returns special offer custom post type arguments
+ */
+function get_cpt_special_offer_args(): array
+{
+  $labels = [
+    'name' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'singular_name' => __( 'Akční nabídka', 'shp-obchodiste' ),
+    'menu_name' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'all_items' => __( 'Všechny nabídky', 'shp-obchodiste' ),
+    'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
+    'add_new_item' => __( 'Přidat novou nabídku', 'shp-obchodiste' ),
+    'edit_item' => __( 'Upravit nabídku', 'shp-obchodiste' ),
+    'new_item' => __( 'Nová nabídka', 'shp-obchodiste' ),
+    'view_item' => __( 'Zobrazit nabídku', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit nabídky', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat nabídky', 'shp-obchodiste' ),
+    'not_found' => __( 'Nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
+    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
+    'archives' => __( 'Archiv nabídek', 'shp-obchodiste' ),
+    'items_list' => __( 'Výpis nabídek', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'description' => '',
+    'public' => false,
+    'publicly_queryable' => false,
+    'show_ui' => true,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'has_archive' => false,
+    'show_in_menu' => true,
+    'exclude_from_search' => true,
+    'capability_type' => 'wholesaler',
+    'map_meta_cap' => true,
+    'hierarchical' => false,
+    'rewrite' => false,
+    'query_var' => true,
+    'menu_icon' => 'dashicons-megaphone',
+    'supports' => [ 'title' ],
+  ];
+  return $args;
+}
