@@ -29,7 +29,7 @@ $the_query = new WP_Query( [
         <div class="col-12 col-lg-6">
           <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
         </div>
-      <?php endwhile; ?>
+      <?php endwhile; wp_reset_query(); ?>
     </div>
   </div>
 <?php endif ?>
