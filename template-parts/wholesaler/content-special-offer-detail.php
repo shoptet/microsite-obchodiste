@@ -1,4 +1,4 @@
-<div class="special-offer-detail d-flex">
+<div class="special-offer-detail d-flex" id="<?php echo get_post_field( "post_name" ); ?>">
 
   <div class="flex-shrink-0 mr-3">
     <?php if ( get_field( "image" ) ): ?>
