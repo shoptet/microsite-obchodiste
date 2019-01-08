@@ -1,7 +1,18 @@
 <?php
 
-require_once( 'lib/setup.php' );
-require_once( 'lib/cpt.php' );
-require_once( 'lib/acf.php' );
-require_once( 'lib/filters.php' );
-require_once( 'lib/helpers.php' );
+require __DIR__ . '/vendor/autoload.php';
+
+$includes = [
+	'src/lib/setup.php',
+	'src/lib/cpt.php',
+	'src/lib/acf.php',
+	'src/lib/filters.php',
+  'src/lib/helpers.php',
+];
+foreach ($includes as $file) {
+  if (!$filepath = locate_template($file)) {
+    trigger_error(sprintf('Error locating %s for inclusion', $file));
+  }
+  require_once $filepath;
+}
+unset($file, $filepath);

@@ -71,6 +71,14 @@ add_action( 'wp_enqueue_scripts', function() {
 } );
 
 /**
+ * Add reCAPTCHA script to wholesaler detail page
+ */
+add_action( 'wp_enqueue_scripts', function() {
+  if ( ! is_singular( 'custom' ) ) return;
+  wp_enqueue_script( 'recaptcha', '//www.google.com/recaptcha/api.js' );
+} );
+
+/**
  * Pass data to javascript
  */
 add_action( 'wp_footer', function() {
@@ -292,6 +300,15 @@ add_action( 'parse_query', function( $query ) {
 add_action( 'wp_ajax_wholesaler_message', 'handle_wholesaler_message' );
 add_action( 'wp_ajax_nopriv_wholesaler_message', 'handle_wholesaler_message' );
 function handle_wholesaler_message() {
+
+  // Verify reCAPTCHA
+  $recaptcha_response = sanitize_text_field( $_POST[ 'g-recaptcha-response' ] );
+  $recaptcha = new \ReCaptcha\ReCaptcha( G_RECAPTCHA_SECRET_KEY );
+  $resp = $recaptcha->verify( $recaptcha_response, $_SERVER['REMOTE_ADDR'] );
+  if ( ! $resp->isSuccess() ) {
+    status_header( 403 );
+    die();
+  }
 
   // Sanitize message post data
   $name = sanitize_text_field( $_POST[ 'name' ] );
