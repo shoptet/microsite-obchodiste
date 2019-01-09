@@ -8,6 +8,20 @@
   }
 }
 
+.special-offer-tease {
+  display: block;
+  position: relative;
+  height: 100%;
+  padding: 1rem;
+  color: $body-color;
+
+  @include hover-focus {
+    color: $body-color;
+    text-decoration: none;
+    background-color: lighten($shoptet-blue, 46%);
+  }
+}
+
 .special-offer-image {
   position: relative;
   width: 4.5rem;
@@ -25,7 +39,34 @@
   }
 }
 
+.special-offer-tease-image {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  background-color: $white;
+  border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(lg) {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  img {
+    @include object-fit-containt;
+  }
+}
+
 .special-offer-image-empty {
   background-color: $gray-200;
   border-color: $gray-200;
+}
+
+.special-offer-tease-title {
+  font-weight: $font-weight-normal;
+  color: $shoptet-blue;
+}
+
+.special-offer-tease-description {
+  font-weight: 300;
+  color: $body-color;
 }

@@ -127,24 +127,24 @@ function get_cpt_wholesaler_message_args(): array
 function get_cpt_special_offer_args(): array
 {
   $labels = [
-    'name' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'name' => __( 'Akční nabídka', 'shp-obchodiste' ),
     'singular_name' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'menu_name' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'menu_name' => __( 'Akční nabídka', 'shp-obchodiste' ),
     'all_items' => __( 'Všechny nabídky', 'shp-obchodiste' ),
     'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
     'add_new_item' => __( 'Přidat novou nabídku', 'shp-obchodiste' ),
     'edit_item' => __( 'Upravit nabídku', 'shp-obchodiste' ),
     'new_item' => __( 'Nová nabídka', 'shp-obchodiste' ),
     'view_item' => __( 'Zobrazit nabídku', 'shp-obchodiste' ),
-    'view_items' => __( 'Zobrazit nabídky', 'shp-obchodiste' ),
-    'search_items' => __( 'Vyhledat nabídky', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit nabídku', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat nabídka', 'shp-obchodiste' ),
     'not_found' => __( 'Nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
     'not_found_in_trash' => __( 'V koši nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
     'archives' => __( 'Archiv nabídek', 'shp-obchodiste' ),
     'items_list' => __( 'Výpis nabídek', 'shp-obchodiste' ),
   ];
   $args = [
-    'label' => __( 'Akční nabídky', 'shp-obchodiste' ),
+    'label' => __( 'Akční nabídka', 'shp-obchodiste' ),
     'labels' => $labels,
     'description' => '',
     'public' => true,
@@ -152,7 +152,7 @@ function get_cpt_special_offer_args(): array
     'show_ui' => true,
     'show_in_rest' => false,
     'rest_base' => '',
-    'has_archive' => 'akce',
+    'has_archive' => 'akcni-nabidka',
     'show_in_menu' => true,
     'exclude_from_search' => false,
     'capability_type' => 'wholesaler',
@@ -160,7 +160,7 @@ function get_cpt_special_offer_args(): array
     'hierarchical' => false,
     'rewrite' => false,
     'query_var' => true,
-    'rewrite' => [ 'slug' => 'akce', 'with_front' => true ],
+    'rewrite' => [ 'slug' => 'akcni-nabidka', 'with_front' => true ],
     'menu_icon' => 'dashicons-megaphone',
     'supports' => [ 'title' ],
   ];

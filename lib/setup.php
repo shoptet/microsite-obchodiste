@@ -88,8 +88,19 @@ add_action( 'wp_footer', function() {
   printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
   // wholesaler terms by id
   printf( 'window.wholesalerTerms = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
-  // wholesaler terms by id
-  printf( 'window.wholesalerArchiveUrl = \'%s\';', get_post_type_archive_link( 'custom' ) );
+  
+  // post type archive urls
+  echo 'window.archiveUrl = [];';
+  foreach ( get_post_types() as $post_type ) {
+    printf( 'window.archiveUrl[\'%s\'] = \'%s\';', $post_type , get_post_type_archive_link( $post_type ) );
+  }
+
+  // curent taxonomy or archive post type
+  if ( is_tax() && get_queried_object()->taxonomy === 'customtaxonomy' ) {
+    printf( 'window.archivePostType = \'%s\';', 'custom' );
+  } else if ( is_archive() ) {
+    printf( 'window.archivePostType = \'%s\';', get_queried_object()->name );
+  }
 
   // wholesaler location
   if ( is_singular( 'custom' ) && get_post_meta( get_queried_object_id(), 'location' ) ) {
@@ -282,6 +293,58 @@ add_action('pre_get_posts', function( $wp_query ) {
       'operator'	=> 'IN',
     ]]);
   }
+} );
+
+/**
+ * Handle filtering and ordering special offer archive
+ */
+add_action('pre_get_posts', function( $wp_query ) {
+	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->get( 'post_type' ) !== 'special_offer' ) return;
+
+	$meta_query = $wp_query->get( 'meta_query' );
+
+	if ( $meta_query == '' ) {
+		$meta_query = [];
+	}
+
+	$wp_query->set( 'posts_per_page', 12 );
+
+	/**
+	 * Handle searching
+	 */
+
+	if( isset( $_GET[ 's' ] ) ) {
+		$wp_query->set( 's', $_GET[ 's' ] );
+	}
+
+	/**
+	 * Handle ordering queries
+	 */
+
+  if( isset($_GET[ 'orderby' ]) ) {
+		$query = explode( "_", $_GET[ 'orderby' ] );
+		
+    if ( $query[0] == 'title' ) {
+      $wp_query->set('orderby', 'title');
+			$wp_query->set('order', $query[1]);
+    } else if ( $query != ['date', 'desc'] ) {
+      // skip default ordering by post_date DESC
+      // e.g. '?orderby=date_asc'
+			$wp_query->set('orderby', 'meta_value_num');
+			$wp_query->set('meta_key', $query[0]);
+			$wp_query->set('order', $query[1]);
+    }
+    
+	}
+
+	/**
+	 * TODO: Handle filtering queries
+	 */
+  // Get all special offers from filtered wholesalers
+  //$wp_query->set( 'post__in', [] ); // list only filtered offers
+
+	$wp_query->set( 'meta_query', $meta_query );
 } );
 
 /**

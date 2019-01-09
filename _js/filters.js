@@ -46,7 +46,7 @@ $(function() {
     data.forEach(function (item, i) {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
-    var url = window.wholesalerArchiveUrl;
+    var url = window.archiveUrl[ window.archivePostType ];
     url += ( categoryCount === 1 ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
