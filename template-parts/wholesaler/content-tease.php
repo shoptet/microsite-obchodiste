@@ -26,17 +26,23 @@
         <?php the_title(); ?>
       </h3>
 
-      <p class="fs-90 mb-0">
-        <?php if ( get_field( "website" ) ): ?>
-        <?php echo display_url( get_field( "website" ), false ); ?>,
+      <ul class="list-comma fs-90">
+        <?php if ( get_field( "category" ) ): ?>
+        <li><?php echo get_field( "category" )->name; ?></li>
         <?php endif; ?>
-        <?php $terms = get_the_terms( $post->ID, 'customtaxonomy' ); ?>
-        <?php if ( ! empty( $terms ) ):  ?>
-          <?php foreach ( $terms as $term ): ?>
-          <?php echo $term->name; ?>
-          <?php endforeach; ?>
+
+        <?php if ( get_field( "minor_category_1" ) ): ?>
+        <li><?php echo get_field( "minor_category_1" )->name; ?></li>
         <?php endif; ?>
-      </p>
+
+        <?php if ( get_field( "minor_category_2" ) ): ?>
+        <li><?php echo get_field( "minor_category_2" )->name; ?></li>
+        <?php endif; ?>
+
+        <?php if ( get_field( "region" ) ): ?>
+        <li><?php echo get_field( "region" )['label']; ?></li>
+        <?php endif; ?>
+      </ul>
 
       <?php if ( get_field( "short_about" ) ): ?>
       <p class="wholesaler-tease-description fs-90 fs-lg-100 mt-2 mb-0">

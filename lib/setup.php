@@ -228,10 +228,19 @@ add_action('pre_get_posts', function( $wp_query ) {
 		return $result;
 	};
 
-	$meta_query[] = $get_array_meta_query( 'category' );
 	$meta_query[] = $get_array_meta_query( 'region' );
 
-	$wp_query->set( 'meta_query', $meta_query );
+  $wp_query->set( 'meta_query', $meta_query );
+  
+  // Set taxonomy query
+  if( !$wp_query->is_tax( 'customtaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $wp_query->set( 'tax_query', [[
+      'taxonomy' => 'customtaxonomy',
+      'field' => 'term_id',
+      'terms' => $_GET[ 'category' ],
+      'operator'	=> 'IN',
+    ]]);
+  }
 } );
 
 /**
@@ -335,6 +344,23 @@ add_action( 'save_post', function( $post_id, $post, $update ) {
 	if ( 'custom' !== get_post_type( $post_id ) || $update ) return;
 	update_post_meta( $post_id, 'contact_count', 0 );
 }, 10, 3 );
+
+/**
+ * Update wholesaler categories
+ */
+add_action( 'save_post', function( $post_id ) {
+	// Not the correct post type, bail out
+  if ( 'custom' !== get_post_type( $post_id ) ) return;
+  $post_categories = [];
+  $post_categories[] = get_field( 'category' )->term_id;
+  if ( get_field( 'minor_category_1' ) ) {
+    $post_categories[] = get_field( 'minor_category_1' )->term_id;
+  }
+  if ( get_field( 'minor_category_2' ) ) {
+    $post_categories[] = get_field( 'minor_category_2' )->term_id;
+  }
+  wp_set_post_terms( $post_id, $post_categories, 'customtaxonomy' );
+} );
 
 /**
  * Wholesaler address geocoding
