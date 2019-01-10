@@ -1,7 +1,7 @@
 <?php
 $the_query = new WP_Query( [
   'post_type' => 'special_offer',
-  'posts_per_page' => 14,
+  'posts_per_page' => 3,
   'post_status' => 'publish',
 ] );
 ?>
