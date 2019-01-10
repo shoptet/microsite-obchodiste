@@ -37,7 +37,7 @@ $(function() {
     });
     // Remove single category and default ordering
     data = data.filter(function (item) {
-      skipSingleCategory = (categoryCount === 1 && item.name === 'category[]');
+      skipSingleCategory = (window.archivePostType === 'custom' && categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
       skipEmptyValue = ( item.value ? false : true );
       return !skipSingleCategory && !skipDefaultOrderBy && !skipEmptyValue;
@@ -47,7 +47,7 @@ $(function() {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.archiveUrl[ window.archivePostType ];
-    url += ( categoryCount === 1 ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
+    url += ( (window.archivePostType === 'custom' && categoryCount === 1) ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };
