@@ -26,3 +26,24 @@
 
   }
 }
+
+.row-bordered-one-row {
+
+  > [class*="col-"] {
+    border-bottom: 1px solid #e5e5e5;
+
+    @include media-breakpoint-up(lg) {
+      border-top: 1px solid #e5e5e5;
+      border-left: 1px solid #e5e5e5;
+    }
+  }
+
+  > [class*="col-"]:first-child {
+    border-top: 1px solid #e5e5e5;
+
+    @include media-breakpoint-up(lg) {
+      border-left: 0;
+    }
+  }
+  
+}
