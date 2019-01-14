@@ -42,6 +42,9 @@
             for="filterCategory<?php echo $term->term_id; ?>"
           >
             <?php echo $term->name; ?>
+            <span class="text-semilight">
+              (<?php echo count( get_special_offers_by_term( $term->term_id ) ); ?>)
+            </span>
           </label>
         </div>
       <?php endforeach; ?>
@@ -73,6 +76,9 @@
               for="filterRegion<?php echo $region[ 'id' ]; ?>"
             >
               <?php echo $region[ 'name' ]; ?>
+              <span class="text-semilight">
+                (<?php echo count( get_special_offers_by_region( $region[ 'id' ] ) ); ?>)
+              </span>
             </label>
           </div>
         <?php endforeach; ?>

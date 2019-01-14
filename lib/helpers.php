@@ -44,6 +44,52 @@ function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = 
   return $count;
 }
 
+function get_special_offers_by_term( $term_id ): array
+{
+  $wp_query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => -1,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+    'tax_query' => [
+      [
+        'taxonomy' => 'customtaxonomy',
+        'field' => 'term_id',
+        'terms' => $term_id,
+      ]
+    ]
+  ] );
+  $wholesalers_with_term = $wp_query->posts;
+  
+  $special_offer_with_term = [];
+  foreach ( get_special_offers() as $special_offer ) {
+    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
+    if ( ! in_array( $related_wholesaler_id, $wholesalers_with_term ) ) continue;
+    $special_offer_with_term[] = $special_offer;
+  }
+
+  return $special_offer_with_term;
+}
+
+function get_special_offers_by_region( $region_id ): array
+{
+  $wholesalers_with_special_offer = get_wholesalers_with_special_offer();
+
+  $wholesalers_in_region = [];
+  foreach ( $wholesalers_with_special_offer as $id ) {
+    if ( ! get_field( 'region', $id ) || $region_id != get_field( 'region', $id )['value'] ) continue;
+    $wholesalers_in_region[] = $id;
+  }
+  
+  $special_offer_in_region = [];
+  foreach ( get_special_offers() as $special_offer ) {
+    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
+    if ( ! in_array( $related_wholesaler_id, $wholesalers_in_region ) ) continue;
+    $special_offer_in_region[] = $special_offer;
+  }
+
+  return $special_offer_in_region;
+}
 
 /**
  * Get terms by id
@@ -77,10 +123,7 @@ function nl2p( $text ): string
   return '<p>' . str_replace( [ "\r\n\r\n", "\n\n" ], '</p><p>', $text ) . '</p>';
 }
 
-/**
- * Get all wholesalers related to a special offer
- */
-function get_wholesalers_with_special_offer(): array
+function get_special_offers(): array
 {
   // Get all special offers
   $wp_query = new WP_Query( [
@@ -88,10 +131,17 @@ function get_wholesalers_with_special_offer(): array
     'posts_per_page' => -1,
     'post_status' => 'publish',
   ] );
+  return $wp_query->posts;
+}
 
+/**
+ * Get all wholesalers related to a special offer
+ */
+function get_wholesalers_with_special_offer(): array
+{
   // Get all wholesalers related to a special offer
   $wholesalers_with_special_offer = [];
-  foreach ( $wp_query->posts as $special_offer ) {
+  foreach ( get_special_offers() as $special_offer ) {
     $wholesalers_with_special_offer[] = get_field( 'related_wholesaler', $special_offer->ID )->ID;
   }
   $wholesalers_with_special_offer = array_unique( $wholesalers_with_special_offer );
@@ -122,15 +172,8 @@ function get_used_regions_by_country( $has_spacial_offers = false ): array
   };
 
   $is_region_used_with_special_offers = function ( $region_id ) {
-    $wholesalers_with_special_offer = get_wholesalers_with_special_offer();
-
-    $is_used = false;
-    foreach ( $wholesalers_with_special_offer as $id ) {
-      if ( ! get_field( 'region', $id ) || $region_id != get_field( 'region', $id )['value'] ) continue;
-      $is_used = true;
-      break;
-    }
-    return $is_used;
+    $region_post_count = count( get_special_offers_by_region( $region_id ) );
+    return ( $region_post_count > 0 );
   };
 
   if ( $has_spacial_offers ) $is_region_used = $is_region_used_with_special_offers;
