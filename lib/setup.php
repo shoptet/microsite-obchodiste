@@ -339,10 +339,52 @@ add_action('pre_get_posts', function( $wp_query ) {
 	}
 
 	/**
-	 * TODO: Handle filtering queries
+	 * Handle filtering queries - filtered by wholesalers
 	 */
-  // Get all special offers from filtered wholesalers
-  //$wp_query->set( 'post__in', [] ); // list only filtered offers
+  
+  // Filtered wholesalers arguments
+  $wp_query_wholesaler_args = [
+    'post_type' => 'custom',
+    'posts_per_page' => -1,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+  ];
+
+  // Get array meta query
+	// e.g. '?query[]=0&query[]=1...'
+	$get_array_meta_query = function($query) {
+		$result = [];
+		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
+			$result[] = [
+				'key' => $query,
+				'value' => $_GET[ $query ],
+				'compare'	=> 'IN',
+			];
+		}
+		return $result;
+	};
+
+  $wp_query_wholesaler_args[ 'meta_query' ] = [];
+  $wp_query_wholesaler_args[ 'meta_query' ][] = $get_array_meta_query( 'region' );
+
+  // Set taxonomy query
+  if( isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $wp_query_wholesaler_args[ 'tax_query' ] =  [[
+      'taxonomy' => 'customtaxonomy',
+      'field' => 'term_id',
+      'terms' => $_GET[ 'category' ],
+      'operator'	=> 'IN',
+    ]];
+  }
+
+  $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+
+  // Query for special offers by filtered wholesalers
+  $meta_query[] = [[
+    'key' => 'related_wholesaler',
+    'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
+    'compare'	=> 'IN',
+  ]];
 
 	$wp_query->set( 'meta_query', $meta_query );
 } );
