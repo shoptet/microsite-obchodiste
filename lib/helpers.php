@@ -118,9 +118,41 @@ function get_used_regions_by_country(): array
 }
 
 /**
- * Get not empty wholesaler regions
+ * Get all services
  */
 function get_all_services(): array
 {
   return get_field_object( 'field_5b5ed686ddd58' )[ 'choices' ];
+}
+
+/**
+ * Get all terms related to wholesalers with a special offer
+ */
+function get_terms_with_special_offer(): array
+{
+
+  // Get all special offers
+  $wp_query = new WP_Query( [
+    'post_type' => 'special_offer',
+    'posts_per_page' => -1,
+    'post_status' => 'publish',
+  ] );
+
+  // Get all wholesalers related to a special offer
+  $wholesalers_with_special_offer = [];
+  foreach ( $wp_query->posts as $special_offer ) {
+    $wholesalers_with_special_offer[] = get_field( 'related_wholesaler', $special_offer->ID )->ID;
+  }
+  $wholesalers_with_special_offer = array_unique( $wholesalers_with_special_offer );
+
+  // Collect all terms related to wholesalers with a special offer
+  $terms_with_special_offers = [];
+  foreach ( $wholesalers_with_special_offer as $id ) {
+    foreach ( get_the_terms( $id, 'customtaxonomy' ) as $term ) {
+      $terms_with_special_offers[ $term->term_id ] = $term; // Rewrite current value and make array unique
+    }
+  }
+  ksort( $terms_with_special_offers ); // Sort by key
+
+  return $terms_with_special_offers;
 }

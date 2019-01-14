@@ -26,7 +26,7 @@
       }
       ?>
 
-      <?php foreach ( get_terms( 'customtaxonomy' ) as $term ): ?>
+      <?php foreach ( get_terms_with_special_offer() as $term ): ?>
         <div class="custom-control custom-checkbox">
           <input
             class="custom-control-input"
