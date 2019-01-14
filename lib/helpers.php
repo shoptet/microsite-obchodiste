@@ -78,9 +78,31 @@ function nl2p( $text ): string
 }
 
 /**
+ * Get all wholesalers related to a special offer
+ */
+function get_wholesalers_with_special_offer(): array
+{
+  // Get all special offers
+  $wp_query = new WP_Query( [
+    'post_type' => 'special_offer',
+    'posts_per_page' => -1,
+    'post_status' => 'publish',
+  ] );
+
+  // Get all wholesalers related to a special offer
+  $wholesalers_with_special_offer = [];
+  foreach ( $wp_query->posts as $special_offer ) {
+    $wholesalers_with_special_offer[] = get_field( 'related_wholesaler', $special_offer->ID )->ID;
+  }
+  $wholesalers_with_special_offer = array_unique( $wholesalers_with_special_offer );
+
+  return $wholesalers_with_special_offer;
+}
+
+/**
  * Get not empty wholesaler regions by country
  */
-function get_used_regions_by_country(): array
+function get_used_regions_by_country( $has_spacial_offers = false ): array
 {
   $countries = [
     'cz' => [
@@ -94,13 +116,31 @@ function get_used_regions_by_country(): array
   ];
   $regions_by_country = [];
 
+  $is_region_used = function ( $region_id ) {
+    $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+    return ( $region_post_count > 0 );
+  };
+
+  $is_region_used_with_special_offers = function ( $region_id ) {
+    $wholesalers_with_special_offer = get_wholesalers_with_special_offer();
+
+    $is_used = false;
+    foreach ( $wholesalers_with_special_offer as $id ) {
+      if ( ! get_field( 'region', $id ) || $region_id != get_field( 'region', $id )['value'] ) continue;
+      $is_used = true;
+      break;
+    }
+    return $is_used;
+  };
+
+  if ( $has_spacial_offers ) $is_region_used = $is_region_used_with_special_offers;
+
   foreach ( $countries as $country_code => $country ) {
     $regions_in_country = get_field_object( $country[ 'field' ] )[ 'choices' ];
     $used_regions = [];
 
     foreach ( $regions_in_country as $region_id => $region_name ) {
-      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
-      if ( $region_post_count > 0 ) $used_regions[] = [
+      if ( $is_region_used( $region_id ) ) $used_regions[] = [
         'id' => $region_id,
         'name' => $region_name,
       ];
@@ -130,20 +170,7 @@ function get_all_services(): array
  */
 function get_terms_with_special_offer(): array
 {
-
-  // Get all special offers
-  $wp_query = new WP_Query( [
-    'post_type' => 'special_offer',
-    'posts_per_page' => -1,
-    'post_status' => 'publish',
-  ] );
-
-  // Get all wholesalers related to a special offer
-  $wholesalers_with_special_offer = [];
-  foreach ( $wp_query->posts as $special_offer ) {
-    $wholesalers_with_special_offer[] = get_field( 'related_wholesaler', $special_offer->ID )->ID;
-  }
-  $wholesalers_with_special_offer = array_unique( $wholesalers_with_special_offer );
+  $wholesalers_with_special_offer = get_wholesalers_with_special_offer();
 
   // Collect all terms related to wholesalers with a special offer
   $terms_with_special_offers = [];

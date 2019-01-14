@@ -56,7 +56,7 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
-      <?php foreach ( get_used_regions_by_country() as $country_code => $country ): ?>
+      <?php foreach ( get_used_regions_by_country( true ) as $country_code => $country ): ?>
         <p class="font-weight-bold my-2"><?php echo $country[ 'name' ]; ?></p>
         <?php foreach ( $country[ 'used_regions' ] as $region ): ?>
           <div class="custom-control custom-checkbox">
