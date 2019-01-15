@@ -1,26 +1,33 @@
 <?php
 $the_query = new WP_Query( [
   'post_type' => 'special_offer',
-  'posts_per_page' => 3,
+  'posts_per_page' => 10,
   'post_status' => 'publish',
 ] );
 ?>
-<section class="section section-primary py-5">
-  <div class="section-inner container">
+<?php if ( $the_query->have_posts() ) : ?>
+  <section class="section section-primary py-5">
+    <div class="section-inner container">
 
-    <h2 class="text-center h3 mb-5">
-      <?php _e( 'Akční nabídka', 'shp-obchodiste' ); ?>
-    </h2>
+      <h2 class="text-center h3 mb-5">
+        <?php _e( 'Akční nabídka', 'shp-obchodiste' ); ?>
+      </h2>
 
-    <div class="row row-bordered-one-row no-gutters">
-      <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
-        <div class="col-12 col-lg-4">
-
+      <div class="owl-carousel owl-carousel-bordered">
+        <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
           <?php get_template_part( 'src/template-parts/special_offer/content', 'tease' ); ?>
+        <?php endwhile; wp_reset_query(); ?>
+      </div>
 
-        </div>
-      <?php endwhile; ?>
+      <p class="text-center mt-4 mb-0">
+        <a
+          href="<?php echo get_post_type_archive_link( 'special_offer' ); ?>"
+          class="btn btn-primary btn-lg ws-normal"
+        >
+          <?php _e( 'Zobrazit všechny akční nabídky', 'shp-obchodiste' ); ?>
+        </a>
+      </p>
+
     </div>
-
-  </div>
-</section>
+  </section>
+<?php endif; ?>

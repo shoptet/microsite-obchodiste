@@ -16,7 +16,7 @@ $the_query = new WP_Query( [
   ] ],
 ] );
 ?>
-<?php if ( $the_query->post_count ): ?>
+<?php if ( $the_query->have_posts() ): ?>
   <div class="pt-5 pb-4">
     <h2 class="text-center h3 mb-1">
       <?php _e( 'Nezaujal vás tento dodavatel?', 'shp-obchodiste' ); ?>
