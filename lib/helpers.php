@@ -44,6 +44,23 @@ function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = 
   return $count;
 }
 
+/**
+ * Get special offers by wholesalers
+ */
+function get_special_offers_by_wholesalers( $wholesalers ): array
+{
+  $special_offers = [];
+  foreach ( get_special_offers() as $special_offer ) {
+    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
+    if ( ! in_array( $related_wholesaler_id, $wholesalers ) ) continue;
+    $special_offers[] = $special_offer;
+  }
+  return $special_offers;
+}
+
+/**
+ * Get special offers by wholesaler term
+ */
 function get_special_offers_by_term( $term_id ): array
 {
   $wp_query = new WP_Query( [
@@ -61,16 +78,14 @@ function get_special_offers_by_term( $term_id ): array
   ] );
   $wholesalers_with_term = $wp_query->posts;
   
-  $special_offer_with_term = [];
-  foreach ( get_special_offers() as $special_offer ) {
-    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
-    if ( ! in_array( $related_wholesaler_id, $wholesalers_with_term ) ) continue;
-    $special_offer_with_term[] = $special_offer;
-  }
-
+  $special_offer_with_term = get_special_offers_by_wholesalers( $wholesalers_with_term );
+  
   return $special_offer_with_term;
 }
 
+/**
+ * Get special offers by region
+ */
 function get_special_offers_by_region( $region_id ): array
 {
   $wholesalers_with_special_offer = get_wholesalers_with_special_offer();
@@ -81,12 +96,7 @@ function get_special_offers_by_region( $region_id ): array
     $wholesalers_in_region[] = $id;
   }
   
-  $special_offer_in_region = [];
-  foreach ( get_special_offers() as $special_offer ) {
-    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
-    if ( ! in_array( $related_wholesaler_id, $wholesalers_in_region ) ) continue;
-    $special_offer_in_region[] = $special_offer;
-  }
+  $special_offer_in_region = get_special_offers_by_wholesalers( $wholesalers_in_region );
 
   return $special_offer_in_region;
 }
@@ -123,9 +133,11 @@ function nl2p( $text ): string
   return '<p>' . str_replace( [ "\r\n\r\n", "\n\n" ], '</p><p>', $text ) . '</p>';
 }
 
+/**
+ * Get all special offers
+ */
 function get_special_offers(): array
 {
-  // Get all special offers
   $wp_query = new WP_Query( [
     'post_type' => 'special_offer',
     'posts_per_page' => -1,
@@ -139,7 +151,6 @@ function get_special_offers(): array
  */
 function get_wholesalers_with_special_offer(): array
 {
-  // Get all wholesalers related to a special offer
   $wholesalers_with_special_offer = [];
   foreach ( get_special_offers() as $special_offer ) {
     $wholesalers_with_special_offer[] = get_field( 'related_wholesaler', $special_offer->ID )->ID;
@@ -152,7 +163,7 @@ function get_wholesalers_with_special_offer(): array
 /**
  * Get not empty wholesaler regions by country
  */
-function get_used_regions_by_country( $has_spacial_offers = false ): array
+function get_used_regions_by_country( $only_with_spacial_offers = false ): array
 {
   $countries = [
     'cz' => [
@@ -166,17 +177,13 @@ function get_used_regions_by_country( $has_spacial_offers = false ): array
   ];
   $regions_by_country = [];
 
-  $is_region_used = function ( $region_id ) {
-    $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+  $is_region_used = function ( $region_id ) use ( &$only_with_spacial_offers ) {
+    if ( $only_with_spacial_offers )
+      $region_post_count = count( get_special_offers_by_region( $region_id ) );
+    else
+      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
     return ( $region_post_count > 0 );
   };
-
-  $is_region_used_with_special_offers = function ( $region_id ) {
-    $region_post_count = count( get_special_offers_by_region( $region_id ) );
-    return ( $region_post_count > 0 );
-  };
-
-  if ( $has_spacial_offers ) $is_region_used = $is_region_used_with_special_offers;
 
   foreach ( $countries as $country_code => $country ) {
     $regions_in_country = get_field_object( $country[ 'field' ] )[ 'choices' ];
