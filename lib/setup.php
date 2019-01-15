@@ -95,13 +95,6 @@ add_action( 'wp_footer', function() {
     printf( 'window.archiveUrl[\'%s\'] = \'%s\';', $post_type , get_post_type_archive_link( $post_type ) );
   }
 
-  // curent taxonomy or archive post type
-  if ( is_tax() && get_queried_object()->taxonomy === 'customtaxonomy' ) {
-    printf( 'window.archivePostType = \'%s\';', 'custom' );
-  } else if ( is_archive() ) {
-    printf( 'window.archivePostType = \'%s\';', get_queried_object()->name );
-  }
-
   // wholesaler location
   if ( is_singular( 'custom' ) && get_post_meta( get_queried_object_id(), 'location' ) ) {
     $location = get_post_meta( get_queried_object_id(), 'location' );

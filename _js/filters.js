@@ -23,7 +23,7 @@ $(function() {
     });
   };
 
-  var createUrl = function (data) {
+  var createUrl = function (data, postType) {
     var categoryCount = 0;
     var lastCategoryId = null;
     var queryString = '';
@@ -37,7 +37,7 @@ $(function() {
     });
     // Remove single category and default ordering
     data = data.filter(function (item) {
-      skipSingleCategory = (window.archivePostType === 'custom' && categoryCount === 1 && item.name === 'category[]');
+      skipSingleCategory = (postType === 'custom' && categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
       skipEmptyValue = ( item.value ? false : true );
       return !skipSingleCategory && !skipDefaultOrderBy && !skipEmptyValue;
@@ -46,8 +46,8 @@ $(function() {
     data.forEach(function (item, i) {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
-    var url = window.archiveUrl[ window.archivePostType ];
-    url += ( (window.archivePostType === 'custom' && categoryCount === 1) ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
+    var url = window.archiveUrl[ postType ];
+    url += ( (postType === 'custom' && categoryCount === 1) ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };
@@ -63,7 +63,7 @@ $(function() {
 
   $archiveForm.on('submit', function (e) {
     e.preventDefault();
-    url = createUrl($archiveForm.serializeArray());
+    url = createUrl($archiveForm.serializeArray(), $(this).attr('data-post-type') );
     sendData(url, false);
   });
 
@@ -73,7 +73,7 @@ $(function() {
 
   $heroForm.on('submit', function (e) {
     e.preventDefault();
-    url = createUrl($heroForm.serializeArray());
+    url = createUrl($heroForm.serializeArray(), 'custom');
     window.location.href = url;
   });
 

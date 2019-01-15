@@ -1,4 +1,4 @@
-<form class="wholesaler-archive mt-2" method="get" id="archiveForm">
+<form class="wholesaler-archive mt-2" method="get" id="archiveForm" data-post-type="custom">
 
   <?php if ( get_search_query() ): ?>
     <input type="hidden" name="s" value="<?php echo get_search_query(); ?>">
