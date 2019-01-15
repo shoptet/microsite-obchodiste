@@ -233,3 +233,12 @@ function get_terms_with_special_offer(): array
 
   return $terms_with_special_offers;
 }
+
+/**
+ * Separate thousands by non-break space
+ */
+function separate_thousands( $num ): string
+{
+  if ( ! is_numeric( $num ) ) return $num;
+  return number_format( $num, 0 , ',', '&nbsp;' );
+}

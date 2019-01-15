@@ -32,7 +32,7 @@
 
       <p class="mt-2 mb-0">
         <?php _e( 'Cena:', 'shp-obchodiste' ); ?>
-        <strong><?php echo get_field( "price" ); ?> <?php _e( 'Kč', 'shp-obchodiste' ); ?></strong>
+        <strong><?php echo separate_thousands( get_field( "price" ) ); ?> <?php _e( 'Kč', 'shp-obchodiste' ); ?></strong>
       </p>
 
     </div>
