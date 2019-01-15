@@ -40,6 +40,11 @@
         </div>
 
         <div class="mt-4">
+          <?php
+          $options = get_fields( 'options' );
+          echo $options[ 'archive_special_offer_description' ];
+          ?>
+
           <?php get_template_part( 'template-parts/utils/content', 'pagination' ); ?>
         </div>
 
