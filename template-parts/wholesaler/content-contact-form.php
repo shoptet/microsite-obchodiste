@@ -1,4 +1,4 @@
-<div class="sticky pb-2" id="<?php _e( 'kontakt', 'shp-obchodiste' ); ?>">
+<div class="sticky pb-2">
 
   <h2 class="h-heavy">
     <?php _e( 'Kontaktovat velkoobchod', 'shp-obchodiste' ); ?>

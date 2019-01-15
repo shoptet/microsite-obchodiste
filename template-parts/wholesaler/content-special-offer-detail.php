@@ -36,7 +36,12 @@
 
     <div class="align-self-center mt-2 mt-md-0 ml-md-3">
       
-      <a href="#<?php _e( 'kontakt', 'shp-obchodiste' ); ?>" class="btn btn-primary" role="button">
+      <a
+        href="#wholesalerContactForm"
+        class="btn btn-primary"
+        data-special-offer-contact="<?php the_title(); ?>"
+        role="button"
+      >
         <?php _e( 'Mám zájem', 'shp-obchodiste' ); ?>
       </a>
     </div>

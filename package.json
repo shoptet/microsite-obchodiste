@@ -30,6 +30,7 @@
     "node_modules/owl.carousel/dist/owl.carousel.min.js",
     "_js/wholesaler-location.js",
     "_js/wholesaler-message.js",
+    "_js/wholesaler-special-offer-contact.js",
     "_js/filters.js",
     "_js/main.js"
   ],
