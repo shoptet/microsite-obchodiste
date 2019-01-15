@@ -112,6 +112,15 @@ add_action( 'wp_footer', function() {
 } );
 
 /**
+ * Make post title required
+ */
+add_action( 'admin_footer', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || ( 'custom' !== $post->post_type && 'special_offer' !== $post->post_type )  ) return;
+  echo '<script>document.getElementById("title").required = true;</script>';
+} );
+
+/**
  * Load addtional fonts
  */
 add_action( 'wp_footer', function() {
@@ -647,6 +656,35 @@ add_action( 'increase_fake_message_number', function() {
 });
 //do_action( 'increase_fake_message_number' );
 
+/**
+ * Disable special offer single page
+ */
+add_action( 'template_redirect', function() {
+  global $wp_query;
+  if ( is_single() && 'special_offer' == $wp_query->query[ 'post_type' ] ) {
+    $wp_query->set_404();
+    status_header( 404 );
+  }
+} );
+
+/**
+ * Remove links to special offer single page in admin
+ */
+add_action( 'admin_head', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && 'special_offer' === $post->post_type ) {
+    echo '
+<style>
+  #wp-admin-bar-view,
+  #preview-action,
+  #message a,
+  #titlediv div.inside {
+    display: none !important;
+  }
+</style>
+    ';
+  }
+} );
 
 /**
  * Enable custom part of header
