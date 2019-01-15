@@ -51,7 +51,7 @@
         <?php else: ?>
 
         <p class="h3 mb-2">
-          <?php _e( 'Nemůžeme najít žádné velkoobchody s těmito požadavky', 'shp-obchodiste' ); ?>
+          <?php _e( 'Nemůžeme najít žádné akční nabídky s těmito požadavky', 'shp-obchodiste' ); ?>
         </p>
         <p>
           <?php _e( 'Zkuste prosím snížit vaše požadavky pomocí filtrů.', 'shp-obchodiste' ); ?>
