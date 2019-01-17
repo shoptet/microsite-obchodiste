@@ -553,8 +553,9 @@ add_action( 'edit_form_top', function( $post ) {
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
 
-  // Only new wholesaler post
-	if ( get_post_type( $post ) !== 'custom' || get_post_type( $post ) !== 'special_offer' || $old_status !== 'draft' || $new_status !== 'pending' ) return;
+  // Only new wholesaler or special offer post
+	if ( get_post_type( $post ) !== 'custom' && get_post_type( $post ) !== 'special_offer' ) return;
+	if ( $old_status !== 'draft' || $new_status !== 'pending' ) return;
 
 	$options = get_fields( 'options' );
 
