@@ -734,6 +734,20 @@ add_action( 'admin_head', function() {
   echo '
 <style>
   .page-title-action { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $pagenow, $post;
+
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  if ( 'post-new.php' !== $pagenow || 'special_offer' !== $post->post_type ) return;
+  echo '
+<style>
   #poststuff { display: none }
 </style>
   ';
