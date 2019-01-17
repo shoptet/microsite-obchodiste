@@ -146,7 +146,7 @@ add_filter( 'posts_distinct', function( $where ) {
 /**
  * Remove wholesaler and special offer list views for subscriber
  */
-function remove_list_view_for_subscribers() {
+function remove_list_view_for_subscribers($views) {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( user_can( $current_user, 'subscriber' ) ) return [];
@@ -298,11 +298,12 @@ add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
 
 /**
- * Show only owner wholesalers in special offer edit page
+ * Show only publish owner wholesalers in special offer edit page
  */
 add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $args ) {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
   $args[ 'author' ] = $current_user->ID;
+  $args[ 'post_status' ] = 'publish';
   return $args;
 } );
