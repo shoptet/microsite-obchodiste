@@ -155,7 +155,7 @@ function get_cpt_special_offer_args(): array
     'has_archive' => 'akcni-nabidka',
     'show_in_menu' => true,
     'exclude_from_search' => false,
-    'capability_type' => 'wholesaler',
+    'capability_type' => 'special_offer',
     'map_meta_cap' => true,
     'hierarchical' => false,
     'rewrite' => false,

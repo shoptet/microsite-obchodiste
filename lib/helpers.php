@@ -242,3 +242,25 @@ function separate_thousands( $num ): string
   if ( ! is_numeric( $num ) ) return $num;
   return number_format( $num, 0 , ',', '&nbsp;' );
 }
+
+/**
+ * Is special offer limit exceeded for current user
+ */
+function is_special_offer_limit_exceeded(): bool
+{
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return false;
+
+  $wp_query = new WP_Query( [
+    'post_type' => 'special_offer',
+    'posts_per_page' => -1,
+    'author' => $current_user->ID,
+  ] );
+
+  $options = get_fields( 'options' );
+  $special_offer_limit = $options[ 'special_offer_limit' ];
+  
+  return ( $wp_query->found_posts >= $special_offer_limit );
+}

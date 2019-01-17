@@ -680,6 +680,71 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Remove wp admin bar link to create new content
+ */
+add_action( 'admin_head', function() {
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+
+  echo '
+<style>
+  #wp-admin-bar-new-content { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Add admin notice if special offer limit exceeded
+ */
+add_action( 'admin_notices', function() {
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
+  ?>
+  <div class="notice notice-warning">
+    <p><?php _e( 'Dosáhli jste maximálního počtu akčních nabídek', 'shp-obchodiste' ); ?></p>
+  </div>
+  <?php
+} );
+
+/**
+ * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $pagenow, $wp_query, $post;
+
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
+  echo '
+<style>
+  .page-title-action { display: none }
+  #poststuff { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Remove "Add new special offer" submenu item if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $pagenow, $wp_query, $post;
+
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  echo '
+<style>
+  #menu-posts-special_offer ul.wp-submenu li:nth-of-type(3) { display: none }
+</style>
+  ';
+} );
+
+/**
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
