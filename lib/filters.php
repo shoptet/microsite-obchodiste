@@ -144,15 +144,16 @@ add_filter( 'posts_distinct', function( $where ) {
 });
 
 /**
- * Remove wholesaler list views for subscriber
+ * Remove wholesaler and special offer list views for subscriber
  */
-add_filter( 'views_edit-custom', function( $views ) {
-	global $current_user;
+function remove_list_view_for_subscribers() {
+  global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( user_can( $current_user, 'subscriber' ) ) return [];
   return $views;
-});
-
+}
+add_filter( 'views_edit-custom', 'remove_list_view_for_subscribers');
+add_filter( 'views_edit-special_offer', 'remove_list_view_for_subscribers');
 
 /**
  * Update login header
@@ -273,23 +274,25 @@ add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
 }, 10, 2);
 
 /**
- * Remove wholesaler quick edit action for subscribers
+ * Remove wholesaler and special offer quick edit action for subscribers
  */
-add_filter( 'post_row_actions', function( $actions ) {
+add_filter( 'post_row_actions', function( $actions, $post ) {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) )
-    unset($actions['inline hide-if-no-js']);
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $actions;
+  unset( $actions['inline hide-if-no-js'] );
+  if ( $post->post_type != 'special_offer' ) return $actions;
+  unset( $actions['view'] );
   return $actions;
-} );
+}, 10, 2 );
 
 /**
- * Remove wholesaler bulk actions for subscribers
+ * Remove wholesaler and special offer bulk actions for subscribers
  */
-add_filter( 'bulk_actions-edit-custom', function( $actions ) {
+function remove_bulk_actions_for_subscribers() {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) )
-    return false;
-  return true;
-} );
+  return ! user_can( $current_user, 'subscriber' );
+}
+add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
+add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
