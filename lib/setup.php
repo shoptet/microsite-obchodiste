@@ -549,12 +549,12 @@ add_action( 'edit_form_top', function( $post ) {
 });
 
 /**
- * Send e-mail when new wholesaler is pending for review
+ * Send e-mail when new wholesaler or special offer is pending for review
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
 
   // Only new wholesaler post
-	if ( get_post_type( $post ) !== 'custom' || $old_status !== 'draft' || $new_status !== 'pending' ) return;
+	if ( get_post_type( $post ) !== 'custom' || get_post_type( $post ) !== 'special_offer' || $old_status !== 'draft' || $new_status !== 'pending' ) return;
 
 	$options = get_fields( 'options' );
 
@@ -563,7 +563,6 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
 
   // Get recipients and wholesaler post id
 	$email_recipients = $options[ 'pending_email_recipients' ];
-	$wholesaler_id = $post->ID;
 
   // Collect recipient e-mails
 	$email_recipients_emails = [];
@@ -573,15 +572,25 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
 	}
 
   // Get wholesaler title and ACF options
-	$wholesaler_title = $post->post_title;
-	$email_from = $options[ 'email_from' ];
-	$email_subject = $options[ 'pending_email_subject' ];
-	$email_body = $options[ 'pending_email_body' ];
+	$title = $post->post_title;
+  $email_from = $options[ 'email_from' ];
+  
+  // Set deferent option variable for diferent post type
+  switch ( get_post_type( $post ) ) {
 
-  // Replace e-mail body variables
-	$to_replace = [
-		'%wholesaler_name%' => $wholesaler_title,
-  ];
+    case 'custom':
+    $email_subject = $options[ 'pending_email_subject' ];
+    $email_body = $options[ 'pending_email_body' ];
+    $to_replace = [ '%wholesaler_name%' => $title ]; // Replace e-mail body variables
+    break;
+
+    case 'special_offer':
+    $email_subject = $options[ 'pending_special_offer_email_subject' ];
+    $email_body = $options[ 'pending_special_offer_email_body' ];
+    $to_replace = [ '%offer_name%' => $title ]; // Replace e-mail body variables
+    break;
+  }
+	
   $email_body = strtr($email_body, $to_replace);
 
   // Send e-mail
