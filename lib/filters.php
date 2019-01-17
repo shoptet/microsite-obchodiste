@@ -296,3 +296,13 @@ function remove_bulk_actions_for_subscribers() {
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
+
+/**
+ * Show only owner wholesalers in special offer edit page
+ */
+add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $args ) {
+  global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  $args[ 'author' ] = $current_user->ID;
+  return $args;
+} );
