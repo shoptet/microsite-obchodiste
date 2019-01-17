@@ -712,23 +712,33 @@ add_action( 'admin_notices', function() {
   global $current_user, $pagenow, $wp_query, $post;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
-  if ( ! is_special_offer_limit_exceeded() ) return;
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
   if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
-  ?>
-  <div class="notice notice-warning">
-    <p><?php _e( 'Dosáhli jste maximálního počtu akčních nabídek', 'shp-obchodiste' ); ?></p>
-  </div>
+
+  if ( is_special_offer_limit_exceeded() ): ?>
+    <div class="notice notice-warning">
+      <p><?php _e( 'Dosáhli jste maximálního počtu akčních nabídek', 'shp-obchodiste' ); ?></p>
+    </div>
   <?php
+  else:
+    $options = get_fields( 'options' );
+    $special_offer_limit = $options[ 'special_offer_limit' ];
+  ?>
+    <div class="notice notice-info">
+      <p><?php printf( __( 'Maximální počet nabídek je %d', 'shp-obchodiste' ), $special_offer_limit ); ?></p>
+    </div>
+  <?php endif;
 } );
 
 /**
  * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
  */
 add_action( 'admin_head', function() {
-  global $pagenow, $wp_query, $post;
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ! is_special_offer_limit_exceeded() ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
   if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
@@ -743,8 +753,10 @@ add_action( 'admin_head', function() {
  * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
  */
 add_action( 'admin_head', function() {
-  global $pagenow, $post;
+  global $current_user, $pagenow, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ! is_special_offer_limit_exceeded() ) return;
   if ( 'post-new.php' !== $pagenow || 'special_offer' !== $post->post_type ) return;
   echo '
@@ -758,8 +770,10 @@ add_action( 'admin_head', function() {
  * Remove "Add new special offer" submenu item if specil offer limit exceeded
  */
 add_action( 'admin_head', function() {
-  global $pagenow, $wp_query, $post;
-
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ! is_special_offer_limit_exceeded() ) return;
   echo '
 <style>

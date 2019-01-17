@@ -251,8 +251,6 @@ function is_special_offer_limit_exceeded(): bool
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
-  if ( ! user_can( $current_user, 'subscriber' ) ) return false;
-
   $wp_query = new WP_Query( [
     'post_type' => 'special_offer',
     'posts_per_page' => -1,
