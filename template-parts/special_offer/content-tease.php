@@ -1,5 +1,5 @@
 <a
-  class="special-offer-tease"
+  class="special-offer-tease <?php echo ( isset( $GLOBALS[ 'is_special_offer_tease_secondary' ] ) && $GLOBALS[ 'is_special_offer_tease_secondary' ] ? 'special-offer-tease-secondary' : '' ) ?>"
   href="<?php echo get_permalink( get_field( "related_wholesaler" ) ) . "#" . get_post_field( "post_name" ); ?>"
   title="<?php _e( 'Zobrazit nabídku', 'shp-obchodiste' ); ?>"
 >

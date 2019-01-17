@@ -13,7 +13,7 @@
 .owl-carousel-bordered {
 
   .owl-item {
-    border: 1px solid #e5e5e5;
+    border: 1px solid rgba($black, .1);
     border-right-width: 0;
 
     &:first-child {
@@ -33,7 +33,7 @@
   top: 0;
   width: 20px;
   height: 100%;
-  background-color: $white !important; // hide unwanted borders on left and right sides
+  background-color: $secondary-light !important; // hide unwanted borders on left and right sides
   overflow: hidden;
   
   span {

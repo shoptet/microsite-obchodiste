@@ -18,7 +18,13 @@
   @include hover-focus {
     color: $body-color;
     text-decoration: none;
-    background-color: lighten($shoptet-blue, 46%);
+    background-color: $primary-light;
+  }
+}
+
+.special-offer-tease-secondary {
+  @include hover-focus {
+    background-color: darken($secondary-light, 4%);
   }
 }
 
@@ -63,7 +69,7 @@
 
 .special-offer-tease-title {
   font-weight: $font-weight-normal;
-  color: $shoptet-blue;
+  color: $primary;
 }
 
 .special-offer-tease-description {
