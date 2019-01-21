@@ -10,7 +10,7 @@ $the_query = new WP_Query( [
     <div class="section-inner container">
 
       <h2 class="text-center h3 mb-5">
-        <?php _e( 'Akční nabídka', 'shp-obchodiste' ); ?>
+        <?php _e( 'Naše velkoobchody právě nabízí', 'shp-obchodiste' ); ?>
       </h2>
 
       <div class="owl-carousel owl-carousel-bordered">
