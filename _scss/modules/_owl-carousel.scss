@@ -33,8 +33,10 @@
   top: 0;
   width: 20px;
   height: 100%;
-  background-color: $secondary-light !important; // hide unwanted borders on left and right sides
+  background-color: $white !important; // hide unwanted borders on left and right sides
   overflow: hidden;
+  border-top: 1px solid #e5e5e5 !important;
+  border-bottom: 1px solid #e5e5e5 !important;
   
   span {
     vertical-align: text-bottom;
@@ -55,9 +57,9 @@
 }
 
 .owl-prev {
-  left: -10px;
+  left: -15px;
 }
 
 .owl-next {
-  right: -10px;
+  right: -15px;
 }

@@ -23,9 +23,7 @@
 }
 
 .special-offer-tease-secondary {
-  @include hover-focus {
-    background-color: darken($secondary-light, 4%);
-  }
+  background-color: $white;
 }
 
 .special-offer-image {
