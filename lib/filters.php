@@ -302,7 +302,8 @@ add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscrib
  */
 add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $args ) {
   global $current_user;
-	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $args;
   $args[ 'author' ] = $current_user->ID;
   $args[ 'post_status' ] = 'publish';
   return $args;
