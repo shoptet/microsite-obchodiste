@@ -8,8 +8,9 @@ $(function() {
     maxWidth: '98%',
   });
 
+  var carouselItemCount = $('.owl-carousel').children().length;
   $('.owl-carousel').owlCarousel({
-    loop: true,
+    loop: ( carouselItemCount >= 3 ), // do not clone items if items do not fill carousel
     nav: true,
     dots: false,
     autoplay: true,
