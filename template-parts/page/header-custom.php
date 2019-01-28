@@ -21,6 +21,9 @@
           <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=custom' ); ?>">
             <?php _e( 'Moje velkoobchody', 'shp-obchodiste' ); ?>
           </a>
+          <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=special_offer' ); ?>">
+            <?php _e( 'Moje nabídky', 'shp-obchodiste' ); ?>
+          </a>
           <a class="dropdown-item" href="<?php echo admin_url( 'profile.php' ); ?>">
             <?php _e( 'Můj profil', 'shp-obchodiste' ); ?>
           </a>
