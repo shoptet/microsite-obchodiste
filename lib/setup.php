@@ -509,12 +509,12 @@ add_action( 'save_post', function( $post_id ) {
 	// Not the correct post type, bail out
   if ( 'custom' !== get_post_type( $post_id ) ) return;
   $post_categories = [];
-  $post_categories[] = get_field( 'category' )->term_id;
-  if ( get_field( 'minor_category_1' ) ) {
-    $post_categories[] = get_field( 'minor_category_1' )->term_id;
+  $post_categories[] = get_field( 'category', $post_id )->term_id;
+  if ( get_field( 'minor_category_1', $post_id ) ) {
+    $post_categories[] = get_field( 'minor_category_1', $post_id )->term_id;
   }
-  if ( get_field( 'minor_category_2' ) ) {
-    $post_categories[] = get_field( 'minor_category_2' )->term_id;
+  if ( get_field( 'minor_category_2', $post_id ) ) {
+    $post_categories[] = get_field( 'minor_category_2', $post_id )->term_id;
   }
   wp_set_post_terms( $post_id, $post_categories, 'customtaxonomy' );
 } );
