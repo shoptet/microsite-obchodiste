@@ -23,6 +23,17 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Remove Yoast page analysis columns from post lists for subscribers
+ */
+add_action( 'init', function() {
+  global $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+	if ( user_can( $current_user, 'subscriber' ) ) {
+    remove_action( 'admin_init', [ $GLOBALS['wpseo_meta_columns'], 'setup_hooks' ] ); // Remove Yoast page analysis columns from post lists
+  }
+} );
+
+/**
  * Register image sizes
  */
 add_action( 'after_setup_theme', function() {
