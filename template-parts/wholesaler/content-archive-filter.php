@@ -97,19 +97,20 @@
 
       <?php foreach ( get_all_services() as $service ): ?>
         <?php if ( $service !== 'Dropshipping' ) continue; // Show only Dropshiping option ?>
+        <?php $inputIdAttr = 'filterService' . preg_replace('/\s/', '', $service); // Remove whitespace ?>
         <?php $service_post_count = get_post_count_by_meta( 'services', $service, 'custom', 'LIKE' ); ?>
         <div class="custom-control custom-checkbox">
           <input
             class="custom-control-input"
             type="checkbox"
             value="<?php echo $service; ?>"
-            id="filterCategory<?php echo $service; ?>"
+            id="<?php echo $inputIdAttr; ?>"
             name="services[]"
             <?php if ( in_array ( $service, $checked_services ) ) echo "checked"; ?>
           >
           <label
             class="custom-control-label"
-            for="filterCategory<?php echo $service; ?>"
+            for="<?php echo $inputIdAttr; ?>"
           >
             <?php echo $service; ?>
             <span class="text-semilight">
