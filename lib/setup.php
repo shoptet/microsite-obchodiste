@@ -99,6 +99,15 @@ add_action( 'wp_footer', function() {
 } );
 
 /**
+ * Make post title required
+ */
+add_action( 'admin_footer', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || 'custom' !== $post->post_type  ) return;
+  echo '<script>document.getElementById("title").required = true;</script>';
+} );
+
+/**
  * Hide WP logo on login page
  */
 add_action( 'login_enqueue_scripts', function() {
@@ -240,6 +249,18 @@ add_action('pre_get_posts', function( $wp_query ) {
 	};
 
 	$meta_query[] = $get_array_meta_query( 'region' );
+  
+  // Set service meta query
+  // checkbox fields are stored as serialized arrays
+  if( isset( $_GET[ 'services' ] ) && is_array( $_GET[ 'services' ] ) ) {
+    foreach( $_GET[ 'services' ] as $service ) {
+      $meta_query[] = [[
+        'key' => 'services',
+        'value' => $service,
+        'compare' =>  'LIKE',
+      ]];
+    }
+  }
 
   $wp_query->set( 'meta_query', $meta_query );
   
@@ -393,6 +414,14 @@ add_action( 'save_post', function( $post_id ) {
   ];
   update_post_meta( $post_id, 'location', $location );
 } );
+
+/**
+ * Add instructions above custom post title
+ */
+add_action( 'edit_form_top', function( $post ) {
+  if ( 'custom' !== $post->post_type  ) return;
+  echo '<p class="description" style="margin: 1rem 0 0 0;">' . __( 'Zadejte oficiální název firmy dle IČ. Např. „Shoptet s.r.o.“', 'shp-obchodiste' ) . '</p>';
+});
 
 /**
  * Send e-mail when new wholesaler is pending for review

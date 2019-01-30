@@ -27,7 +27,7 @@ function display_url( $url, $display_www = true ): string
 /**
  * Get post count by meta key and value
  */
-function get_post_count_by_meta( $meta_key, $meta_value, $post_type ): int
+function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = '=' ): int
 {
   $args = [
     'post_type' => $post_type,
@@ -37,6 +37,7 @@ function get_post_count_by_meta( $meta_key, $meta_value, $post_type ): int
   $args[ 'meta_query' ][] = [
     'key' => $meta_key,
     'value' => $meta_value,
+    'compare' => $compare,
   ];
   $posts = get_posts( $args );
   $count = count( $posts );
@@ -114,4 +115,12 @@ function get_used_regions_by_country(): array
   }
   
   return $regions_by_country;
+}
+
+/**
+ * Get not empty wholesaler regions
+ */
+function get_all_services(): array
+{
+  return get_field_object( 'field_5b5ed686ddd58' )[ 'choices' ];
 }
