@@ -13,9 +13,9 @@
     <?php endif; ?>
   </div>
 
-  <div class="d-md-flex mt-1">
+  <div class="d-md-flex w-100 mt-1">
 
-    <div>
+    <div class="flex-grow-1">
 
       <h3 class="h4 mb-2 font-weight-bold">
         <?php the_title(); ?>
