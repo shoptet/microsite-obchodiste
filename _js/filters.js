@@ -4,7 +4,7 @@ $(function() {
   var $archiveForm = $('#archiveForm');
 
   var initOrderSelect = function () {
-    $('#archiveForm select').on('change', function (e) {
+    $('#archiveForm select, #archiveFormServices input[type=checkbox]').on('change', function (e) {
       $archiveForm.submit();
     });
   };
