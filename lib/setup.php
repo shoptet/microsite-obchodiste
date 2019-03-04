@@ -7,6 +7,7 @@ add_action( 'init', function() {
   register_post_type( 'custom', get_cpt_wholesaler_args() );
   register_taxonomy( 'customtaxonomy', 'custom', get_cpt_wholesaler_taxonomy_args() );
   register_post_type( 'special_offer', get_cpt_special_offer_args() );
+  register_post_type( 'product', get_cpt_product_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
 } );
 
@@ -57,8 +58,13 @@ add_action( 'wp_head', function() {
  */
 add_action( 'wp_head', function() {
   global $post;
+  $description = NULL;
   if ( is_singular( 'custom' ) && get_field( "short_about" ) ) {
     $description = strip_tags( get_field( "short_about" ) );
+  } else if ( is_singular( 'product' ) && get_field( "short_description" ) ) {
+    $description = strip_tags( get_field( "short_description" ) );
+  }
+  if ( $description ) {
     printf( '<meta name="description" content="%s">', $description );
     printf( '<meta property="og:description" content="%s">', $description );
   }
@@ -160,7 +166,7 @@ add_action( 'admin_init', function() {
 } );
 
 /**
- * Show only own wholesaler and special offer post for subscriber
+ * Show only own wholesaler, special offer and product post for subscriber
  */
 add_action( 'pre_get_posts', function( $wp_query ) {
   global $current_user, $pagenow;
@@ -168,7 +174,7 @@ add_action( 'pre_get_posts', function( $wp_query ) {
 	// Not the correct screen, bail out
 	if( ! is_admin() || 'edit.php' !== $pagenow ) return;
 	// Not the correct post type, bail out
-  if( 'custom' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $wp_query->query[ 'post_type' ] ) return;
+  if( ! in_array( $wp_query->query[ 'post_type' ], [ 'custom', 'special_offer', 'product' ] ) ) return;
   if ( user_can( $current_user, 'subscriber' ) )
     $wp_query->set( 'author', $current_user->ID );
 } );
