@@ -262,3 +262,13 @@ function is_special_offer_limit_exceeded(): bool
   
   return ( $wp_query->found_posts >= $special_offer_limit );
 }
+
+/**
+ * Get single category link by for post type
+ */
+function get_archive_category_link( $post_type, $category ): string
+{
+  $archive_link = get_post_type_archive_link( $post_type );
+  $category_id = $category->term_id;
+  return $archive_link . '?category[]=' . $category_id;
+}

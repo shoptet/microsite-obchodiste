@@ -7,6 +7,10 @@ $(function() {
   $('.special-offer-detail .colorbox').colorbox({
     maxWidth: '98%',
   });
+  $('.product-gallery .colorbox').colorbox({
+    rel: 'product-gallery',
+    maxWidth: '98%',
+  });
 
   var carouselItemCount = $('.owl-carousel').children().length;
   $('.owl-carousel').owlCarousel({

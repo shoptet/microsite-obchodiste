@@ -102,11 +102,17 @@ add_action( 'wp_footer', function() {
   }
 
   // wholesaler location
+  $location = NULL;
   if ( is_singular( 'custom' ) && get_post_meta( get_queried_object_id(), 'location' ) ) {
     $location = get_post_meta( get_queried_object_id(), 'location' );
+  } else if (
+    is_singular( 'product' ) && get_field( 'related_wholesaler' ) && get_post_meta( get_field( 'related_wholesaler' )->ID, 'location' ) ) {
+    $location = get_post_meta( get_field( 'related_wholesaler' )->ID, 'location' );
+  }
+  if ( $location ) {
     printf( 'window.wholesalerLocation = %s;', json_encode( $location[ 0 ] ) );
   }
-
+  
   echo '</script>';
 } );
 

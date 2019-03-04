@@ -50,3 +50,18 @@
   }
 
 }
+
+.gallery-small {
+  margin-left: - ( $gallery-small-gutter / 2 );
+  margin-right: - ( $gallery-small-gutter / 2 );
+
+  li {
+    padding-left: ( $gallery-small-gutter / 2 );
+    padding-right: ( $gallery-small-gutter / 2 );
+
+    @include media-breakpoint-up(xs) {
+      width: percentage(1/4);
+    }
+  }
+
+}
