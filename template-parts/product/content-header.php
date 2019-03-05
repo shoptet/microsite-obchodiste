@@ -1,6 +1,8 @@
 <div class="row mt-3">
   <div class="col-md-7 col-lg-12 col-xl-7 order-md-1 order-lg-0 order-xl-1 mb-4">
 
+    <meta itemprop="url" content="<?php the_permalink(); ?>">
+
     <h1 class="h2 mb-1" itemprop="name">
       <?php the_title(); ?>
     </h1>
@@ -39,19 +41,22 @@
       endif;
     ?>
 
-    <?php if ( get_field( "short_description" ) ): ?>
-    <p><?php echo get_field( "short_description" ); ?></p>
+    <?php if ( $short_description = get_field( "short_description" ) ): ?>
+    <meta itemprop="description" content="<?php echo $short_description; ?>">
+    <p><?php echo $short_description; ?></p>
     <?php endif; ?>
 
     <div class="d-flex justify-content-between align-items-center">
       <div>
 
         <?php if ( get_field( "price" ) || get_field( "minimal_order" ) ): ?>
-        <dl class="dl-pair-inline mb-0">
+        <dl class="dl-pair-inline mb-0" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
 
           <?php if ( $price = get_field( "price" ) ): ?>
           <dt class="text-muted"><?php _e( 'Cena', 'shp-obchodiste' ); ?></dt>
           <dd class="font-weight-bold">
+            <meta itemprop="price" content="<?php echo $price; ?>">
+            <meta itemprop="priceCurrency" content="CZK">
             <span class="fs-150"><?php echo separate_thousands( $price ); ?></span>
             <?php _e( 'Kč', 'shp-obchodiste' ); ?>
           </dd>
@@ -86,17 +91,20 @@
   <div class="col-md-5 col-lg-12 col-xl-5 mb-4">
 
     <div class="product-gallery">
-      <a class="d-block colorbox" href="<?php echo get_field( "thumbnail" )[ "sizes" ][ "large" ]; ?>">
+      <?php if ( $thumbnail = get_field( "thumbnail" ) ): ?>
+      <meta itemprop="image" content="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
+      <a class="d-block colorbox" href="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
         <img
           class="w-100"
-          src="<?php echo get_field( "thumbnail" )[ "sizes" ][ "product-thumb" ]; ?>"
+          src="<?php echo $thumbnail[ "sizes" ][ "product-thumb" ]; ?>"
           alt="<?php echo the_title(); ?>"
         >
       </a>
+      <?php endif; ?>
 
-      <?php if ( get_field( "gallery" ) ): ?>
+      <?php if ( $gallery = get_field( "gallery" ) ): ?>
       <ul class="gallery gallery-small mt-2" itemscope itemtype="http://schema.org/ImageGallery">
-        <?php foreach ( get_field( "gallery" ) as $image ): ?>
+        <?php foreach ( $gallery as $image ): ?>
         <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
           <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
             <img
