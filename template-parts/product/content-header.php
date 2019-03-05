@@ -54,11 +54,11 @@
 
           <?php if ( $price = get_field( "price" ) ): ?>
           <dt class="text-muted"><?php _e( 'Cena', 'shp-obchodiste' ); ?></dt>
-          <dd class="font-weight-bold">
+          <dd>
             <meta itemprop="price" content="<?php echo $price; ?>">
             <meta itemprop="priceCurrency" content="CZK">
-            <span class="fs-150"><?php echo separate_thousands( $price ); ?></span>
-            <?php _e( 'Kč', 'shp-obchodiste' ); ?>
+            <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price ); ?></span>
+            <?php _e( '<span class="font-weight-bold">Kč</span> / ks', 'shp-obchodiste' ); ?>
           </dd>
           <?php endif; ?>
 
@@ -103,7 +103,7 @@
       <?php endif; ?>
 
       <?php if ( $gallery = get_field( "gallery" ) ): ?>
-      <ul class="gallery gallery-small mt-2" itemscope itemtype="http://schema.org/ImageGallery">
+      <ul class="gallery gallery-small mt-3" itemscope itemtype="http://schema.org/ImageGallery">
         <?php foreach ( $gallery as $image ): ?>
         <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
           <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
