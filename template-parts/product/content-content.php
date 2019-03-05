@@ -1,17 +1,13 @@
-<div class="row wholesaler" itemscope itemtype="http://schema.org/Organization">
+<div class="row product" itemscope itemtype="http://schema.org/Organization">
   <div class="col-12 col-lg-7 col-xl-8">
 
     <?php get_template_part( 'src/template-parts/product/content', 'header' ); ?>
 
     <?php if ( get_field( "description" ) ): ?>
-    <div>
-      <h2 class="h-heavy mb-1">
-        <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
-      </h2>
-      <div>
-        <?php the_field( "description" ); ?>
-      </div>
-    </div>
+    <h2 class="h-heavy mb-1">
+      <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
+    </h2>
+    <?php the_field( "description" ); ?>
     <?php endif; ?>
 
   </div>
@@ -38,5 +34,3 @@
 
   </div>
 </div>
-
-<?php get_template_part( 'src/template-parts/wholesaler/content', 'special-offers' ); ?>

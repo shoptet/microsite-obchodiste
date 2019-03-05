@@ -40,6 +40,7 @@ add_action( 'init', function() {
  */
 add_action( 'after_setup_theme', function() {
   add_image_size( 'wholesaler-logo-thumb', 150, 150 );
+  add_image_size( 'product-thumb', 1024, 680 );
 } );
 
 /**
