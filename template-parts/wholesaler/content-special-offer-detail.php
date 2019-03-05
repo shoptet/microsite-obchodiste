@@ -40,7 +40,8 @@
       <a
         href="#wholesalerContactForm"
         class="btn btn-primary"
-        data-special-offer-contact="<?php the_title(); ?>"
+        data-wholesaler-contact="special-offer"
+        data-wholesaler-contact-item="<?php the_title(); ?>"
         role="button"
       >
         <?php _e( 'Mám zájem', 'shp-obchodiste' ); ?>

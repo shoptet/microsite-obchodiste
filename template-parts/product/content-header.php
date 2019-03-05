@@ -1,36 +1,7 @@
-<div class="row mt-3 mb-3">
-  <div class="col-md-6 col-lg-12 col-xl-6">
+<div class="row mt-3">
+  <div class="col-md-7 col-lg-12 col-xl-7 order-md-1 order-lg-0 order-xl-1 mb-4">
 
-    <div class="product-gallery mb-3">
-      <a class="d-block colorbox" href="<?php echo get_field( "thumbnail" )[ "sizes" ][ "large" ]; ?>">
-        <img
-          class="w-100"
-          src="<?php echo get_field( "thumbnail" )[ "sizes" ][ "medium" ]; ?>"
-          alt="<?php echo the_title(); ?>"
-        >
-      </a>
-
-      <?php if ( get_field( "gallery" ) ): ?>
-      <ul class="gallery gallery-small mt-2" itemscope itemtype="http://schema.org/ImageGallery">
-        <?php foreach ( get_field( "gallery" ) as $image ): ?>
-        <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
-            <img
-              src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
-              alt="<?php echo $image[ "alt" ]; ?>"
-              itemprop="thumbnail"
-            >
-          </a>
-        </li>
-        <?php endforeach; ?>
-      </ul>
-      <?php endif; ?>
-    </div>
-
-  </div>
-  <div class="col-md-6 col-lg-12 col-xl-6">
-
-    <h1 class="h2 mt-1 mb-1" itemprop="name">
+    <h1 class="h2 mb-1" itemprop="name">
       <?php the_title(); ?>
     </h1>
 
@@ -72,27 +43,73 @@
     <p><?php echo get_field( "short_description" ); ?></p>
     <?php endif; ?>
 
-    <?php if ( get_field( "price" ) || get_field( "minimal_order" ) ): ?>
-    <dl class="dl-pair-inline">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
 
-      <?php if ( $price = get_field( "price" ) ): ?>
-      <dt class="text-muted"><?php _e( 'Cena', 'shp-obchodiste' ); ?></dt>
-      <dd class="font-weight-bold">
-        <span class="fs-150"><?php echo separate_thousands( $price ); ?></span>
-        <?php _e( 'Kč', 'shp-obchodiste' ); ?>
-      </dd>
+        <?php if ( get_field( "price" ) || get_field( "minimal_order" ) ): ?>
+        <dl class="dl-pair-inline mb-0">
+
+          <?php if ( $price = get_field( "price" ) ): ?>
+          <dt class="text-muted"><?php _e( 'Cena', 'shp-obchodiste' ); ?></dt>
+          <dd class="font-weight-bold">
+            <span class="fs-150"><?php echo separate_thousands( $price ); ?></span>
+            <?php _e( 'Kč', 'shp-obchodiste' ); ?>
+          </dd>
+          <?php endif; ?>
+
+          <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
+          <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
+          <dd class="font-weight-bold">
+            <?php echo separate_thousands( $minimal_order ); ?>
+            <?php _e( 'ks', 'shp-obchodiste' ); ?>
+          </dd>
+          <?php endif; ?>
+
+        </dl>
+        <?php endif; ?>
+
+      </div>
+      <div class="ml-2">
+        <a
+          href="#wholesalerContactForm"
+          class="btn btn-primary"
+          data-wholesaler-contact="product"
+          data-wholesaler-contact-item="<?php the_title(); ?>"
+          role="button"
+        >
+          <?php _e( 'Mám zájem', 'shp-obchodiste' ); ?>
+        </a>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-5 col-lg-12 col-xl-5 mb-4">
+
+    <div class="product-gallery">
+      <a class="d-block colorbox" href="<?php echo get_field( "thumbnail" )[ "sizes" ][ "large" ]; ?>">
+        <img
+          class="w-100"
+          src="<?php echo get_field( "thumbnail" )[ "sizes" ][ "product-thumb" ]; ?>"
+          alt="<?php echo the_title(); ?>"
+        >
+      </a>
+
+      <?php if ( get_field( "gallery" ) ): ?>
+      <ul class="gallery gallery-small mt-2" itemscope itemtype="http://schema.org/ImageGallery">
+        <?php foreach ( get_field( "gallery" ) as $image ): ?>
+        <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
+            <img
+              src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
+              alt="<?php echo $image[ "alt" ]; ?>"
+              itemprop="thumbnail"
+            >
+          </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
       <?php endif; ?>
-
-      <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
-      <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
-      <dd class="font-weight-bold">
-        <?php echo separate_thousands( $minimal_order ); ?>
-        <?php _e( 'ks', 'shp-obchodiste' ); ?>
-      </dd>
-      <?php endif; ?>
-
-    </dl>
-    <?php endif; ?>
+    </div>
 
   </div>
 </div>
