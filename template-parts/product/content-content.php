@@ -5,10 +5,12 @@
     <?php get_template_part( 'src/template-parts/product/content', 'header' ); ?>
 
     <?php if ( $description = get_field( "description" ) ): ?>
-    <h2 class="h-heavy mb-1">
-      <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
-    </h2>
-    <?php echo $description; ?>
+    <div class="product-detail">
+      <h2 class="h-heavy mb-1">
+        <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
+      </h2>
+      <?php echo $description; ?>
+    </div>
     <?php endif; ?>
 
   </div>
