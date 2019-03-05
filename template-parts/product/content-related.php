@@ -1,0 +1,37 @@
+<?php
+if ( $related_wholesaler = get_field( "related_wholesaler" ) ):
+$the_query = new WP_Query( [
+  'post_type' => 'product',
+  'posts_per_page' => 2,
+  'post_status' => 'publish',
+  'post__not_in' => [ $post->ID ], // exclude current post
+  'meta_query' => [
+    [
+      'key' => 'related_wholesaler',
+      'value' => $related_wholesaler->ID,
+    ],
+  ],
+] );
+?>
+<?php if ( $the_query->have_posts() ): ?>
+  <div class="pt-5 pb-4">
+    <h2 class="text-center h3 mb-5">
+      <?php
+      printf(
+        __( 'Velkoobchod „%s“ dále nabízí', 'shp-obchodiste' ),
+        $related_wholesaler->post_title
+      );
+      ?>
+    </h2>
+    <div class="row row-bordered no-gutters">
+      <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
+        <div class="col-12 col-lg-6">
+          <?php the_title(); ?>
+        </div>
+      <?php endwhile; wp_reset_query(); ?>
+    </div>
+  </div>
+<?php
+endif;
+endif;
+ ?>

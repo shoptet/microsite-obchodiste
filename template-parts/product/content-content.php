@@ -6,7 +6,7 @@
 
     <?php if ( $description = get_field( "description" ) ): ?>
     <div class="product-detail">
-      <h2 class="h-heavy mb-1">
+      <h2 class="h3">
         <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
       </h2>
       <?php echo $description; ?>
