@@ -313,11 +313,11 @@ add_action('pre_get_posts', function( $wp_query ) {
 } );
 
 /**
- * Handle filtering and ordering special offer archive
+ * Handle filtering and ordering special offer and product archive
  */
 add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->get( 'post_type' ) !== 'special_offer' ) return;
+	if ( is_admin() || !$wp_query->is_main_query() || !in_array( $wp_query->get( 'post_type' ), [ 'special_offer', 'product' ] ) ) return;
 
 	$meta_query = $wp_query->get( 'meta_query' );
 
@@ -396,7 +396,7 @@ add_action('pre_get_posts', function( $wp_query ) {
 
   $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
 
-  // Query for special offers by filtered wholesalers
+  // Query for special offers or products by filtered wholesalers
   $meta_query[] = [[
     'key' => 'related_wholesaler',
     'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result

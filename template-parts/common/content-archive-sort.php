@@ -29,7 +29,7 @@
   <div class="text-muted mt-3 mt-lg-0">
     <?php
     printf(
-      __( 'Celkem %d z %d nabídek', 'shp-obchodiste' ),
+      __( 'Celkem %d z %d', 'shp-obchodiste' ),
       $wp_query->post_count,
       $wp_query->found_posts
     );

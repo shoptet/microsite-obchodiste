@@ -1,3 +1,7 @@
+<?php
+$post_type = $wp_query->get( 'post_type' );
+?>
+
 <div class="filters mb-4 mb-md-0">
   <button
     class="btn btn-primary d-md-none"
@@ -26,7 +30,7 @@
       }
       ?>
 
-      <?php foreach ( get_terms_with_special_offer() as $term ): ?>
+      <?php foreach ( get_wholesaler_terms_related_to_post_type( $post_type ) as $term ): ?>
         <div class="custom-control custom-checkbox">
           <input
             class="custom-control-input"
@@ -43,7 +47,7 @@
           >
             <?php echo $term->name; ?>
             <span class="text-semilight">
-              (<?php echo count( get_special_offers_by_term( $term->term_id ) ); ?>)
+              (<?php echo count( get_posts_by_related_wholesaler_term( $post_type, $term->term_id ) ); ?>)
             </span>
           </label>
         </div>
@@ -59,7 +63,7 @@
       $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ? $_GET[ 'region' ] : [];
       ?>
 
-      <?php foreach ( get_used_regions_by_country( true ) as $country_code => $country ): ?>
+      <?php foreach ( get_used_regions_by_country( $post_type ) as $country_code => $country ): ?>
         <p class="font-weight-bold my-2"><?php echo $country[ 'name' ]; ?></p>
         <?php foreach ( $country[ 'used_regions' ] as $region ): ?>
           <div class="custom-control custom-checkbox">
@@ -77,7 +81,7 @@
             >
               <?php echo $region[ 'name' ]; ?>
               <span class="text-semilight">
-                (<?php echo count( get_special_offers_by_region( $region[ 'id' ] ) ); ?>)
+                (<?php echo count( get_posts_by_region( $post_type, $region[ 'id' ] ) ); ?>)
               </span>
             </label>
           </div>
@@ -89,7 +93,7 @@
       <a
         class="small"
         role="button"
-        href="<?php echo get_post_type_archive_link( 'special_offer' ); ?>"
+        href="<?php echo get_post_type_archive_link( $post_type ); ?>"
       >
         <i class="fas fa-times text-muted mr-1"></i>
         <?php _e( 'Zrušit filtry', 'shp-obchodiste' ); ?>
