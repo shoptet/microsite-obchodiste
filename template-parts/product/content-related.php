@@ -26,7 +26,7 @@ $the_query = new WP_Query( [
     <div class="row row-bordered no-gutters">
       <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
         <div class="col-12 col-lg-6">
-          <?php the_title(); ?>
+          <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
         </div>
       <?php endwhile; wp_reset_query(); ?>
     </div>
