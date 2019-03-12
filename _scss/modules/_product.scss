@@ -10,3 +10,66 @@
   padding-top: 2rem;
   border-top: 1px solid $gray-300;
 }
+
+.product-tease {
+  display: block;
+  position: relative;
+  height: 100%;
+  padding: 1rem 0;
+  color: $body-color;
+
+  @include media-breakpoint-up(lg) {
+    padding: 1rem;
+  }
+
+  @include hover-focus {
+    color: $body-color;
+    text-decoration: none;
+    background-color: $primary-light;
+  }
+}
+
+.product-tease-in-row {
+  padding: 1rem 0;
+}
+
+
+.product-tease-image {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  background-color: $white;
+  border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(xl) {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  img {
+    @include object-fit-containt;
+  }
+}
+
+.product-tease-image-placeholder {
+  width: 4.5rem;
+
+  @include media-breakpoint-up(xl) {
+    width: 5.5rem;
+  }
+}
+
+.product-image-empty {
+  background-color: $gray-200;
+  border-color: $gray-200;
+}
+
+.product-tease-title {
+  font-weight: $font-weight-normal;
+  color: $primary;
+}
+
+.product-tease-description {
+  font-weight: 300;
+  color: $body-color;
+}

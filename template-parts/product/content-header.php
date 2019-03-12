@@ -58,7 +58,7 @@
             <meta itemprop="price" content="<?php echo $price; ?>">
             <meta itemprop="priceCurrency" content="CZK">
             <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price ); ?></span>
-            <?php _e( '<span class="font-weight-bold">Kč</span> / ks', 'shp-obchodiste' ); ?>
+            <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
           </dd>
           <?php endif; ?>
 
