@@ -316,6 +316,14 @@ function handle_wholesaler_message() {
   $message = sanitize_textarea_field( $_POST[ 'message' ] );
   $wholesaler_id = intval( $_POST[ 'wholesaler_id' ] );
 
+  // WordPress comments blacklist check
+  $user_url = '';
+  $user_ip = $_SERVER['REMOTE_ADDR'];
+  $user_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $user_ip );
+  $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+  $user_agent = substr( $user_agent, 0, 254 );
+  $is_blacklisted = wp_blacklist_check( $name, $email, $user_url, $message, $user_ip, $user_agent );
+
   // Insert wholesaler message post
   $postarr = [
     'post_type' => 'wholesaler_message',
@@ -325,9 +333,16 @@ function handle_wholesaler_message() {
       'email' => $email,
       'message' => $message,
       'wholesaler' => $wholesaler_id,
+      'agent' => $user_agent,
+      'ip' => $user_ip,
+      'spam' => $is_blacklisted,
     ],
   ];
   wp_insert_post( $postarr );
+
+  if ( $is_blacklisted ) {
+    wp_die();
+  }
 
   // Increase wholesaler contact count
   $wholesaler_contact_count = get_post_meta( $wholesaler_id, 'contact_count', true );
