@@ -115,10 +115,19 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
  * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
-  if ( ! is_singular( 'custom' ) ) return;
-  array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
-  $term_crumb = [ 'term' => get_field( 'category' )];
-  array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
+  if ( is_singular( 'custom' ) ) {
+    array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
+    $term_crumb = [ 'term' => get_field( 'category' ) ];
+    array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
+  } else if ( is_singular( 'product' ) ) {
+    array_splice( $crumbs, 1, 1 ); // Remove product archive link from breadcrumbs
+    if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
+      $post_crumb = [ 'id' => $related_wholesaler->ID ];
+      array_splice( $crumbs, 1, 0, [ $post_crumb ] ); // Add related wholesaler link to breadcrumbs
+      $term_crumb = [ 'term' => get_field( 'category', $related_wholesaler->ID ) ];
+      array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add related wholesaler main category link to breadcrumbs
+    }
+  }
   return $crumbs;
 } );
 
