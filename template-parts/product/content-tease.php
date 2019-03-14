@@ -21,7 +21,7 @@
       <?php endif; ?>
     </div>
 
-    <div class="<?php if ( $is_product_tease_in_row ) echo 'row no-gutters align-items-center'; ?>">
+    <div class="<?php if ( $is_product_tease_in_row ) echo 'row no-gutters flex-grow-1 align-items-center'; ?>">
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-6'; ?>">
 
