@@ -2,7 +2,7 @@
   $is_product_tease_in_row = ( isset( $GLOBALS[ 'is_product_tease_in_row' ] ) && $GLOBALS[ 'is_product_tease_in_row' ] );
 ?>
 <a
-  class="product-tease <?php if ( $is_product_tease_in_row ) echo 'product-tease-in-row'; ?>"
+  class="product-tease"
   href="<?php echo get_permalink(); ?>"
   title="<?php _e( 'Zobrazit produkt', 'shp-obchodiste' ); ?>"
 >
