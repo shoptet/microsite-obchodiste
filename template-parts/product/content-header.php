@@ -95,7 +95,7 @@
       <meta itemprop="image" content="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
       <a class="d-block colorbox" href="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
         <img
-          class="w-100"
+          class="product-image"
           src="<?php echo $thumbnail[ "sizes" ][ "product-thumb" ]; ?>"
           alt="<?php echo the_title(); ?>"
         >
