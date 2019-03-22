@@ -201,7 +201,7 @@ function get_cpt_product_args(): array
     'has_archive' => 'produkty',
     'show_in_menu' => true,
     'exclude_from_search' => false,
-    'capability_type' => 'special_offer',
+    'capability_type' => 'product',
     'map_meta_cap' => true,
     'hierarchical' => false,
     'rewrite' => false,

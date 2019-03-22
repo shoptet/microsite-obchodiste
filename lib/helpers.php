@@ -258,23 +258,23 @@ function separate_thousands( $num ): string
 }
 
 /**
- * Is special offer limit exceeded for current user
+ * Is number of posts exceeded for current user
  */
-function is_special_offer_limit_exceeded(): bool
+function is_number_of_posts_exceeded( $post_type ): bool
 {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
   $wp_query = new WP_Query( [
-    'post_type' => 'special_offer',
+    'post_type' => $post_type,
     'posts_per_page' => -1,
     'author' => $current_user->ID,
   ] );
 
   $options = get_fields( 'options' );
-  $special_offer_limit = $options[ 'special_offer_limit' ];
+  $post_type_limit = $options[ $post_type . '_limit' ];
   
-  return ( $wp_query->found_posts >= $special_offer_limit );
+  return ( $wp_query->found_posts >= $post_type_limit );
 }
 
 /**

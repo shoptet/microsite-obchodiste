@@ -55,7 +55,7 @@ add_action( 'wp_head', function() {
 } );
 
 /**
- * Add meta and open graph description to wholesaler detail page
+ * Add meta and open graph description to wholesaler and product detail page
  */
 add_action( 'wp_head', function() {
   global $post;
@@ -721,7 +721,7 @@ add_action( 'admin_head', function() {
 } );
 
 /**
- * Add admin notice if special offer limit exceeded
+ * Add admin notice if special offer or product limit exceeded
  */
 add_action( 'admin_notices', function() {
   global $current_user, $pagenow, $wp_query, $post;
@@ -729,34 +729,35 @@ add_action( 'admin_notices', function() {
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
-  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
 
-  if ( is_special_offer_limit_exceeded() ): ?>
+  $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+
+  $options = get_fields( 'options' );
+  $special_offer_limit = $options[ $post_type . '_limit' ];
+  if ( is_number_of_posts_exceeded( $post_type ) ): ?>
     <div class="notice notice-warning">
-      <p><?php _e( 'Dosáhli jste maximálního počtu akčních nabídek', 'shp-obchodiste' ); ?></p>
+      <p><?php printf( __( '<strong>Dosáhli jste maximálního počtu položek.</strong> Maximální počet položek je %d.', 'shp-obchodiste' ), $special_offer_limit ); ?></p>
     </div>
-  <?php
-  else:
-    $options = get_fields( 'options' );
-    $special_offer_limit = $options[ 'special_offer_limit' ];
-  ?>
+  <?php else: ?>
     <div class="notice notice-info">
-      <p><?php printf( __( 'Maximální počet nabídek je %d', 'shp-obchodiste' ), $special_offer_limit ); ?></p>
+      <p><?php printf( __( 'Maximální počet položek je %d', 'shp-obchodiste' ), $special_offer_limit ); ?></p>
     </div>
   <?php endif;
 } );
 
 /**
- * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
+ * Disable "Add new item" button and edit page if specil offer or product limit exceeded
  */
 add_action( 'admin_head', function() {
   global $current_user, $pagenow, $wp_query, $post;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
-  if ( ! is_special_offer_limit_exceeded() ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
-  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
+  $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+  if ( ! is_number_of_posts_exceeded( $post_type ) ) return;
   echo '
 <style>
   .page-title-action { display: none }
@@ -772,8 +773,10 @@ add_action( 'admin_head', function() {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
-  if ( ! is_special_offer_limit_exceeded() ) return;
-  if ( 'post-new.php' !== $pagenow || 'special_offer' !== $post->post_type ) return;
+  if ( 'post-new.php' !== $pagenow ) return;
+  $post_type = $post->post_type;
+  if ( ! is_number_of_posts_exceeded( $post_type ) ) return;
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
   echo '
 <style>
   #poststuff { display: none }
@@ -782,19 +785,22 @@ add_action( 'admin_head', function() {
 } );
 
 /**
- * Remove "Add new special offer" submenu item if specil offer limit exceeded
+ * Remove "Add new item" submenu item if post type limit exceeded
  */
 add_action( 'admin_head', function() {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  
+
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
-  if ( ! is_special_offer_limit_exceeded() ) return;
-  echo '
+
+  foreach ( [ 'special_offer', 'product' ] as $post_type ) {
+    if ( ! is_number_of_posts_exceeded( $post_type ) ) continue;
+    echo '
 <style>
-  #menu-posts-special_offer ul.wp-submenu li:nth-of-type(3) { display: none }
+  #menu-posts-' . $post_type . ' ul.wp-submenu li:nth-of-type(3) { display: none }
 </style>
-  ';
+    ';
+  }
 } );
 
 /**
