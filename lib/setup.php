@@ -583,14 +583,16 @@ add_action( 'edit_form_top', function( $post ) {
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
 
-  // Only new wholesaler or special offer post
-	if ( get_post_type( $post ) !== 'custom' && get_post_type( $post ) !== 'special_offer' ) return;
+  $post_type = get_post_type( $post );
+
+  // Only new wholesaler, special offer or product post
+  if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
 	if ( $old_status !== 'draft' || $new_status !== 'pending' ) return;
 
 	$options = get_fields( 'options' );
 
   // Check e-mail recipients
-	if ( ! isset($options[ 'pending_email_recipients' ] ) || ! is_array( $options[ 'pending_email_recipients' ] ) ) return;
+	if ( ! isset( $options[ 'pending_email_recipients' ] ) || ! is_array( $options[ 'pending_email_recipients' ] ) ) return;
 
   // Get recipients and wholesaler post id
 	$email_recipients = $options[ 'pending_email_recipients' ];
@@ -606,23 +608,30 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
 	$title = $post->post_title;
   $email_from = $options[ 'email_from' ];
   
-  // Set deferent option variable for diferent post type
+  // Set diferent option variables for diferent post type
   switch ( get_post_type( $post ) ) {
 
     case 'custom':
     $email_subject = $options[ 'pending_email_subject' ];
     $email_body = $options[ 'pending_email_body' ];
-    $to_replace = [ '%wholesaler_name%' => $title ]; // Replace e-mail body variables
+    $to_replace = [ '%wholesaler_name%' => $title ];
     break;
 
     case 'special_offer':
     $email_subject = $options[ 'pending_special_offer_email_subject' ];
     $email_body = $options[ 'pending_special_offer_email_body' ];
-    $to_replace = [ '%offer_name%' => $title ]; // Replace e-mail body variables
+    $to_replace = [ '%offer_name%' => $title ];
+    break;
+
+    case 'product':
+    $email_subject = $options[ 'pending_product_email_subject' ];
+    $email_body = $options[ 'pending_product_email_body' ];
+    $to_replace = [ '%product_name%' => $title ];
     break;
   }
-	
-  $email_body = strtr($email_body, $to_replace);
+  
+  // Replace e-mail body variables
+  $email_body = strtr( $email_body, $to_replace );
 
   // Send e-mail
 	wp_mail(
