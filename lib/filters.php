@@ -74,7 +74,9 @@ add_filter( 'add_meta_boxes', function() {
  global $current_user;
  wp_get_current_user(); // Make sure global $current_user is set, if not set it
  if ( user_can( $current_user, 'subscriber' ) ) {
-   remove_meta_box( 'wpseo_meta', 'custom', 'normal' ); // Remove Yoast meta box
+    // Remove Yoast meta box
+   remove_meta_box( 'wpseo_meta', 'custom', 'normal' );
+   remove_meta_box( 'wpseo_meta', 'product', 'normal' );
  }
 } );
 
