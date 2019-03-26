@@ -26,7 +26,7 @@ $(function() {
     var isValid = true;
     var value = '';
     var $this = null;
-    $contactForm.find('[name]').each(function() {
+    $contactForm.find('input[name], textarea[name]').each(function() {
       $this = $(this);
       value = $.trim($this.val());
       if (!value) {

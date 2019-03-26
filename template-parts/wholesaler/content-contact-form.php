@@ -29,6 +29,8 @@
 
     <input type="hidden" name="wholesaler_id" value="<?php the_ID(); ?>">
 
+    <div class="g-recaptcha mb-3" data-sitekey="<?php echo G_RECAPTCHA_SITE_KEY; ?>"></div>
+
     <p class="text-danger d-none" id="wholesalerContactFormError"></p>
 
     <p class="small">
