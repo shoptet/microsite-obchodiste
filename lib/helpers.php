@@ -124,18 +124,3 @@ function get_all_services(): array
 {
   return get_field_object( 'field_5b5ed686ddd58' )[ 'choices' ];
 }
-
-/**
- * Get client IP address
- */
-function get_client_ip(): string
-{
-  foreach ( [ 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' ] as $key) {
-    if ( ! array_key_exists($key, $_SERVER) ) continue;
-    foreach ( array_map( 'trim', explode( ',', $_SERVER[$key] ) ) as $ip ) {
-      if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) continue;
-      return $ip;
-    }
-  }
-  return '';
-}
