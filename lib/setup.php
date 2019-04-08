@@ -527,6 +527,22 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Set cron for increasing fake message number
+ */
+if ( ! wp_next_scheduled( 'increase_fake_message_number' ) ) {
+  wp_schedule_event( time(), 'hourly', 'increase_fake_message_number' );
+}
+add_action( 'increase_fake_message_number', function() {
+	$options = get_fields('options');
+  if ( ! isset( $options['fake_message_number'] ) || ! isset( $options['fake_message_max_increase_constant'] ) ) return;
+  $increase_constant = rand( 0, (int) $options['fake_message_max_increase_constant'] ); // Generate random number from 0 to user defined value
+  $new_fake_message_number = (int) $options['fake_message_number'] + $increase_constant;
+  update_field( 'fake_message_number', $new_fake_message_number, 'options' );
+});
+//do_action( 'increase_fake_message_number' );
+
+
+/**
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
