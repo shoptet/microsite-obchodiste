@@ -1,6 +1,5 @@
 $(function() {
 
-  var $heroForm = $('#heroForm');
   var $archiveForm = $('#archiveForm');
 
   var initOrderSelect = function () {
@@ -69,12 +68,6 @@ $(function() {
 
   $('#archiveForm input[type=checkbox]').on('change', function () {
     $archiveForm.submit();
-  });
-
-  $heroForm.on('submit', function (e) {
-    e.preventDefault();
-    url = createUrl($heroForm.serializeArray(), 'custom');
-    window.location.href = url;
   });
 
   // Refresh browser after state popped

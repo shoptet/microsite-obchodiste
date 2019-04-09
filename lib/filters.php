@@ -338,3 +338,11 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
   $args[ 'post_status' ] = 'publish';
   return $args;
 } );
+
+/**
+ * Prevent product query string showing in navbar search form
+ */
+add_filter( 'the_search_query', function ( $search ) {
+  if ( is_post_type_archive( 'product' ) ) return '';
+  return $search;
+} );
