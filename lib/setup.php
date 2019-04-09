@@ -95,7 +95,22 @@ add_action( 'wp_footer', function() {
   printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
   // wholesaler terms by id
   printf( 'window.wholesalerTerms = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
-  
+
+  // search form data by selected custom post type
+  $search_form_data = [
+    'custom' => [
+      'formAction' => get_post_type_archive_link( 'custom' ),
+      'searchInputPlaceholder' => __( 'Hledat velkoobchodní prodejce', 'shp-obchodiste' ),
+      'submitButtonText' => __( 'Hledejte velkoobchodní prodejce', 'shp-obchodiste' ),
+    ],
+    'product' => [
+      'formAction' => get_post_type_archive_link( 'product' ),
+      'searchInputPlaceholder' => __( 'Hledat produkt', 'shp-obchodiste' ),
+      'submitButtonText' => __( 'Hledejte produkt', 'shp-obchodiste' ),
+    ],
+  ];
+  printf( 'window.searchFormData = %s;', json_encode( $search_form_data  ) );
+
   // post type archive urls
   echo 'window.archiveUrl = [];';
   foreach ( get_post_types() as $post_type ) {
