@@ -49,10 +49,9 @@
     <div class="d-flex justify-content-between align-items-center">
       <div>
 
-        <?php if ( get_field( "price" ) || get_field( "minimal_order" ) ): ?>
+        <?php if ( $price = get_field( "price" ) ): ?>
         <dl class="dl-pair-inline mb-0" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
 
-          <?php if ( $price = get_field( "price" ) ): ?>
           <dt class="text-muted"><?php _e( 'Cena', 'shp-obchodiste' ); ?></dt>
           <dd>
             <meta itemprop="price" content="<?php echo $price; ?>">
@@ -60,15 +59,14 @@
             <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price ); ?></span>
             <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
           </dd>
-          <?php endif; ?>
 
-            <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
-            <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
-            <dd class="font-weight-bold">
-              <?php echo separate_thousands( $minimal_order ); ?>
-              <?php _e( 'ks', 'shp-obchodiste' ); ?>
-            </dd>
-            <?php endif; ?>
+          <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
+          <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
+          <dd class="font-weight-bold">
+            <?php echo separate_thousands( $minimal_order ); ?>
+            <?php _e( 'ks', 'shp-obchodiste' ); ?>
+          </dd>
+          <?php endif; ?>
 
         </dl>
         <?php else: ?>
