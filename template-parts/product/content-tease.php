@@ -45,17 +45,23 @@
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
 
+        <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>      
         <p class="mb-0">
           <span class="font-weight-bold fs-125"><?php echo separate_thousands( get_field( "price" ) ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 
-        <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>      
-        <p class="text-muted mb-0 small">
-          <?php _e( 'Min. objednávka', 'shp-obchodiste' ); ?>
-          <span>
-            <?php echo separate_thousands( $minimal_order ); ?>&nbsp;<?php _e( 'ks', 'shp-obchodiste' ); ?>
-          </span>
+          <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>      
+          <p class="text-muted mb-0 small">
+            <?php _e( 'Min. objednávka', 'shp-obchodiste' ); ?>
+            <span>
+              <?php echo separate_thousands( $minimal_order ); ?>&nbsp;<?php _e( 'ks', 'shp-obchodiste' ); ?>
+            </span>
+          </p>
+          <?php endif; ?>
+        <?php else: ?>
+        <p class="mb-0 font-weight-bold">
+          <?php _e( 'Cena na požádnání', 'shp-obchodiste' ); ?>
         </p>
         <?php endif; ?>
 
