@@ -62,15 +62,19 @@
           </dd>
           <?php endif; ?>
 
-          <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
-          <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
-          <dd class="font-weight-bold">
-            <?php echo separate_thousands( $minimal_order ); ?>
-            <?php _e( 'ks', 'shp-obchodiste' ); ?>
-          </dd>
-          <?php endif; ?>
+            <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>
+            <dt class="text-muted"><?php _e( 'Minimální objednávka', 'shp-obchodiste' ); ?></dt>
+            <dd class="font-weight-bold">
+              <?php echo separate_thousands( $minimal_order ); ?>
+              <?php _e( 'ks', 'shp-obchodiste' ); ?>
+            </dd>
+            <?php endif; ?>
 
         </dl>
+        <?php else: ?>
+        <p class="mb-0 fs-110 font-weight-bold">
+          <?php _e( 'Cena na požádání', 'shp-obchodiste' ); ?>
+        </p>
         <?php endif; ?>
 
       </div>
