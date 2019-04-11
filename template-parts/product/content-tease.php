@@ -45,9 +45,9 @@
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
 
-        <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>      
+        <?php if ( $price = get_field( "price" ) ): ?>      
         <p class="mb-0">
-          <span class="font-weight-bold fs-125"><?php echo separate_thousands( get_field( "price" ) ); ?></span>
+          <span class="font-weight-bold fs-125"><?php echo separate_thousands( $price ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 
