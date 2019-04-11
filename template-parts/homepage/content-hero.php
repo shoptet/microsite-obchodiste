@@ -4,22 +4,22 @@
       <?php _e( 'Velkoobchodní dodavatelé pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
     </h1>
 
-    <form action="<?php echo get_post_type_archive_link( 'custom' ); ?>" id="searchForm" role="search">
+    <form action="<?php echo get_post_type_archive_link( 'product' ); ?>" id="searchForm" role="search">
 
       <div class="hero-form">
 
         <div class="input-group">
           <div class="input-group-prepend">
             <select class="custom-select" name="searchFormPostTypeSelect" id="searchFormPostTypeSelect">
-              <option id="searchFormPostTypeSelectCustom" value="custom" selected>
-                <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
-              </option>
-              <option id="searchFormPostTypeSelectProduct" value="product">
+              <option id="searchFormPostTypeSelectProduct" value="product" selected>
                 <?php _e( 'Produkty', 'shp-obchodiste' ); ?>
+              </option>
+              <option id="searchFormPostTypeSelectCustom" value="custom">
+                <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
               </option>
             </select>
           </div>
-          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Hledejte velkoobchodní prodejce', 'shp-obchodiste' ); ?>" required>
+          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Hledat produkt', 'shp-obchodiste' ); ?>" required>
         </div>
 
         <div class="mt-2 d-sm-none">
@@ -41,7 +41,7 @@
 
       <div class="hero-form-action">
         <button type="submit" class="btn btn-primary btn-lg ws-normal">
-          <?php _e( 'Hledejte velkoobchodní prodejce', 'shp-obchodiste' ); ?>
+          <?php _e( 'Hledejte produkt', 'shp-obchodiste' ); ?>
         </button>
       </div>
 
