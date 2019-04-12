@@ -1,8 +1,9 @@
 <?php
   $is_product_tease_in_row = ( isset( $GLOBALS[ 'is_product_tease_in_row' ] ) && $GLOBALS[ 'is_product_tease_in_row' ] );
+  $is_product_in_carousel = ( isset( $GLOBALS[ 'is_product_in_carousel' ] ) && $GLOBALS[ 'is_product_in_carousel' ] );
 ?>
 <a
-  class="product-tease"
+  class="product-tease <?php if ( $is_product_in_carousel ) echo 'bg-white'; ?>"
   href="<?php echo get_permalink(); ?>"
   title="<?php _e( 'Zobrazit produkt', 'shp-obchodiste' ); ?>"
 >
@@ -37,17 +38,19 @@
 
       </div>
 
+      <?php if ( ! $is_product_in_carousel ): ?>
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 text-lg-center mt-lg-0'; ?> mt-2 fs-90 text-muted">
         <?php if ( $related_wholesaler = get_field( "related_wholesaler" ) ):?>
         <span class="<?php if ( $is_product_tease_in_row ) echo 'd-lg-none'; ?>">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo $related_wholesaler->post_title; ?></span>
         <?php endif; ?>
-      </div>
+        </div>
+      <?php endif; ?>
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
 
         <?php if ( $price = get_field( "price" ) ): ?>      
         <p class="mb-0">
-          <span class="font-weight-bold fs-125"><?php echo separate_thousands( $price ); ?></span>
+          <span class="font-weight-bold <?php if ( ! $is_product_in_carousel ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 
