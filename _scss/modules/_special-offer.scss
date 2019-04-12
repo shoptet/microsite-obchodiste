@@ -12,12 +12,8 @@
   display: block;
   position: relative;
   height: 100%;
-  padding: 1rem 0;
+  padding: 1rem;
   color: $body-color;
-
-  @include media-breakpoint-up(lg) {
-    padding: 1rem;
-  }
 
   @include hover-focus {
     color: $body-color;
