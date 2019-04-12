@@ -8,6 +8,12 @@
   .owl-stage {
     display: flex; // stretch child items
   }
+
+  .owl-item {
+    img {
+      width: auto;
+    }
+  }
 }
 
 .owl-carousel-bordered {
