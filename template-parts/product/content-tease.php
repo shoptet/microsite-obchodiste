@@ -61,7 +61,7 @@
           <?php endif; ?>
         <?php else: ?>
         <p class="mb-0 font-weight-bold">
-          <?php _e( 'Cena na požádnání', 'shp-obchodiste' ); ?>
+          <?php _e( 'Cena na požádání', 'shp-obchodiste' ); ?>
         </p>
         <?php endif; ?>
 
