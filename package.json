@@ -27,9 +27,14 @@
     "../scaffolding/vendor/bs/js/collapse.js",
     "../scaffolding/vendor/jquery.colorbox-min.js",
     "../scaffolding/shoptet/js/shoptet.js",
+    "node_modules/owl.carousel/dist/owl.carousel.min.js",
     "_js/wholesaler-location.js",
     "_js/wholesaler-message.js",
+    "_js/wholesaler-special-offer-contact.js",
     "_js/filters.js",
     "_js/main.js"
-  ]
+  ],
+  "dependencies": {
+    "owl.carousel": "^2.3.4"
+  }
 }

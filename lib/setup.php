@@ -6,6 +6,7 @@
 add_action( 'init', function() {
   register_post_type( 'custom', get_cpt_wholesaler_args() );
   register_taxonomy( 'customtaxonomy', 'custom', get_cpt_wholesaler_taxonomy_args() );
+  register_post_type( 'special_offer', get_cpt_special_offer_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
 } );
 
@@ -87,8 +88,12 @@ add_action( 'wp_footer', function() {
   printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
   // wholesaler terms by id
   printf( 'window.wholesalerTerms = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
-  // wholesaler terms by id
-  printf( 'window.wholesalerArchiveUrl = \'%s\';', get_post_type_archive_link( 'custom' ) );
+  
+  // post type archive urls
+  echo 'window.archiveUrl = [];';
+  foreach ( get_post_types() as $post_type ) {
+    printf( 'window.archiveUrl[\'%s\'] = \'%s\';', $post_type , get_post_type_archive_link( $post_type ) );
+  }
 
   // wholesaler location
   if ( is_singular( 'custom' ) && get_post_meta( get_queried_object_id(), 'location' ) ) {
@@ -97,6 +102,15 @@ add_action( 'wp_footer', function() {
   }
 
   echo '</script>';
+} );
+
+/**
+ * Make post title required
+ */
+add_action( 'admin_footer', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || ( 'custom' !== $post->post_type && 'special_offer' !== $post->post_type )  ) return;
+  echo '<script>document.getElementById("title").required = true;</script>';
 } );
 
 /**
@@ -146,7 +160,7 @@ add_action( 'admin_init', function() {
 } );
 
 /**
- * Show only own wholesaler post for subscriber
+ * Show only own wholesaler and special offer post for subscriber
  */
 add_action( 'pre_get_posts', function( $wp_query ) {
   global $current_user, $pagenow;
@@ -154,7 +168,7 @@ add_action( 'pre_get_posts', function( $wp_query ) {
 	// Not the correct screen, bail out
 	if( ! is_admin() || 'edit.php' !== $pagenow ) return;
 	// Not the correct post type, bail out
-  if( 'custom' !== $wp_query->query[ 'post_type' ] ) return;
+  if( 'custom' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $wp_query->query[ 'post_type' ] ) return;
   if ( user_can( $current_user, 'subscriber' ) )
     $wp_query->set( 'author', $current_user->ID );
 } );
@@ -284,6 +298,100 @@ add_action('pre_get_posts', function( $wp_query ) {
 } );
 
 /**
+ * Handle filtering and ordering special offer archive
+ */
+add_action('pre_get_posts', function( $wp_query ) {
+	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->get( 'post_type' ) !== 'special_offer' ) return;
+
+	$meta_query = $wp_query->get( 'meta_query' );
+
+	if ( $meta_query == '' ) {
+		$meta_query = [];
+	}
+
+	$wp_query->set( 'posts_per_page', 12 );
+
+	/**
+	 * Handle searching
+	 */
+
+	if( isset( $_GET[ 's' ] ) ) {
+		$wp_query->set( 's', $_GET[ 's' ] );
+	}
+
+	/**
+	 * Handle ordering queries
+	 */
+
+  if( isset($_GET[ 'orderby' ]) ) {
+		$query = explode( "_", $_GET[ 'orderby' ] );
+		
+    if ( $query[0] == 'title' ) {
+      $wp_query->set('orderby', 'title');
+			$wp_query->set('order', $query[1]);
+    } else if ( $query != ['date', 'desc'] ) {
+      // skip default ordering by post_date DESC
+      // e.g. '?orderby=date_asc'
+			$wp_query->set('orderby', 'meta_value_num');
+			$wp_query->set('meta_key', $query[0]);
+			$wp_query->set('order', $query[1]);
+    }
+    
+	}
+
+	/**
+	 * Handle filtering queries - filtered by wholesalers
+	 */
+  
+  // Filtered wholesalers arguments
+  $wp_query_wholesaler_args = [
+    'post_type' => 'custom',
+    'posts_per_page' => -1,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+  ];
+
+  // Get array meta query
+	// e.g. '?query[]=0&query[]=1...'
+	$get_array_meta_query = function($query) {
+		$result = [];
+		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
+			$result[] = [
+				'key' => $query,
+				'value' => $_GET[ $query ],
+				'compare'	=> 'IN',
+			];
+		}
+		return $result;
+	};
+
+  $wp_query_wholesaler_args[ 'meta_query' ] = [];
+  $wp_query_wholesaler_args[ 'meta_query' ][] = $get_array_meta_query( 'region' );
+
+  // Set taxonomy query
+  if( isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $wp_query_wholesaler_args[ 'tax_query' ] =  [[
+      'taxonomy' => 'customtaxonomy',
+      'field' => 'term_id',
+      'terms' => $_GET[ 'category' ],
+      'operator'	=> 'IN',
+    ]];
+  }
+
+  $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+
+  // Query for special offers by filtered wholesalers
+  $meta_query[] = [[
+    'key' => 'related_wholesaler',
+    'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
+    'compare'	=> 'IN',
+  ]];
+
+	$wp_query->set( 'meta_query', $meta_query );
+} );
+
+/**
  * Disable default searching
  */
 add_action( 'parse_query', function( $query ) {
@@ -401,12 +509,12 @@ add_action( 'save_post', function( $post_id ) {
 	// Not the correct post type, bail out
   if ( 'custom' !== get_post_type( $post_id ) ) return;
   $post_categories = [];
-  $post_categories[] = get_field( 'category' )->term_id;
-  if ( get_field( 'minor_category_1' ) ) {
-    $post_categories[] = get_field( 'minor_category_1' )->term_id;
+  $post_categories[] = get_field( 'category', $post_id )->term_id;
+  if ( get_field( 'minor_category_1', $post_id ) ) {
+    $post_categories[] = get_field( 'minor_category_1', $post_id )->term_id;
   }
-  if ( get_field( 'minor_category_2' ) ) {
-    $post_categories[] = get_field( 'minor_category_2' )->term_id;
+  if ( get_field( 'minor_category_2', $post_id ) ) {
+    $post_categories[] = get_field( 'minor_category_2', $post_id )->term_id;
   }
   wp_set_post_terms( $post_id, $post_categories, 'customtaxonomy' );
 } );
@@ -441,12 +549,13 @@ add_action( 'edit_form_top', function( $post ) {
 });
 
 /**
- * Send e-mail when new wholesaler is pending for review
+ * Send e-mail when new wholesaler or special offer is pending for review
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
 
-  // Only new wholesaler post
-	if ( get_post_type( $post ) !== 'custom' || $old_status !== 'draft' || $new_status !== 'pending' ) return;
+  // Only new wholesaler or special offer post
+	if ( get_post_type( $post ) !== 'custom' && get_post_type( $post ) !== 'special_offer' ) return;
+	if ( $old_status !== 'draft' || $new_status !== 'pending' ) return;
 
 	$options = get_fields( 'options' );
 
@@ -455,7 +564,6 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
 
   // Get recipients and wholesaler post id
 	$email_recipients = $options[ 'pending_email_recipients' ];
-	$wholesaler_id = $post->ID;
 
   // Collect recipient e-mails
 	$email_recipients_emails = [];
@@ -465,15 +573,25 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
 	}
 
   // Get wholesaler title and ACF options
-	$wholesaler_title = $post->post_title;
-	$email_from = $options[ 'email_from' ];
-	$email_subject = $options[ 'pending_email_subject' ];
-	$email_body = $options[ 'pending_email_body' ];
+	$title = $post->post_title;
+  $email_from = $options[ 'email_from' ];
+  
+  // Set deferent option variable for diferent post type
+  switch ( get_post_type( $post ) ) {
 
-  // Replace e-mail body variables
-	$to_replace = [
-		'%wholesaler_name%' => $wholesaler_title,
-  ];
+    case 'custom':
+    $email_subject = $options[ 'pending_email_subject' ];
+    $email_body = $options[ 'pending_email_body' ];
+    $to_replace = [ '%wholesaler_name%' => $title ]; // Replace e-mail body variables
+    break;
+
+    case 'special_offer':
+    $email_subject = $options[ 'pending_special_offer_email_subject' ];
+    $email_body = $options[ 'pending_special_offer_email_body' ];
+    $to_replace = [ '%offer_name%' => $title ]; // Replace e-mail body variables
+    break;
+  }
+	
   $email_body = strtr($email_body, $to_replace);
 
   // Send e-mail
@@ -541,6 +659,128 @@ add_action( 'increase_fake_message_number', function() {
 });
 //do_action( 'increase_fake_message_number' );
 
+/**
+ * Disable special offer single page
+ */
+add_action( 'template_redirect', function() {
+  global $wp_query;
+  if ( is_single() && 'special_offer' == $wp_query->query[ 'post_type' ] ) {
+    $wp_query->set_404();
+    status_header( 404 );
+  }
+} );
+
+/**
+ * Remove links to special offer single page in admin
+ */
+add_action( 'admin_head', function() {
+  global $post, $pagenow;
+  if ( ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && 'special_offer' === $post->post_type ) {
+    echo '
+<style>
+  #wp-admin-bar-view,
+  #preview-action,
+  #message a,
+  #titlediv div.inside {
+    display: none !important;
+  }
+</style>
+    ';
+  }
+} );
+
+/**
+ * Remove wp admin bar link to create new content
+ */
+add_action( 'admin_head', function() {
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+
+  echo '
+<style>
+  #wp-admin-bar-new-content { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Add admin notice if special offer limit exceeded
+ */
+add_action( 'admin_notices', function() {
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
+
+  if ( is_special_offer_limit_exceeded() ): ?>
+    <div class="notice notice-warning">
+      <p><?php _e( 'Dosáhli jste maximálního počtu akčních nabídek', 'shp-obchodiste' ); ?></p>
+    </div>
+  <?php
+  else:
+    $options = get_fields( 'options' );
+    $special_offer_limit = $options[ 'special_offer_limit' ];
+  ?>
+    <div class="notice notice-info">
+      <p><?php printf( __( 'Maximální počet nabídek je %d', 'shp-obchodiste' ), $special_offer_limit ); ?></p>
+    </div>
+  <?php endif;
+} );
+
+/**
+ * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $current_user, $pagenow, $wp_query, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( 'special_offer' !== $wp_query->query[ 'post_type' ] && 'special_offer' !== $post->post_type ) return;
+  echo '
+<style>
+  .page-title-action { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Disable "Add new special offer" button and special offer edit page if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $current_user, $pagenow, $post;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  if ( 'post-new.php' !== $pagenow || 'special_offer' !== $post->post_type ) return;
+  echo '
+<style>
+  #poststuff { display: none }
+</style>
+  ';
+} );
+
+/**
+ * Remove "Add new special offer" submenu item if specil offer limit exceeded
+ */
+add_action( 'admin_head', function() {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ( ! is_special_offer_limit_exceeded() ) return;
+  echo '
+<style>
+  #menu-posts-special_offer ul.wp-submenu li:nth-of-type(3) { display: none }
+</style>
+  ';
+} );
 
 /**
  * Enable custom part of header

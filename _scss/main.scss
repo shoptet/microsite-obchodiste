@@ -2,7 +2,7 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 
 @import "../../scaffolding/vendor/bs/scss/functions";
 @import "../../scaffolding/shoptet/variables-bootstrap";
-@import "modules/variables-bootstrap";
+@import "variables-bootstrap";
 @import "../../scaffolding/vendor/bs/scss/variables";
 @import "../../scaffolding/vendor/bs/scss/mixins";
 @import "../../scaffolding/vendor/bs/scss/utilities";
@@ -20,7 +20,9 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import '../../scaffolding/vendor/fa/scss/fa-brands';
 @import '../../scaffolding/vendor/fa/scss/fa-regular';
 
-@import "modules/variables";
+@import "variables";
+@import "mixins";
+
 @import "modules/wholesaler";
 @import "modules/badge";
 @import "modules/list";
@@ -44,3 +46,6 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/section";
 @import "modules/post-banner";
 @import "modules/button";
+@import "modules/special-offer";
+@import "modules/owl-carousel";
+@import "modules/background";

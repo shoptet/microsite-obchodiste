@@ -15,7 +15,7 @@
 
         get_template_part( 'src/template-parts/wholesaler/content', 'related' );
 
-        endwhile; // End of the loop.
+        endwhile; wp_reset_query(); // End of the loop.
     ?>
 
     </div>

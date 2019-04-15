@@ -1,0 +1,76 @@
+.special-offer-detail {
+  padding: 1.3rem 0;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+
+  & + .special-offer-detail {
+    border-top: 0;
+  }
+}
+
+.special-offer-tease {
+  display: block;
+  position: relative;
+  height: 100%;
+  padding: 1rem;
+  color: $body-color;
+
+  @include hover-focus {
+    color: $body-color;
+    text-decoration: none;
+    background-color: $primary-light;
+  }
+}
+
+.special-offer-tease-secondary {
+  background-color: $white;
+}
+
+.special-offer-image {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  background-color: $white;
+  border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(lg) {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  img {
+    @include object-fit-containt;
+  }
+}
+
+.special-offer-tease-image {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  background-color: $white;
+  border: 1px solid $gray-300;
+
+  @include media-breakpoint-up(lg) {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  img {
+    @include object-fit-containt;
+  }
+}
+
+.special-offer-image-empty {
+  background-color: $gray-200;
+  border-color: $gray-200;
+}
+
+.special-offer-tease-title {
+  font-weight: $font-weight-normal;
+  color: $primary;
+}
+
+.special-offer-tease-description {
+  font-weight: 300;
+  color: $body-color;
+}

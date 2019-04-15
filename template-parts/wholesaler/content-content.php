@@ -16,3 +16,5 @@
 
   </div>
 </div>
+
+<?php get_template_part( 'src/template-parts/wholesaler/content', 'special-offers' ); ?>

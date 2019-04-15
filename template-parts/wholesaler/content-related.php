@@ -16,7 +16,7 @@ $the_query = new WP_Query( [
   ] ],
 ] );
 ?>
-<?php if ( $the_query->post_count ): ?>
+<?php if ( $the_query->have_posts() ): ?>
   <div class="pt-5 pb-4">
     <h2 class="text-center h3 mb-1">
       <?php _e( 'Nezaujal vás tento dodavatel?', 'shp-obchodiste' ); ?>
@@ -29,7 +29,7 @@ $the_query = new WP_Query( [
         <div class="col-12 col-lg-6">
           <?php get_template_part( 'src/template-parts/wholesaler/content', 'tease' ); ?>
         </div>
-      <?php endwhile; ?>
+      <?php endwhile; wp_reset_query(); ?>
     </div>
   </div>
 <?php endif ?>
