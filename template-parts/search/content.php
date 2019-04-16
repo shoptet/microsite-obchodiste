@@ -2,7 +2,7 @@
 $isWholesalerDefault = is_singular( 'custom' ) || is_post_type_archive( 'custom' ) || is_tax( 'customtaxonomy' );
 ?>
 
-<form action="<?php echo get_post_type_archive_link( $isWholesalerDefault ? 'custom' : 'product' ); ?>" id="searchFormHeader" role="search">
+<form class="mr-lg-2" action="<?php echo get_post_type_archive_link( $isWholesalerDefault ? 'custom' : 'product' ); ?>" id="searchFormHeader" role="search">
 
   <div class="input-group">
     <div class="input-group-prepend">
