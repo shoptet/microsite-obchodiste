@@ -825,6 +825,19 @@ add_action( 'admin_head', function() {
   }
 } );
 
+add_filter('wp_dropdown_users', function () {
+  global $post;
+  $users = get_users();
+  $output = '<select id="post_author_override" name="post_author_override">';
+  foreach( $users as $user ) {
+    $sel = ( $post->post_author == $user->ID ) ? 'selected': '';
+    $output .= '<option value="' . $user->ID . '"' . $sel . '>' . $user->user_email . '</option>';
+  }
+  $output .= '</select>';
+
+  return $output;
+});
+
 /**
  * Enable custom part of header
  */
