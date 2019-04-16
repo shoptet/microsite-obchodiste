@@ -20,6 +20,10 @@ switch ( $post_type ) {
 
 <form class="wholesaler-archive mt-2" method="get" id="archiveForm" data-post-type="<?php echo $post_type; ?>">
 
+  <?php if ( get_search_query() ): ?>
+    <input type="hidden" name="s" value="<?php echo get_search_query(); ?>">
+  <?php endif; ?>
+
   <div class="row">
     <div class="col-12 col-md-4 col-lg-3">
 
