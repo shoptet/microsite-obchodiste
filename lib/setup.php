@@ -830,3 +830,4 @@ add_action( 'admin_head', function() {
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( "CUSTOM_SEARCH_ACTION", TRUE );
+define( "CUSTOM_SEARCH_HEADER", TRUE );
