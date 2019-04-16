@@ -16,15 +16,23 @@
 
         <?php if ( have_posts() ): ?>
 
-        <h1 class="h2 mb-3">
-          <?php
-          if ( is_tax() ) {
-            $taxonomy = get_queried_object();
-            echo $taxonomy->name . ' – ';
-          }
-          _e( 'Velkoobchody', 'shp-obchodiste' );
-          ?>
-        </h1>
+        <div class="d-md-flex justify-content-between mb-3">
+          <h1 class="h2 mb-3 mb-md-0">
+            <?php
+            if ( is_tax() ) {
+              $taxonomy = get_queried_object();
+              echo $taxonomy->name . ' – ';
+            }
+            _e( 'Velkoobchody', 'shp-obchodiste' );
+            ?>
+          </h1>
+          <div class="ml-md-3">
+            <a href="<?php echo admin_url( 'post-new.php?post_type=custom' ); ?>" class="btn btn-orange btn-add">
+              <i class="fas fa-plus-circle"></i>
+              <?php _e( 'Přidat velkoobchod', 'shp-obchodiste' ); ?>
+            </a>
+          </div>
+        </div>
 
         <?php get_template_part( 'template-parts/utils/content', 'breadcrumb' ); ?>
 
