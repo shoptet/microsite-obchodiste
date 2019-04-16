@@ -24,15 +24,15 @@
 
         <div class="mt-2 d-sm-none">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioCustom" value="custom" checked>
-            <label class="form-check-label" for="searchFormPostTypeRadioCustom">
-              <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
+            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioProduct" value="product" checked>
+            <label class="form-check-label" for="searchFormPostTypeRadioProduct">
+              <?php _e( 'Produkty', 'shp-obchodiste' ); ?>
             </label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioProduct" value="product">
-            <label class="form-check-label" for="searchFormPostTypeRadioProduct">
-              <?php _e( 'Produkty', 'shp-obchodiste' ); ?>
+            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioCustom" value="custom">
+            <label class="form-check-label" for="searchFormPostTypeRadioCustom">
+              <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
             </label>
           </div>
         </div>
