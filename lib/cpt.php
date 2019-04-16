@@ -40,7 +40,7 @@ function get_cpt_wholesaler_args(): array
     'rewrite' => [ 'slug' => 'velkoobchod', 'with_front' => true ],
     'query_var' => true,
     'menu_icon' => 'dashicons-store',
-    'supports' => [ 'title', 'thumbnail' ],
+    'supports' => [ 'title', 'thumbnail', 'author' ],
   ];
   return $args;
 }
@@ -208,7 +208,7 @@ function get_cpt_product_args(): array
     'query_var' => true,
     'rewrite' => [ 'slug' => 'produkt', 'with_front' => true ],
     'menu_icon' => 'dashicons-cart',
-    'supports' => [ 'title', 'thumbnail' ],
+    'supports' => [ 'title', 'thumbnail', 'author' ],
   ];
   return $args;
 }
