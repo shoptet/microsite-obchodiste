@@ -41,7 +41,7 @@
 
       <div class="hero-form-action">
         <button type="submit" class="btn btn-primary btn-lg ws-normal">
-          <?php _e( 'Hledejte produkt', 'shp-obchodiste' ); ?>
+          <?php _e( 'Hledat produkt', 'shp-obchodiste' ); ?>
         </button>
       </div>
 
