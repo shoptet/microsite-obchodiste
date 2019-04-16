@@ -831,7 +831,7 @@ add_filter('wp_dropdown_users', function () {
   $output = '<select id="post_author_override" name="post_author_override">';
   foreach( $users as $user ) {
     $sel = ( $post->post_author == $user->ID ) ? 'selected': '';
-    $output .= '<option value="' . $user->ID . '"' . $sel . '>' . $user->user_email . '</option>';
+    $output .= '<option value="' . $user->ID . '"' . $sel . '>' . $user->user_name . '</option>';
   }
   $output .= '</select>';
 

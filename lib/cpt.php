@@ -162,7 +162,7 @@ function get_cpt_special_offer_args(): array
     'query_var' => true,
     'rewrite' => [ 'slug' => 'akcni-nabidka', 'with_front' => true ],
     'menu_icon' => 'dashicons-megaphone',
-    'supports' => [ 'title' ],
+    'supports' => [ 'title', 'author' ],
   ];
   return $args;
 }
