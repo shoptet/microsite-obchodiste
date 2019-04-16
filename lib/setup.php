@@ -842,13 +842,11 @@ add_action( 'admin_head', function() {
   }
 } );
 
-add_filter('wp_dropdown_users', function () {
-  global $post;
+add_filter('wp_dropdown_users', function ($output) {
   $users = get_users();
-  $output = '<select id="post_author_override" name="post_author_override">';
+  $output = '<select name="post_author">';
   foreach( $users as $user ) {
-    $sel = ( $post->post_author == $user->ID ) ? 'selected': '';
-    $output .= '<option value="' . $user->ID . '"' . $sel . '>' . $user->user_name . '</option>';
+    $output .= '<option value="' . $user->ID . '">' . ( $user->display_name ? $user->display_name : $user->user_login ) . '</option>';
   }
   $output .= '</select>';
 
