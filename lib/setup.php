@@ -82,7 +82,7 @@ add_action( 'wp_enqueue_scripts', function() {
  * Add reCAPTCHA script to wholesaler detail page
  */
 add_action( 'wp_enqueue_scripts', function() {
-  if ( ! is_singular( 'custom' ) ) return;
+  if ( ! is_singular( 'custom' ) && ! is_singular( 'product' )  ) return;
   wp_enqueue_script( 'recaptcha', '//www.google.com/recaptcha/api.js' );
 } );
 
