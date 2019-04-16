@@ -1,6 +1,6 @@
 <?php
 $the_query = new WP_Query( [
-  'post_type' => 'special_offer',
+  'post_type' => 'product',
   'posts_per_page' => 10,
   'post_status' => 'publish',
 ] );
@@ -14,19 +14,19 @@ $the_query = new WP_Query( [
       </h2>
 
       <div class="owl-carousel owl-carousel-bordered">
-        <?php $GLOBALS[ 'is_special_offer_tease_secondary' ] = true; ?>
+        <?php $GLOBALS[ 'is_product_in_carousel' ] = true; ?>
         <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
-          <?php get_template_part( 'src/template-parts/special_offer/content', 'tease' ); ?>
+          <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
         <?php endwhile; wp_reset_query(); ?>
-        <?php unset( $GLOBALS[ 'is_special_offer_tease_secondary' ] ); ?>
+        <?php unset( $GLOBALS[ 'is_product_in_carousel' ] ); ?>
       </div>
 
       <p class="text-center mt-4 mb-0">
         <a
-          href="<?php echo get_post_type_archive_link( 'special_offer' ); ?>"
+          href="<?php echo get_post_type_archive_link( 'product' ); ?>"
           class="btn btn-primary btn-lg ws-normal"
         >
-          <?php _e( 'Zobrazit všechny akční nabídky', 'shp-obchodiste' ); ?>
+          <?php _e( 'Zobrazit všechny produkty', 'shp-obchodiste' ); ?>
         </a>
       </p>
 

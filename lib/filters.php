@@ -57,7 +57,7 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
 }, 10, 2 );
 
 /**
- * Hide redundant meta boxes in wholesaler edit page
+ * Hide redundant meta boxes in wholesaler and product edit page
  */
 add_filter( 'add_meta_boxes', function() {
    // Hide category meta box
@@ -65,6 +65,7 @@ add_filter( 'add_meta_boxes', function() {
   remove_meta_box( 'customtaxonomydiv', 'custom', 'side' ); // if taxonomy is hierarchical
    // Hide featured image metabox
   remove_meta_box( 'postimagediv', 'custom', 'side' );
+  remove_meta_box( 'postimagediv', 'product', 'side' );
 } );
 
 /**
@@ -74,7 +75,9 @@ add_filter( 'add_meta_boxes', function() {
  global $current_user;
  wp_get_current_user(); // Make sure global $current_user is set, if not set it
  if ( user_can( $current_user, 'subscriber' ) ) {
-   remove_meta_box( 'wpseo_meta', 'custom', 'normal' ); // Remove Yoast meta box
+    // Remove Yoast meta box
+   remove_meta_box( 'wpseo_meta', 'custom', 'normal' );
+   remove_meta_box( 'wpseo_meta', 'product', 'normal' );
  }
 } );
 
@@ -95,13 +98,38 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
 }, 10, 3 );
 
 /**
+ * Set product thumbnail as featured image
+ */
+add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $field ) {
+  // Not the correct post type, bail out
+  if ( 'product' !== get_post_type( $post_id ) ) {
+    return $value;
+  }
+  // Skip empty value
+  if ( $value != ''  ) {
+    // Add the value which is the image ID to the _thumbnail_id meta data for the current post
+    add_post_meta( $post_id, '_thumbnail_id', $value );
+  }
+  return $value;
+}, 10, 3 );
+
+/**
  * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
-  if ( ! is_singular( 'custom' ) ) return;
-  array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
-  $term_crumb = [ 'term' => get_field( 'category' )];
-  array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
+  if ( is_singular( 'custom' ) ) {
+    array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
+    $term_crumb = [ 'term' => get_field( 'category' ) ];
+    array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
+  } else if ( is_singular( 'product' ) ) {
+    array_splice( $crumbs, 1, 1 ); // Remove product archive link from breadcrumbs
+    if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
+      $post_crumb = [ 'id' => $related_wholesaler->ID ];
+      array_splice( $crumbs, 1, 0, [ $post_crumb ] ); // Add related wholesaler link to breadcrumbs
+      $term_crumb = [ 'term' => get_field( 'category', $related_wholesaler->ID ) ];
+      array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add related wholesaler main category link to breadcrumbs
+    }
+  }
   return $crumbs;
 } );
 
@@ -145,7 +173,7 @@ add_filter( 'posts_distinct', function( $where ) {
 });
 
 /**
- * Remove wholesaler and special offer list views for subscriber
+ * Remove wholesaler, special offer and product list views for subscriber
  */
 function remove_list_view_for_subscribers($views) {
   global $current_user;
@@ -155,6 +183,7 @@ function remove_list_view_for_subscribers($views) {
 }
 add_filter( 'views_edit-custom', 'remove_list_view_for_subscribers');
 add_filter( 'views_edit-special_offer', 'remove_list_view_for_subscribers');
+add_filter( 'views_edit-product', 'remove_list_view_for_subscribers');
 
 /**
  * Update login header
@@ -275,7 +304,7 @@ add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
 }, 10, 2);
 
 /**
- * Remove wholesaler and special offer quick edit action for subscribers
+ * Remove wholesaler, special offer and product quick edit action for subscribers
  */
 add_filter( 'post_row_actions', function( $actions, $post ) {
   global $current_user;
@@ -288,7 +317,7 @@ add_filter( 'post_row_actions', function( $actions, $post ) {
 }, 10, 2 );
 
 /**
- * Remove wholesaler and special offer bulk actions for subscribers
+ * Remove wholesaler, special offer and product bulk actions for subscribers
  */
 function remove_bulk_actions_for_subscribers() {
   global $current_user;
@@ -297,6 +326,7 @@ function remove_bulk_actions_for_subscribers() {
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
+add_filter( 'bulk_actions-edit-product', 'remove_bulk_actions_for_subscribers' );
 
 /**
  * Show only publish owner wholesalers in special offer edit page

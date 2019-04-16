@@ -12,7 +12,7 @@
 }
 
 .hero-form {
-  max-width: 50rem;
+  max-width: 45rem;
   margin: 0 auto;
   padding: 3rem 2rem;
   background-color: $white;
@@ -21,6 +21,18 @@
   @include media-breakpoint-only(xs) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+
+    .input-group {
+
+      .input-group-prepend {
+        display: none;
+      }
+      
+      .form-control {
+        border-radius: $border-radius;
+      }
+    }
+
   }
 }
 

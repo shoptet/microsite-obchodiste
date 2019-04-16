@@ -15,7 +15,11 @@
   <?php endif; ?>
 
   <address itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-    <?php if ( get_field( "in" ) ): ?>
+    <?php if ( ! is_singular( 'custom' ) ): ?>
+      <a href="<?php the_permalink(); ?>">
+        <?php the_title(); ?>
+      </a>
+    <?php elseif ( get_field( "in" ) ): ?>
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
         <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank">
           <?php the_title(); ?>
