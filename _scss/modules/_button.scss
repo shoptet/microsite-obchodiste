@@ -2,3 +2,8 @@
   font-weight: 600;
   text-transform: uppercase;
 }
+
+.btn-input {
+  @include button-variant($input-bg, $input-border-color, darken($input-bg, 7.5%), $input-border-color);
+  color: $gray-600;
+}
