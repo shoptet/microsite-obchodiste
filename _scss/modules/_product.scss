@@ -54,15 +54,15 @@
   }
 
   img {
-    @include object-fit-containt;
+    @include object-fit-containt(97.5%);
   }
 }
 
 .product-tease-image-placeholder {
-  width: 4.5rem;
+  width: 4.75rem;
 
   @include media-breakpoint-up(xl) {
-    width: 5.5rem;
+    width: 6.1rem;
   }
 }
 

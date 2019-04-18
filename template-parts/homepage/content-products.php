@@ -3,6 +3,7 @@ $the_query = new WP_Query( [
   'post_type' => 'product',
   'posts_per_page' => 18,
   'post_status' => 'publish',
+  'orderby' => 'rand',
 ] );
 ?>
 <?php if ( $the_query->have_posts() ) : ?>
@@ -30,7 +31,7 @@ $the_query = new WP_Query( [
           href="<?php echo get_post_type_archive_link( 'product' ); ?>"
           class="btn btn-primary btn-lg ws-normal"
         >
-          <?php _e( 'Zobrazit všechny produkty', 'shp-obchodiste' ); ?>
+          <?php _e( 'Zobrazit nabídky produktů od velkoobchodů', 'shp-obchodiste' ); ?>
         </a>
       </p>
 
