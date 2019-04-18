@@ -62,6 +62,16 @@
           <?php endwhile; ?>
         </div>
 
+        <div class="text-muted text-right mt-3">
+          <?php
+          printf(
+            __( 'Celkem %d z %d velkoobchodů', 'shp-obchodiste' ),
+            $wp_query->post_count,
+            $wp_query->found_posts
+          );
+          ?>
+        </div>
+
         <div class="mt-4">
           <?php
           if ( is_tax() ) {
