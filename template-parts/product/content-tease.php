@@ -9,7 +9,7 @@
 >
   <div class="d-flex">
 
-    <div class="flex-shrink-0 mr-3">
+    <div class="flex-shrink-0">
       <?php if ( $thumbnail = get_field( "thumbnail" ) ): ?>
       <div class="product-tease-image d-block">
         <img
