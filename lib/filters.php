@@ -145,6 +145,15 @@ add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
 } );
 
 /**
+ * Rename pagination slug
+ */
+add_filter('init', function () {
+  global $wp_rewrite;
+  $wp_rewrite->pagination_base = 'strana';
+  $wp_rewrite->flush_rules();
+}, 0);
+
+/**
  * Join posts and postmeta tables for searching
  */
 add_filter( 'posts_join', function( $join ) {
