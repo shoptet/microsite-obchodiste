@@ -46,7 +46,7 @@
     <p><?php echo $short_description; ?></p>
     <?php endif; ?>
 
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="product-price-block d-flex justify-content-between align-items-center">
       <div>
 
         <?php if ( $price = get_field( "price" ) ): ?>
