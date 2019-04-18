@@ -1,4 +1,5 @@
 <?php
+  $hide_wholesaler_in_product_list = ( isset( $GLOBALS[ 'hide_wholesaler_in_product_list' ] ) && $GLOBALS[ 'hide_wholesaler_in_product_list' ] );
   $is_product_tease_in_row = ( isset( $GLOBALS[ 'is_product_tease_in_row' ] ) && $GLOBALS[ 'is_product_tease_in_row' ] );
   $is_product_on_homepage = ( isset( $GLOBALS[ 'is_product_on_homepage' ] ) && $GLOBALS[ 'is_product_on_homepage' ] );
 ?>
@@ -24,7 +25,7 @@
 
     <div class="<?php if ( $is_product_tease_in_row ) echo 'row no-gutters flex-grow-1 align-items-center'; ?>">
 
-      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-6'; ?>">
+      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-8' : 'col-lg-6' ) ; ?>">
 
         <h3 class="product-tease-title h6 mb-0">
           <?php the_title(); ?>
@@ -38,7 +39,7 @@
 
       </div>
 
-      <?php if ( $is_product_tease_in_row ): ?>
+      <?php if ( $is_product_tease_in_row && ! $hide_wholesaler_in_product_list ): ?>
       <div class="col-12 col-lg-3 pl-lg-1 pl-xl-2 text-lg-center mt-lg-0 mt-2 fs-90 text-muted">
         <?php if ( $related_wholesaler = get_field( "related_wholesaler" ) ):?>
         <span class="d-lg-none">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo $related_wholesaler->post_title; ?></span>
@@ -46,7 +47,7 @@
         </div>
       <?php endif; ?>
 
-      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
+      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-4' : 'col-lg-3' ) . ' pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
 
         <?php if ( $price = get_field( "price" ) ): ?>      
         <p class="mb-0">
