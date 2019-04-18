@@ -4,9 +4,9 @@ $(function() {
   var getContactText = function (itemType, itemTitle) {
     var contactText = '';
     if ( itemType === 'special-offer') {
-      contactText = 'Dobrý den, mám zájem o Vaši akční nabídku „' + itemTitle + '“. Děkuji.';
+      contactText = 'Dobrý den,\n\nmám zájem o Vaši akční nabídku „' + itemTitle + '“.\n\nDěkuji.';
     } else if ( itemType === 'product' ) {
-      contactText = 'Dobrý den, mám zájem o Váš produkt „' + itemTitle + '“. Děkuji.';
+      contactText = 'Dobrý den,\n\nmám zájem o Váš produkt „' + itemTitle + '“.\n\nMohli bychom Vás poprosit o bližší informace o odběru tohoto produktu a případné spolupráci?\n\nDěkuji.';
     }
     return contactText;
   };
