@@ -7,18 +7,28 @@
   margin: 0 auto;
   color: $white;
   text-align: center;
-  max-width: 32rem;
+  max-width: 35rem;
   font-weight: 200;
 }
 
 .hero-form {
-  max-width: 45rem;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 3rem 2rem;
   background-color: $white;
   border-radius: $border-radius;
 
+  @include media-breakpoint-up(sm) {
+    .input-group {
+      .custom-select, .form-control {
+        height: 3rem;
+        font-size: 110%;
+      }
+    }
+  }
+
   @include media-breakpoint-only(xs) {
+    padding: 2rem 1rem;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 

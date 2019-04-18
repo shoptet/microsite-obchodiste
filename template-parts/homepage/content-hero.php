@@ -1,7 +1,7 @@
 <div class="hero">
   <div class="container">
     <h1 class="hero-title mb-5">
-      <?php _e( 'Velkoobchodní dodavatelé pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
+      <?php _e( 'Produkty od velkoobchodů pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
     </h1>
 
     <form action="<?php echo get_post_type_archive_link( 'product' ); ?>" id="searchForm" role="search">
@@ -19,7 +19,7 @@
               </option>
             </select>
           </div>
-          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Hledat produkt', 'shp-obchodiste' ); ?>" required>
+          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Jaký produkt byste chtěli prodávat?', 'shp-obchodiste' ); ?>" required>
         </div>
 
         <div class="mt-2 d-sm-none">

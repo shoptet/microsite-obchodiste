@@ -100,12 +100,12 @@ add_action( 'wp_footer', function() {
   $search_form_data = [
     'custom' => [
       'formAction' => get_post_type_archive_link( 'custom' ),
-      'searchInputPlaceholder' => __( 'Hledat velkoobchodní prodejce', 'shp-obchodiste' ),
+      'searchInputPlaceholder' => __( 'Jakého velkoobchodního prodejce hledáte?', 'shp-obchodiste' ),
       'submitButtonText' => __( 'Hledat velkoobchodní prodejce', 'shp-obchodiste' ),
     ],
     'product' => [
       'formAction' => get_post_type_archive_link( 'product' ),
-      'searchInputPlaceholder' => __( 'Hledat produkt', 'shp-obchodiste' ),
+      'searchInputPlaceholder' => __( 'Jaký produkt byste chtěli prodávat?', 'shp-obchodiste' ),
       'submitButtonText' => __( 'Hledat produkt', 'shp-obchodiste' ),
     ],
   ];
