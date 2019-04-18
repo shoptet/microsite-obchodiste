@@ -37,7 +37,14 @@ switch ( $post_type ) {
         <?php if ( have_posts() ): ?>
 
         <div class="d-md-flex justify-content-between mb-3">
-          <h1 class="h2 mb-3 mb-md-0"><?php echo $archive_title; ?></h1>
+          <h1 class="h2 mb-3 mb-md-0">
+            <?php
+            echo $archive_title;
+            if (is_paged()) {
+              printf( __( ', strana %d', 'shp-obchodiste' ), get_query_var('paged'));
+            }
+            ?>
+          </h1>
           <div class="ml-md-3">
             <a href="<?php echo admin_url( 'post-new.php?post_type=' . $post_type ); ?>" class="btn btn-orange btn-add">
               <i class="fas fa-plus-circle"></i>

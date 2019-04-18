@@ -24,6 +24,9 @@
               echo $taxonomy->name . ' – ';
             }
             _e( 'Velkoobchody', 'shp-obchodiste' );
+            if (is_paged()) {
+              printf( __( ', strana %d', 'shp-obchodiste' ), get_query_var('paged'));
+            }
             ?>
           </h1>
           <div class="ml-md-3">
