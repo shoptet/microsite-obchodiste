@@ -16,7 +16,7 @@ $isWholesalerDefault = is_singular( 'custom' ) || is_post_type_archive( 'custom'
           </option>
         </select>
       </div>
-      <input type="text" class="form-control px-2" name="s" value="<?php the_search_query(); ?>" placeholder="<?php _e( 'Hledat...', 'shp-obchodiste' ); ?>" required>
+      <input type="text" class="form-control px-2" name="s" value="<?php the_search_query(); ?>" placeholder="<?php echo ( $isWholesalerDefault ? 'Jakého velkoobchodního prodejce hledáte' : 'Jaký produkt byste chtěli prodávat?' ); ?>" required>
       <div class="input-group-append">
         <button type="submit" class="btn btn-input px-2 border-left-0" aria-label="<?php _e( 'Vyhledat', 'shp-obchodiste' ); ?>">
           <i class="fas fa-search fs-90"></i>
