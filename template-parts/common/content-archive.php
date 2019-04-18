@@ -75,6 +75,16 @@ switch ( $post_type ) {
         </div>
         <?php endif; ?>
 
+        <div class="text-muted text-right mt-3">
+          <?php
+          printf(
+            __( 'Celkem %d z %d', 'shp-obchodiste' ),
+            $wp_query->post_count,
+            $wp_query->found_posts
+          );
+          ?>
+        </div>
+
         <div class="mt-4">
           <?php echo $archive_description; ?>
 
