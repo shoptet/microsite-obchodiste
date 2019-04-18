@@ -28,10 +28,18 @@ Disallow: /*s=*
 add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   if( $args->menu_id !== 'shp_navigation' ) return $items;
 
+  $products_item = '
+    <li class="active shp_menu-item">
+      <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'product' ) . '">
+      ' . __( 'Produkty', 'shp-obchodiste' ) . '
+      </a>
+    </li>
+  ';
+
   $taxonomy_items = '
     <li class="shp_menu-item has-dropdown">
       <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
-      ' . __( 'Kategorie', 'shp-obchodiste' ) . '
+      ' . __( 'Velkoobchody', 'shp-obchodiste' ) . '
       </a>
       <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
       <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
@@ -53,7 +61,7 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   }
 
   $taxonomy_items .= '</ul></li>';
-  return $taxonomy_items . $items;
+  return $products_item . $taxonomy_items . $items;
 }, 10, 2 );
 
 /**
