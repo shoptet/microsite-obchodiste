@@ -149,7 +149,7 @@ add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
  */
 add_filter('init', function () {
   global $wp_rewrite;
-  $wp_rewrite->pagination_base = 'strana';
+  $wp_rewrite->pagination_base = __( 'strana', 'shp-obchodiste' );
   $wp_rewrite->flush_rules();
 }, 0);
 
