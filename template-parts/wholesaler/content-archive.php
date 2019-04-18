@@ -38,7 +38,7 @@
 
         <?php get_template_part( 'src/template-parts/wholesaler/content', 'archive-sort' ); ?>
 
-        <div class="row row-bordered no-gutters">
+        <div class="row row-bordered row-bordered-2-columns no-gutters">
           <?php $loop_index = 0; ?>
           <?php while ( have_posts() ) : the_post(); ?>
             <div class="col-12 col-lg-6">
@@ -54,7 +54,7 @@
                   <?php get_template_part( 'src/template-parts/post/content', 'banner' ); ?>
                 </div>
               </div>
-              <div class="row row-bordered no-gutters">
+              <div class="row row-bordered row-bordered-2-columns no-gutters">
             <?php endif; ?>
 
             <?php $loop_index++; ?>

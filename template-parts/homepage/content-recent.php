@@ -12,7 +12,7 @@ $the_query = new WP_Query( [
       <?php _e( 'Noví velkoobchodní prodejci', 'shp-obchodiste' ); ?>
     </h2>
 
-    <div class="row row-bordered no-gutters">
+    <div class="row row-bordered row-bordered-2-columns no-gutters">
       <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
         <div class="col-12 col-lg-6">
 

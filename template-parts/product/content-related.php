@@ -23,7 +23,7 @@ $the_query = new WP_Query( [
       );
       ?>
     </h2>
-    <div class="row row-bordered no-gutters">
+    <div class="row row-bordered row-bordered-2-columns no-gutters">
       <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
         <div class="col-12 col-lg-6">
           <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>

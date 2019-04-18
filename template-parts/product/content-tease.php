@@ -9,7 +9,7 @@
 >
   <div class="d-flex">
 
-    <div class="flex-shrink-0 mr-3">
+    <div class="flex-shrink-0">
       <?php if ( $thumbnail = get_field( "thumbnail" ) ): ?>
       <div class="product-tease-image d-block">
         <img
@@ -31,9 +31,9 @@
         </h3>
 
         <?php if ( $short_description = get_field( "short_description" ) ): ?>
-        <p class="product-tease-description fs-90 fs-lg-100 mt-2 mb-0">
-          <?php echo truncate( strip_tags( $short_description ), 110 ); ?>
-        </p>
+        <div class="product-tease-description block-ellipsis fs-90 fs-lg-100 mt-2 mb-0">
+          <p><?php echo truncate( strip_tags( $short_description ), 110 ); ?></p>
+        </div>
         <?php endif; ?>
 
       </div>
@@ -54,7 +54,7 @@
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 
-          <?php if ( $minimal_order = get_field( "minimal_order" ) ): ?>      
+          <?php if ( $is_product_tease_in_row && $minimal_order = get_field( "minimal_order" ) ): ?>      
           <p class="text-muted mb-0 small">
             <?php _e( 'Min. objednávka', 'shp-obchodiste' ); ?>
             <span>
