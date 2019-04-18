@@ -27,7 +27,7 @@ $the_query = new WP_Query( [
         href="<?php echo get_post_type_archive_link( 'custom' ); ?>"
         class="btn btn-primary btn-lg ws-normal"
       >
-        <?php _e( 'Zobrazit všechny velkkoobchody', 'shp-obchodiste' ); ?>
+        <?php _e( 'Zobrazit všechny velkoobchody', 'shp-obchodiste' ); ?>
       </a>
     </p>
 
