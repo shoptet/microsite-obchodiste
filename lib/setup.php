@@ -827,16 +827,14 @@ add_action( 'admin_head', function() {
   }
 } );
 
-add_filter('wp_dropdown_users', function ($output) {
-  $users = get_users();
-  $output = '<select name="post_author">';
-  foreach( $users as $user ) {
-    $output .= '<option value="' . $user->ID . '">' . ( $user->display_name ? $user->display_name : $user->user_login ) . '</option>';
-  }
-  $output .= '</select>';
+/**
+ * Include subscribers to dropdown menus
+ */
+add_filter( 'wp_dropdown_users_args', function ( $query_args ) {
+  $query_args['who'] = '';
+  return $query_args;
+} );
 
-  return $output;
-});
 
 /**
  * Enable custom part of header
