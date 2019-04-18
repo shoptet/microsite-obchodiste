@@ -1,7 +1,7 @@
 <?php
 $the_query = new WP_Query( [
   'post_type' => 'custom',
-  'posts_per_page' => 14,
+  'posts_per_page' => 8,
   'post_status' => 'publish',
 ] );
 ?>
@@ -27,7 +27,7 @@ $the_query = new WP_Query( [
         href="<?php echo get_post_type_archive_link( 'custom' ); ?>"
         class="btn btn-primary btn-lg ws-normal"
       >
-        <?php _e( 'Zobrazit všechny nabídky velkoobchodů', 'shp-obchodiste' ); ?>
+        <?php _e( 'Zobrazit všechny velkkoobchody', 'shp-obchodiste' ); ?>
       </a>
     </p>
 
