@@ -35,14 +35,15 @@
 
 .product-tease-image {
   position: relative;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 5rem;
+  height: 5rem;
   background-color: $white;
   border: 1px solid $gray-300;
+  margin-right: 1rem;
 
-  @include media-breakpoint-up(xl) {
-    width: 5.5rem;
-    height: 5.5rem;
+  @include media-breakpoint-up(lg) {
+    width: 6.1rem;
+    height: 6.1rem;
   }
 
   img {
