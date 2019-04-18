@@ -51,7 +51,7 @@ switch ( $post_type ) {
         <?php get_template_part( 'src/template-parts/common/content', 'archive-sort' ); ?>
 
         <?php if ($post_type === 'special_offer'): ?>
-        <div class="row row-bordered no-gutters">
+        <div class="row row-bordered row-bordered-2-columns no-gutters">
           <?php while ( have_posts() ) : the_post(); ?>
             <div class="col-12 col-lg-6">
 

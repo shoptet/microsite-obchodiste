@@ -1,7 +1,7 @@
 <?php
 $the_query = new WP_Query( [
   'post_type' => 'product',
-  'posts_per_page' => 10,
+  'posts_per_page' => 18,
   'post_status' => 'publish',
 ] );
 ?>
@@ -10,13 +10,17 @@ $the_query = new WP_Query( [
     <div class="section-inner container">
 
       <h2 class="text-center h3 mb-5">
-        <?php _e( 'Naše velkoobchody právě nabízí', 'shp-obchodiste' ); ?>
+        <?php _e( 'Zboží od velkoobchodů, které můžete prodávat', 'shp-obchodiste' ); ?>
       </h2>
 
-      <div class="owl-carousel owl-carousel-bordered">
+      <div class="row row-bordered row-bordered-3-columns no-gutters">
         <?php $GLOBALS[ 'is_product_in_carousel' ] = true; ?>
         <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
-          <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
+          <div class="col-12 col-md-6 col-xl-4">
+
+            <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
+
+          </div>
         <?php endwhile; wp_reset_query(); ?>
         <?php unset( $GLOBALS[ 'is_product_in_carousel' ] ); ?>
       </div>
