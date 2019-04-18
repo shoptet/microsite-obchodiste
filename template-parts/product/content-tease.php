@@ -31,9 +31,9 @@
         </h3>
 
         <?php if ( $short_description = get_field( "short_description" ) ): ?>
-        <p class="product-tease-description fs-90 fs-lg-100 mt-2 mb-0">
-          <?php echo truncate( strip_tags( $short_description ), 110 ); ?>
-        </p>
+        <div class="product-tease-description block-ellipsis fs-90 fs-lg-100 mt-2 mb-0">
+          <p><?php echo truncate( strip_tags( $short_description ), 110 ); ?></p>
+        </div>
         <?php endif; ?>
 
       </div>
