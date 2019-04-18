@@ -137,6 +137,9 @@ add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
       array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add related wholesaler main category link to breadcrumbs
     }
   }
+  if (is_paged()) {
+    array_pop($crumbs); // Remove page number item from archives
+  }
   return $crumbs;
 } );
 
