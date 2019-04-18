@@ -14,7 +14,7 @@ $the_query = new WP_Query( [
 <div class="pt-5 pb-4">
   <div class="row">
   <div class="col-12 col-lg-10 offset-lg-1">
-  <h2 class="h3 mb-4 text-center">
+  <h2 class="h3 mb-5 text-center">
     <?php
     printf(
       __( 'Produkty od dodavatele %s', 'shp-obchodiste' ),
