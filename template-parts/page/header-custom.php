@@ -21,7 +21,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
           <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=custom' ); ?>">
-            <?php _e( 'Moje velkoobchody', 'shp-obchodiste' ); ?>
+            <?php _e( 'Můj velkoobchod', 'shp-obchodiste' ); ?>
           </a>
           <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=product' ); ?>">
             <?php _e( 'Moje produkty', 'shp-obchodiste' ); ?>
