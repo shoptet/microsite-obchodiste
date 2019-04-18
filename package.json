@@ -32,6 +32,7 @@
     "_js/wholesaler-contact.js",
     "_js/filters.js",
     "_js/search-form.js",
+    "_js/block-ellipsis.js",
     "_js/main.js"
   ],
   "dependencies": {

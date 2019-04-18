@@ -1,9 +1,9 @@
 <?php
   $is_product_tease_in_row = ( isset( $GLOBALS[ 'is_product_tease_in_row' ] ) && $GLOBALS[ 'is_product_tease_in_row' ] );
-  $is_product_in_carousel = ( isset( $GLOBALS[ 'is_product_in_carousel' ] ) && $GLOBALS[ 'is_product_in_carousel' ] );
+  $is_product_on_homepage = ( isset( $GLOBALS[ 'is_product_on_homepage' ] ) && $GLOBALS[ 'is_product_on_homepage' ] );
 ?>
 <a
-  class="product-tease <?php if ( $is_product_in_carousel ) echo 'bg-white'; ?>"
+  class="product-tease <?php if ( $is_product_on_homepage ) echo 'product-tease-secondary'; ?>"
   href="<?php echo get_permalink(); ?>"
   title="<?php _e( 'Zobrazit produkt', 'shp-obchodiste' ); ?>"
 >
@@ -31,17 +31,17 @@
         </h3>
 
         <?php if ( $short_description = get_field( "short_description" ) ): ?>
-        <p class="product-tease-description fs-90 fs-lg-100 mt-2 mb-0">
-          <?php echo truncate( strip_tags( $short_description ), 110 ); ?>
-        </p>
+        <div class="product-tease-description block-ellipsis fs-90 fs-lg-100 mt-2 mb-0">
+          <p><?php echo truncate( strip_tags( $short_description ), 110 ); ?></p>
+        </div>
         <?php endif; ?>
 
       </div>
 
-      <?php if ( ! $is_product_in_carousel ): ?>
-      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 col-lg-3 pl-lg-1 pl-xl-2 text-lg-center mt-lg-0'; ?> mt-2 fs-90 text-muted">
+      <?php if ( $is_product_tease_in_row ): ?>
+      <div class="col-12 col-lg-3 pl-lg-1 pl-xl-2 text-lg-center mt-lg-0 mt-2 fs-90 text-muted">
         <?php if ( $related_wholesaler = get_field( "related_wholesaler" ) ):?>
-        <span class="<?php if ( $is_product_tease_in_row ) echo 'd-lg-none'; ?>">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo $related_wholesaler->post_title; ?></span>
+        <span class="d-lg-none">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo $related_wholesaler->post_title; ?></span>
         <?php endif; ?>
         </div>
       <?php endif; ?>
@@ -50,7 +50,7 @@
 
         <?php if ( $price = get_field( "price" ) ): ?>      
         <p class="mb-0">
-          <span class="font-weight-bold <?php if ( ! $is_product_in_carousel ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price ); ?></span>
+          <span class="font-weight-bold <?php if ( $is_product_tease_in_row ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 

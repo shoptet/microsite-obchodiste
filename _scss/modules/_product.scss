@@ -24,6 +24,7 @@
   position: relative;
   height: 100%;
   padding: 1rem;
+  background-color: $white;
   color: $body-color;
 
   @include hover-focus {
@@ -33,10 +34,16 @@
   }
 }
 
+.product-tease-secondary {
+  @include hover-focus {
+    background-color: $secondary-lighter;
+  }
+}
+
 .product-tease-image {
   position: relative;
-  width: 5rem;
-  height: 5rem;
+  width: 4.75rem;
+  height: 4.75rem;
   background-color: $white;
   border: 1px solid $gray-300;
   margin-right: 1rem;
