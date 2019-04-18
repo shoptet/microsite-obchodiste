@@ -1,7 +1,7 @@
 <div class="hero">
   <div class="container">
     <h1 class="hero-title mb-5">
-      <?php _e( 'Velkoobchodní dodavatelé pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
+      <?php _e( 'Produkty od velkoobchodů pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
     </h1>
 
     <form action="<?php echo get_post_type_archive_link( 'product' ); ?>" id="searchForm" role="search">
