@@ -39,7 +39,7 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   $taxonomy_items = '
     <li class="shp_menu-item has-dropdown">
       <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
-      ' . __( 'Kategorie', 'shp-obchodiste' ) . '
+      ' . __( 'Velkoobchody', 'shp-obchodiste' ) . '
       </a>
       <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
       <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
