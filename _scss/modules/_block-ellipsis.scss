@@ -1,0 +1,8 @@
+.block-ellipsis {
+  max-height: (2 * $line-height-base * 16px);
+  overflow: hidden;
+
+  p {
+    margin-bottom: 0;
+  }
+}
