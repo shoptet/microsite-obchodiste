@@ -5,6 +5,7 @@ $the_query = new WP_Query( [
   'posts_per_page' => 12,
   'post_status' => 'publish',
   'post__not_in' => [ $post->ID ], // exclude current post
+  'orderby' => 'rand',
   'meta_query' => [
     [
       'key' => 'related_wholesaler',

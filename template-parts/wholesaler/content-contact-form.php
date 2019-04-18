@@ -24,7 +24,7 @@
       <label class="required-asterisk" for="wholesalerContactFormMessage">
         <?php _e( 'Zpráva velkoobchodu', 'shp-obchodiste' ); ?>
       </label>
-      <textarea class="form-control" name="message" rows="9" id="wholesalerContactFormMessage" required></textarea>
+      <textarea class="form-control" name="message" rows="11" id="wholesalerContactFormMessage" required></textarea>
     </div>
 
     <input type="hidden" name="wholesaler_id" value="<?php the_ID(); ?>">
