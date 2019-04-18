@@ -14,7 +14,7 @@ $the_query = new WP_Query( [
       </h2>
 
       <div class="row row-bordered row-bordered-3-columns no-gutters">
-        <?php $GLOBALS[ 'is_product_in_carousel' ] = true; ?>
+        <?php $GLOBALS[ 'is_product_on_homepage' ] = true; ?>
         <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
           <div class="col-12 col-md-6 col-xl-4">
 
@@ -22,7 +22,7 @@ $the_query = new WP_Query( [
 
           </div>
         <?php endwhile; wp_reset_query(); ?>
-        <?php unset( $GLOBALS[ 'is_product_in_carousel' ] ); ?>
+        <?php unset( $GLOBALS[ 'is_product_on_homepage' ] ); ?>
       </div>
 
       <p class="text-center mt-4 mb-0">

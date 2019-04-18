@@ -1,11 +1,11 @@
 $(function() {
 
-  $('.block-ellipsis').each(function () {
-    var $this = $(this);
-    var $p = $this.find('p');
-    var blockHeight = $this.innerHeight();
-    while ($p[0].scrollHeight > blockHeight) { // Check if the paragraph's height is taller than the container's height. If it is:
-      $p.text($p.text().replace(/\W*\s(\S)*$/, '...')); // add an ellipsis at the last shown space
+  var containers = document.querySelectorAll('.block-ellipsis');
+  Array.prototype.forEach.call(containers, function (container) {  // Loop through each container
+    var p = container.querySelector('p');
+    var divh = container.clientHeight;
+    while (p.offsetHeight > divh) { // Check if the paragraph's height is taller than the container's height. If it is:
+      p.textContent = p.textContent.replace(/\W*\s(\S)*$/, '...'); // add an ellipsis at the last shown space
     }
   });
 
