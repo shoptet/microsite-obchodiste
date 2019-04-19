@@ -895,6 +895,16 @@ add_filter( 'wp_dropdown_users_args', function ( $query_args ) {
   return $query_args;
 } );
 
+/**
+ * Remove Medai in menu for subscribers
+ */
+add_action( 'admin_menu', function () {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  remove_menu_page( 'upload.php' );
+} );
 
 /**
  * Enable custom part of header
