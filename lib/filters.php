@@ -405,3 +405,14 @@ add_filter( 'post_type_labels_custom', function ( $labels ) {
   }
   return $labels;
 } );
+
+add_filter( 'post_type_labels_product', function ( $labels ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+
+  $labels->menu_name = __( 'Moje produkty', 'shp-obchodiste' );
+
+  return $labels;
+} );
