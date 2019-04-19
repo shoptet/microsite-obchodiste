@@ -429,3 +429,17 @@ function remove_admin_footer ( $text ) {
 }
 add_filter( 'admin_footer_text', 'remove_admin_footer', 11 );
 add_filter( 'update_footer', 'remove_admin_footer', 11 );
+
+/**
+ * Update translations
+ */
+add_filter( 'gettext', function ( $translated ) {
+
+  switch ( $translated ) {
+    case 'Příspěvek byl odeslán ke schválení.':
+    $translated = __( 'Příspěvek byl odeslán ke schválení. Vyčkejte na kontrolu z naší strany a případné schválení, nebo souhrn doporučení jak informace v medajlonku doplnit.', 'shp-obchodiste' );
+    break;
+  }
+
+  return $translated;
+} );
