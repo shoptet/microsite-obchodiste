@@ -176,15 +176,36 @@ add_action( 'admin_head', function() {
 }, 1 );
 
 /**
- * Redirect subscriber from admin dashboard to wholesaler list
+ * Redirect logic for subscribers
  */
 add_action( 'admin_init', function() {
 	global $current_user, $pagenow;
-	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( 'index.php' === $pagenow && user_can( $current_user, 'subscriber' ) ) {
-    wp_redirect( admin_url( 'edit.php?post_type=custom' ), 301 );
-    exit;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  // Redirection login for subscribers only
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+
+  // Redirect user from dashboard to wholesalers list
+  if ( 'index.php' === $pagenow ) {
+    wp_redirect( admin_url( 'edit.php?post_type=custom' ), 301 ); exit;
   }
+
+  // Redirect user form wholesaler list to new wholesaler / edit wholesaler page
+  if ( 'edit.php' === $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'custom' ) {
+    if ( $wholesaler = get_user_wholesaler( $current_user ) ) {
+      wp_redirect( admin_url( 'post.php?post=' . $wholesaler->ID . '&action=edit' ), 301 ); exit;
+    } else {
+      wp_redirect( admin_url( 'post-new.php?post_type=custom' ), 301 ); exit;
+    }
+  }
+
+  // Redirect user with wholesaler from new wholesaler to edit wholesaler page
+  if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'custom' ) {
+    if ( $wholesaler = get_user_wholesaler( $current_user ) ) {
+      wp_redirect( admin_url( 'post.php?post=' . $wholesaler->ID . '&action=edit' ), 301 ); exit;
+    }
+  }
+
 } );
 
 /**
@@ -682,6 +703,22 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Hide related wholesaler field
+ */
+add_action( 'admin_head', function() {
+  global $post, $pagenow, $current_user;
+	wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  echo '
+<style>
+[data-name=related_wholesaler] {
+  display: none;
+}
+</style>
+  ';
+} );
+
+/**
  * Set cron for increasing fake message number
  */
 if ( ! wp_next_scheduled( 'increase_fake_message_number' ) ) {
@@ -769,7 +806,7 @@ add_action( 'admin_notices', function() {
 } );
 
 /**
- * Disable "Add new item" button and edit page if specil offer or product limit exceeded
+ * Disable "Add new item" button at page title action
  */
 add_action( 'admin_head', function() {
   global $current_user, $pagenow, $wp_query, $post;
@@ -778,13 +815,17 @@ add_action( 'admin_head', function() {
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
   $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
-  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
-  if ( ! is_number_of_posts_exceeded( $post_type ) ) return;
-  echo '
-<style>
-  .page-title-action { display: none }
-</style>
-  ';
+  if (
+    ( in_array( $post_type, [ 'special_offer', 'product' ] ) && is_number_of_posts_exceeded( $post_type ) ) ||
+    'custom' === $post_type
+  ) {
+    echo '
+    <style>
+      .page-title-action { display: none }
+    </style>
+    ';
+  };
+
 } );
 
 /**
@@ -815,13 +856,17 @@ add_action( 'admin_head', function() {
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
 
-  foreach ( [ 'special_offer', 'product' ] as $post_type ) {
-    if ( ! is_number_of_posts_exceeded( $post_type ) ) continue;
-    echo '
-<style>
-  #menu-posts-' . $post_type . ' ul.wp-submenu li:nth-of-type(3) { display: none }
-</style>
-    ';
+  foreach ( [ 'custom', 'special_offer', 'product' ] as $post_type ) {
+    if (
+      ( in_array( $post_type, [ 'special_offer', 'product' ] ) && is_number_of_posts_exceeded( $post_type ) ) ||
+      'custom' === $post_type
+    ) {
+      echo '
+      <style>
+        #menu-posts-' . $post_type . ' ul.wp-submenu li:nth-of-type(3) { display: none }
+      </style>
+      ';
+    };
   }
 } );
 

@@ -358,6 +358,49 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return $args;
   $args[ 'author' ] = $current_user->ID;
-  $args[ 'post_status' ] = 'publish';
   return $args;
+} );
+
+/**
+ * Set related wholesaler field not required for subscriber
+ */
+add_filter('acf/load_field/name=related_wholesaler', function( $field ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) {
+    $field['required'] = 0;
+  };
+  return $field;
+} );
+
+/**
+ * Set related wholesaler to product
+ */
+add_filter( 'acf/update_value/name=related_wholesaler', function( $value ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $value;
+
+  if ( $wholesaler = get_user_wholesaler( $current_user ) ) {
+    return $wholesaler->ID;
+  }
+
+  return $value;
+} );
+
+add_filter( 'post_type_labels_custom', function ( $labels ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+
+  $labels->menu_name = __( 'Můj velkoobchod', 'shp-obchodiste' );
+
+  $wholesaler = get_user_wholesaler( $current_user );
+  if ( $wholesaler && $wholesaler->post_status === 'publish' ) {
+    $labels->all_items = __( 'Upravit medailonek', 'shp-obchodiste' );
+  } else {
+    $labels->all_items = __( 'Přidat medailonek', 'shp-obchodiste' );
+  }
+  return $labels;
 } );
