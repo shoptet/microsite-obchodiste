@@ -239,12 +239,15 @@ add_filter( 'login_message', function( $message ) {
         src="' . $custom_logo_url . '"
         style="
           display: block;
-          margin: 0 auto 50px auto;
+          margin: 0 auto 15px auto;
           max-width: 230px;
         "
       >
     </a>
   ';
+  $new_message .= '<p style="margin-bottom:40px;text-align:center;">';
+  $new_message .= __( 'Nabídněte svoje produkty maloobchodním prodejcům. Služba Obchodistě je zcela zdarma, bez jakýchkoliv přímých nebo nepřímých poplatků.', 'shp-obchodiste' );
+  $new_message .= '</p>';
 
   // Add title to login pages
   if ( ! isset( $_REQUEST[ 'action' ] ) )
@@ -280,24 +283,6 @@ add_filter( 'login_message', function( $message ) {
     $new_message .= $message;
 
   return $new_message;
-});
-
-/**
- * Update login footer
- */
-add_filter( 'login_footer', function() {
-  echo '
-    <a href="https://www.shoptet.cz/" target="_blank">
-      <img
-        src="' . get_template_directory_uri() . '/src/dist/img/shoptet-logo.svg"
-        style="
-          display: block;
-          max-width: 120px;
-          margin: 50px auto 50px auto;
-        "
-      >
-    </a>
-  ';
 });
 
 /**
