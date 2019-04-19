@@ -600,6 +600,14 @@ add_action( 'edit_form_top', function( $post ) {
 });
 
 /**
+ * Add instructions above product post title
+ */
+add_action( 'edit_form_top', function( $post ) {
+  if ( 'product' !== $post->post_type  ) return;
+  echo '<p class="description" style="margin: 1rem 0 0 0;">' . __( 'Vložte obchodní název vašeho produktu', 'shp-obchodiste' ) . '</p>';
+});
+
+/**
  * Send e-mail when new wholesaler or special offer is pending for review
  */
 add_action( 'transition_post_status',  function( $new_status, $old_status, $post) {
