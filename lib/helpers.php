@@ -286,3 +286,12 @@ function get_archive_category_link( $post_type, $category ): string
   $category_id = $category->term_id;
   return $archive_link . '?category[]=' . $category_id;
 }
+
+function get_user_wholesaler( $user ) {
+  $wp_query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => 1,
+    'author' => $user->ID,
+  ] );
+  return $wp_query->post;
+}
