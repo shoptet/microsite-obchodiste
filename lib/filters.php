@@ -23,20 +23,38 @@ Disallow: /*s=*
 });
 
 /**
- * Add wholesaler categories dropdown to main menu
+ * Add products and wholesaler categories dropdown to main menu
  */
 add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   if( $args->menu_id !== 'shp_navigation' ) return $items;
 
-  $products_item = '
-    <li class="active shp_menu-item">
+  $products_taxonomy_items = '
+    <li class="shp_menu-item has-dropdown">
       <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'product' ) . '">
       ' . __( 'Produkty', 'shp-obchodiste' ) . '
       </a>
-    </li>
+      <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+      <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
+        <li class="shp_menu-item">
+          <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( 'product' ) . '">
+          ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
+          </a>
+        </li>
   ';
 
-  $taxonomy_items = '
+  foreach ( get_wholesaler_terms_related_to_post_type( 'product' ) as $term ) {
+    $products_taxonomy_items .= '
+      <li class="shp_menu-item">
+        <a class="shp_menu-item-link dropdown-item" href="' . get_archive_category_link( 'product', $term ) . '">
+        ' . $term->name . '
+        </a>
+      </li>
+    ';
+  }
+
+  $products_taxonomy_items .= '</ul></li>';
+
+  $wholesaler_taxonomy_items = '
     <li class="shp_menu-item has-dropdown">
       <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
       ' . __( 'Velkoobchody', 'shp-obchodiste' ) . '
@@ -51,7 +69,7 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
   ';
 
   foreach ( get_terms( 'customtaxonomy' ) as $term ) {
-    $taxonomy_items .= '
+    $wholesaler_taxonomy_items .= '
       <li class="shp_menu-item">
         <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
         ' . $term->name . '
@@ -60,8 +78,8 @@ add_filter( 'wp_nav_menu_items', function( $items, $args ) {
     ';
   }
 
-  $taxonomy_items .= '</ul></li>';
-  return $products_item . $taxonomy_items . $items;
+  $wholesaler_taxonomy_items .= '</ul></li>';
+  return $products_taxonomy_items . $wholesaler_taxonomy_items . $items;
 }, 10, 2 );
 
 /**
