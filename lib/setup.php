@@ -683,6 +683,23 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Remove wordpress logo fron admin for subscribers
+ */
+add_action( 'admin_head', function() {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+	echo '
+<style>
+  #wp-admin-bar-wp-logo {
+		display: none;
+  }
+</style>
+  ';
+} );
+
+/**
  * Disable wholesaler title, slug and status editing for publish wholesaler post
  */
 add_action( 'admin_head', function() {
