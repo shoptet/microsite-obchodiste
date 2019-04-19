@@ -416,3 +416,17 @@ add_filter( 'post_type_labels_product', function ( $labels ) {
 
   return $labels;
 } );
+
+/**
+ * Remove admin footer for subscriber
+ */
+function remove_admin_footer ( $text ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) {
+    $text = '';
+  }
+  return $text;
+}
+add_filter( 'admin_footer_text', 'remove_admin_footer', 11 );
+add_filter( 'update_footer', 'remove_admin_footer', 11 );
