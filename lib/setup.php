@@ -689,6 +689,19 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Remove ACF gallery sort select
+ */
+add_action( 'admin_head', function() {
+	echo '
+<style>
+  .acf-gallery-sort {
+		display: none;
+  }
+</style>
+  ';
+} );
+
+/**
  * Remove wordpress logo fron admin for subscribers
  */
 add_action( 'admin_head', function() {
