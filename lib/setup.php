@@ -820,6 +820,27 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Sticky sidebar in admin for large devices
+ */
+add_action( 'admin_head', function() {
+  echo '
+<style>
+  @media screen and (min-width: 851px) {
+    #post-body::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    .postbox-container {
+      position: sticky;
+      top: 50px;
+    }
+  }
+</style>
+  ';
+} );
+
+/**
  * Add admin notice if special offer or product limit exceeded
  */
 add_action( 'admin_notices', function() {
