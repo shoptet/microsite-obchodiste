@@ -486,3 +486,15 @@ add_filter( 'acf/validate_value/name=contact_tel', function( $valid, $value, $fi
   
   return $valid;
 }, 10, 4 );
+
+/**
+ * Show only own media for subscribers
+ */
+add_filter( 'ajax_query_attachments_args', function ( $query = [] ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) {
+    $query['author'] = $current_user->ID;
+  }
+  return $query;
+} );
