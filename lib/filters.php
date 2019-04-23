@@ -430,3 +430,59 @@ function remove_admin_footer ( $text ) {
 }
 add_filter( 'admin_footer_text', 'remove_admin_footer', 11 );
 add_filter( 'update_footer', 'remove_admin_footer', 11 );
+
+/**
+ * ACF ZIP validation
+ */
+add_filter( 'acf/validate_value/name=zip', function( $valid, $value, $field, $input ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  if ( ! preg_match('/^[0-9]{5}$/', $value ) ) {
+    $valid = __( 'Zadejte prosím PSČ ve správném formátu', 'shp-obchodiste' );
+  }
+  
+  return $valid;
+}, 10, 4 );
+
+/**
+ * ACF IN validation
+ */
+add_filter( 'acf/validate_value/name=in', function( $valid, $value, $field, $input ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  if ( ! preg_match('/^[0-9]+$/', $value ) ) {
+    $valid = __( 'Zadejte prosím IČ ve správném formátu', 'shp-obchodiste' );
+  }
+  
+  return $valid;
+}, 10, 4 );
+
+/**
+ * ACF url validation
+ */
+add_filter( 'acf/validate_value/name=website', function( $valid, $value, $field, $input ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  if ( ! preg_match('/^(https?://)?([a-zA-Z0-9]([a-zA-ZäöüÄÖÜ0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}.*/', $value ) ) {
+    $valid = __( 'Zadejte prosím URL ve správném formátu', 'shp-obchodiste' );
+  }
+  
+  return $valid;
+}, 10, 4 );
+
+/**
+ * ACF tel validation
+ */
+add_filter( 'acf/validate_value/name=contact_tel', function( $valid, $value, $field, $input ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  if ( ! preg_match('/^[+]?[0-9]{9,}$/', $value ) ) {
+    $valid = __( 'Zadejte prosím telefonní číslo ve správném formátu', 'shp-obchodiste' );
+  }
+  
+  return $valid;
+}, 10, 4 );
