@@ -60,8 +60,8 @@ add_action( 'wp_head', function() {
 add_action( 'wp_head', function() {
   global $post;
   $description = NULL;
-  if ( is_singular( 'custom' ) && get_field( "short_about" ) ) {
-    $description = strip_tags( get_field( "short_about" ) );
+  if ( is_singular( 'custom' ) && get_field( "about_company" ) ) {
+    $description = strip_tags( get_field( "about_company" ) );
   } else if ( is_singular( 'product' ) && get_field( "short_description" ) ) {
     $description = strip_tags( get_field( "short_description" ) );
   }
@@ -850,6 +850,19 @@ add_action( 'admin_head', function() {
       position: sticky;
       top: 50px;
     }
+  }
+</style>
+  ';
+} );
+
+/**
+ * Hide redundant profile link in admin bar
+ */
+add_action( 'admin_head', function() {
+  echo '
+<style>
+  #wpadminbar #wp-admin-bar-user-info .display-name {
+    display: none;
   }
 </style>
   ';
