@@ -72,6 +72,18 @@ add_action( 'wp_head', function() {
 } );
 
 /**
+ * Add meta and open graph description to wholesaler and product detail page
+ */
+add_action( 'wp_head', function() {
+  global $post;
+  if( ! is_singular( 'product' ) ) return;
+  if ( $price = get_field( "price" ) ) {
+    printf( '<meta property="product:price:amount" content="%d">', $price );
+    printf( '<meta property="product:price:currency" content="%s">', 'CZK' );
+  }
+} );
+
+/**
  * Add Mapy.cz API
  */
 add_action( 'wp_enqueue_scripts', function() {

@@ -498,3 +498,13 @@ add_filter( 'ajax_query_attachments_args', function ( $query = [] ) {
   }
   return $query;
 } );
+
+/**
+ * Change product og type
+ */
+add_filter( 'wpseo_opengraph_type', function ( $type ) {
+  if ( is_singular( 'product' ) ) {
+    return 'product';
+  }
+  return $type;
+} );
