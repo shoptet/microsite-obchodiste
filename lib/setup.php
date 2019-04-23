@@ -841,6 +841,19 @@ add_action( 'admin_head', function() {
 } );
 
 /**
+ * Hide redundant profile link in admin bar
+ */
+add_action( 'admin_head', function() {
+  echo '
+<style>
+  #wpadminbar #wp-admin-bar-user-info .display-name {
+    display: none;
+  }
+</style>
+  ';
+} );
+
+/**
  * Add admin notice if special offer or product limit exceeded
  */
 add_action( 'admin_notices', function() {
