@@ -466,7 +466,7 @@ add_filter( 'acf/validate_value/name=website', function( $valid, $value, $field,
   // bail early if value is already invalid
   if( ! $valid ) return $valid;
 
-  if ( ! preg_match('/^(https?://)?([a-zA-Z0-9]([a-zA-ZäöüÄÖÜ0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}.*/', $value ) ) {
+  if ( ! preg_match('/^(https?:\/\/)?([a-zA-Z0-9]([a-zA-ZäöüÄÖÜ0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}.*/', $value ) ) {
     $valid = __( 'Zadejte prosím URL ve správném formátu', 'shp-obchodiste' );
   }
   
