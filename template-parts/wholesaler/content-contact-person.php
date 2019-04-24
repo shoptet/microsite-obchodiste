@@ -32,15 +32,15 @@
         <a href="mailto:<?php the_field( "contact_email" ); ?>">
           <?php the_field( "contact_email" ); ?> 
         </a>
-        <meta itemprop="email" content="<?php the_field( "contact_email" ); ?>">
+        <?php if ( is_singular('custom') ): ?><meta itemprop="email" content="<?php the_field( "contact_email" ); ?>"><?php endif; ?>
       </li>
       <?php endif; ?>
       <?php if ( get_field( "contact_tel" ) ): ?>
       <li class="text-truncate">
-        <a href="tel:<?php the_field( "contact_tel" ); ?>" itemprop="telephone">
+        <a href="tel:<?php the_field( "contact_tel" ); ?>">
           <?php the_field( "contact_tel" ); ?>
         </a>
-        <meta itemprop="telephone" content="<?php the_field( "contact_tel" ); ?>">
+        <?php if ( is_singular('custom') ): ?><meta itemprop="telephone" content="<?php the_field( "contact_tel" ); ?>"><?php endif; ?>
       </li>
       <?php endif; ?>
     </ul>

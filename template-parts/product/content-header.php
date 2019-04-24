@@ -56,6 +56,7 @@
           <dd>
             <meta itemprop="price" content="<?php echo $price; ?>">
             <meta itemprop="priceCurrency" content="CZK">
+            <meta itemprop="url" content="<?php the_permalink(); ?>">
             <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price ); ?></span>
             <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
           </dd>
@@ -105,14 +106,13 @@
       <?php endif; ?>
 
       <?php if ( $gallery = get_field( "gallery" ) ): ?>
-      <ul class="gallery gallery-small mt-3" itemscope itemtype="http://schema.org/ImageGallery">
+      <ul class="gallery gallery-small mt-3">
         <?php foreach ( $gallery as $image ): ?>
-        <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
+        <li>
+          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>">
             <img
               src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
               alt="<?php echo $image[ "alt" ]; ?>"
-              itemprop="thumbnail"
             >
           </a>
         </li>
