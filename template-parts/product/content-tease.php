@@ -7,6 +7,9 @@
   class="product-tease <?php if ( $is_product_on_homepage ) echo 'product-tease-secondary'; ?>"
   href="<?php echo get_permalink(); ?>"
   title="<?php _e( 'Zobrazit produkt', 'shp-obchodiste' ); ?>"
+  itemprop="isRelatedTo"
+  itemscope
+  itemtype="http://schema.org/Product"
 >
   <div class="d-flex">
 
@@ -27,7 +30,7 @@
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-8' : 'col-lg-6' ) ; ?>">
 
-        <h3 class="product-tease-title h6 mb-0">
+        <h3 class="product-tease-title h6 mb-0" itemprop="name">
           <?php the_title(); ?>
         </h3>
 
@@ -36,6 +39,9 @@
           <p><?php echo truncate( strip_tags( $short_description ), 110 ); ?></p>
         </div>
         <?php endif; ?>
+
+        <meta itemprop="url" content="<?php the_permalink(); ?>">
+        <meta itemprop="image" content="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
 
       </div>
 
@@ -47,9 +53,12 @@
         </div>
       <?php endif; ?>
 
-      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-4' : 'col-lg-3' ) . ' pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1">
+      <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-4' : 'col-lg-3' ) . ' pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
 
-        <?php if ( $price = get_field( "price" ) ): ?>      
+        <?php if ( $price = get_field( "price" ) ): ?>
+        
+        <meta itemprop="price" content="<?php echo $price; ?>">
+        <meta itemprop="priceCurrency" content="CZK">    
         <p class="mb-0">
           <span class="font-weight-bold <?php if ( $is_product_tease_in_row ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>

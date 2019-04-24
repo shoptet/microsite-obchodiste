@@ -1,6 +1,6 @@
 <div class="row product">
 
-  <div class="col-12 col-lg-7 col-xl-8" itemscope itemtype="http://schema.org/Product">
+  <div class="col-12 col-lg-7 col-xl-8">
 
     <?php get_template_part( 'src/template-parts/product/content', 'header' ); ?>
 

@@ -5,7 +5,7 @@
     <?php get_template_part( 'template-parts/utils/content', 'breadcrumb' ); ?>
     </div>
 
-    <div class="container">
+    <div class="container" itemscope itemtype="http://schema.org/Product">
         
     <?php
         /* Start the Loop */
