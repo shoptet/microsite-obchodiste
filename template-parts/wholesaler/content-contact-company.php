@@ -9,12 +9,12 @@
     <img
       src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
       alt="<?php the_title(); ?>"
-      itemprop="logo"
+      <?php if ( is_singular('custom') ): ?>itemprop="logo"<?php endif; ?>
     >
   </div>
   <?php endif; ?>
 
-  <address itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+<address <?php if ( is_singular('custom') ): ?>itemprop="address" itemscope itemtype="http://schema.org/PostalAddress"<?php endif; ?>>
     <?php if ( ! is_singular( 'custom' ) ): ?>
       <a href="<?php the_permalink(); ?>">
         <?php the_title(); ?>
@@ -34,11 +34,11 @@
     <?php endif; ?>
     <br>
     <?php if ( get_field( "street" ) ): ?>
-    <span itemprop="streetAddress"><?php the_field( "street" ); ?></span>
+    <span <?php if ( is_singular('custom') ): ?>itemprop="streetAddress"<?php endif; ?>><?php the_field( "street" ); ?></span>
     <br>
     <?php endif; ?>
-    <span itemprop="streetAddress"><?php the_field( "zip" ); ?></span>
-    &nbsp;<span itemprop="addressLocality"><?php the_field( "city" ); ?></span>
+    <span <?php if ( is_singular('custom') ): ?>itemprop="streetAddress"<?php endif; ?>><?php the_field( "zip" ); ?></span>
+    &nbsp;<span <?php if ( is_singular('custom') ): ?>itemprop="addressLocality"<?php endif; ?>><?php the_field( "city" ); ?></span>
     <?php if ( get_field( "country" ) && get_field( "country" )[ 'label' ] ): ?>
       <br>
       <?php echo get_field( "country" )[ 'label' ]; ?>
@@ -50,11 +50,11 @@
     <dt><?php _e( 'IČ', 'shp-obchodiste' ); ?></dt>
     <dd>
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
-        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank" itemprop="identifier">
+        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="identifier"<?php endif; ?>>
           <?php the_field( "in" ); ?>
         </a>
       <?php else: ?>
-        <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" itemprop="identifier">
+        <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="identifier"<?php endif; ?>>
           <?php the_field( "in" ); ?>
         </a>
       <?php endif; ?>
@@ -62,7 +62,7 @@
     <?php endif; ?>
     <?php if ( get_field( "tin" ) ): ?>
     <dt><?php _e( 'DIČ', 'shp-obchodiste' ); ?></dt>
-    <dd itemprop="taxID">
+    <dd <?php if ( is_singular('custom') ): ?>itemprop="taxID"<?php endif; ?>>
 
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
         <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank">
@@ -88,7 +88,7 @@
 
   <?php if ( get_field( "website" ) ): ?>
   <p>
-    <a href="<?php the_field( "website" ); ?>" target="_blank" itemprop="url">
+    <a href="<?php the_field( "website" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="url"<?php endif; ?>>
       <?php echo display_url( get_field( "website" ) ); ?>
     </a>
   </p>
@@ -98,21 +98,21 @@
   <ul class="list-inline">
     <?php if ( get_field( "facebook" ) ): ?>
     <li class="list-inline-item">
-      <a class="link-facebook" href="<?php the_field( "facebook" ); ?>" target="_blank" itemprop="sameAs">
+      <a class="link-facebook" href="<?php the_field( "facebook" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="sameAs"<?php endif; ?>>
         <i class="fab fa-2x fa-facebook-square"></i>
       </a>
     </li>
     <?php endif; ?>
     <?php if ( get_field( "twitter" ) ): ?>
     <li class="list-inline-item">
-      <a class="link-twitter" href="<?php the_field( "twitter" ); ?>" target="_blank" itemprop="sameAs">
+      <a class="link-twitter" href="<?php the_field( "twitter" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="sameAs"<?php endif; ?>>
         <i class="fab fa-2x fa-twitter-square"></i>
       </a>
     </li>
     <?php endif; ?>
     <?php if ( get_field( "instagram" ) ): ?>
     <li class="list-inline-item">
-      <a class="link-instagram" href="<?php the_field( "instagram" ); ?>" target="_blank" itemprop="sameAs">
+      <a class="link-instagram" href="<?php the_field( "instagram" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="sameAs"<?php endif; ?>>
         <i class="fab fa-2x fa-instagram"></i>
       </a>
     </li>
