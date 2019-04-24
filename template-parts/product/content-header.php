@@ -105,14 +105,13 @@
       <?php endif; ?>
 
       <?php if ( $gallery = get_field( "gallery" ) ): ?>
-      <ul class="gallery gallery-small mt-3" itemscope itemtype="http://schema.org/ImageGallery">
+      <ul class="gallery gallery-small mt-3">
         <?php foreach ( $gallery as $image ): ?>
-        <li itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>" itemprop="contentUrl">
+        <li>
+          <a class="colorbox" href="<?php echo $image[ "sizes" ][ "large" ]; ?>">
             <img
               src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
               alt="<?php echo $image[ "alt" ]; ?>"
-              itemprop="thumbnail"
             >
           </a>
         </li>
