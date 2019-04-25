@@ -49,12 +49,15 @@
     <?php if ( get_field( "in" ) ): ?>
     <dt><?php _e( 'IČ', 'shp-obchodiste' ); ?></dt>
     <dd>
+      <?php if ( is_singular('custom') ): ?>
+        <meta itemprop="identifier" content="<?php the_field( "in" ); ?>">
+      <?php endif; ?>
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
-        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="identifier"<?php endif; ?>>
+        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank">
           <?php the_field( "in" ); ?>
         </a>
       <?php else: ?>
-        <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="identifier"<?php endif; ?>>
+        <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php the_field( "in" ); ?>" target="_blank">
           <?php the_field( "in" ); ?>
         </a>
       <?php endif; ?>
@@ -62,8 +65,10 @@
     <?php endif; ?>
     <?php if ( get_field( "tin" ) ): ?>
     <dt><?php _e( 'DIČ', 'shp-obchodiste' ); ?></dt>
-    <dd <?php if ( is_singular('custom') ): ?>itemprop="taxID"<?php endif; ?>>
-
+    <dd>
+      <?php if ( is_singular('custom') ): ?>
+        <meta itemprop="taxID" content="<?php the_field( "tin" ); ?>">
+      <?php endif; ?>
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
         <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank">
           <?php the_field( "tin" ); ?>
