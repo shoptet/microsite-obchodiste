@@ -668,6 +668,11 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
     $email_subject = $options[ 'pending_product_email_subject' ];
     $email_body = $options[ 'pending_product_email_body' ];
     $to_replace = [ '%product_name%' => $title ];
+
+    if ( $related_wholesaler = get_field( "related_wholesaler" ) ) {
+      $to_replace['%wholesaler_name%'] = $related_wholesaler->post_title;
+    }
+
     break;
   }
   
