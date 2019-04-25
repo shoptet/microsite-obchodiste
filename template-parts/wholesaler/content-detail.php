@@ -9,7 +9,12 @@
 </div>
 <?php endif; ?>
 
-<?php if ( ! empty( get_field( "services" ) ) ): ?>
+
+<?php
+$services = get_field( "services" ) ?: [];
+$services = array_filter( $services ); // Remove empty values from an array
+if ( ! empty( $services ) ):
+?>
 <div class="wholesaler-block">
 
   <h2 class="h-heavy mb-2">
