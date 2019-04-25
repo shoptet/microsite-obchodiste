@@ -22,7 +22,7 @@ if ( ! empty( $services ) ):
   </h2>
 
   <ul class="fa-ul list-horizontal">
-    <?php foreach ( get_field( "services" ) as $service ): ?>
+    <?php foreach ( $services as $service ): ?>
     <?php if ( ! empty( $service ) ): ?>
     <li>
       <span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>
