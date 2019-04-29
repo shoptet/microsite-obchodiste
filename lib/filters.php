@@ -370,7 +370,7 @@ add_filter('acf/load_field/name=related_wholesaler', function( $field ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( user_can( $current_user, 'subscriber' ) ) {
-    $field['required'] = 0;
+    $field['value'] = get_user_wholesaler( $current_user, 'public' );
   };
   return $field;
 } );
@@ -398,8 +398,8 @@ add_filter( 'post_type_labels_custom', function ( $labels ) {
 
   $labels->menu_name = __( 'Můj velkoobchod', 'shp-obchodiste' );
 
-  $wholesaler = get_user_wholesaler( $current_user );
-  if ( $wholesaler && $wholesaler->post_status === 'publish' ) {
+  $wholesaler = get_user_wholesaler( $current_user, 'publish' );
+  if ( $wholesaler ) {
     $labels->all_items = __( 'Upravit medailonek', 'shp-obchodiste' );
   } else {
     $labels->all_items = __( 'Přidat medailonek', 'shp-obchodiste' );
