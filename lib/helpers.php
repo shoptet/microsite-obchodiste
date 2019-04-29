@@ -177,7 +177,7 @@ function get_related_wholesalers( $post_type ): array
 /**
  * Get not empty wholesaler regions by country
  */
-function get_used_regions_by_country( $post_type = false ): array
+function get_used_regions_by_country( $post_type ): array
 {
   $countries = [
     'cz' => [
@@ -192,10 +192,10 @@ function get_used_regions_by_country( $post_type = false ): array
   $regions_by_country = [];
 
   $is_region_used = function ( $region_id ) use ( &$post_type ) {
-    if ( $post_type )
-      $region_post_count = count( get_posts_by_region( $post_type, $region_id ) );
+    if ( $post_type === 'custom' )
+      $region_post_count = get_post_count_by_meta( 'region', $region_id, $post_type );
     else
-      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+      $region_post_count = count( get_posts_by_region( $post_type, $region_id ) );
     return ( $region_post_count > 0 );
   };
 
@@ -294,4 +294,17 @@ function get_user_wholesaler( $user ) {
     'author' => $user->ID,
   ] );
   return $wp_query->post;
+}
+
+function get_post_type_in_archive_or_taxonomy () {
+  global $wp_query;
+  $post_type = $wp_query->get( 'post_type' );
+  if ( is_tax() ) {
+    $taxonomy = get_queried_object();
+    if ( $taxonomy->taxonomy === 'customtaxonomy' )
+      $post_type = 'custom';
+    elseif ( $taxonomy->taxonomy === 'producttaxonomy' )
+      $post_type = 'product';
+  }
+  return $post_type;
 }

@@ -89,6 +89,8 @@ add_filter( 'add_meta_boxes', function() {
    // Hide category meta box
   remove_meta_box( 'tagsdiv-customtaxonomy', 'custom', 'side' );
   remove_meta_box( 'customtaxonomydiv', 'custom', 'side' ); // if taxonomy is hierarchical
+  remove_meta_box( 'tagsdiv-producttaxonomy', 'product', 'side' );
+  remove_meta_box( 'producttaxonomydiv', 'product', 'side' ); // if taxonomy is hierarchical
    // Hide featured image metabox
   remove_meta_box( 'postimagediv', 'custom', 'side' );
   remove_meta_box( 'postimagediv', 'product', 'side' );
@@ -508,3 +510,21 @@ add_filter( 'wpseo_opengraph_type', function ( $type ) {
   }
   return $type;
 } );
+
+/**
+ * Change archive file path
+ */
+add_filter( 'archive_template', function ( $archive_template ) {
+  if ( is_post_type_archive( [ 'custom', 'special_offer', 'product' ] ) )
+    return get_template_directory() . '/src/archive.php';
+  return $archive_template;
+} ) ;
+
+/**
+ * Change taxonomy file path
+ */
+add_filter( 'taxonomy_template', function ( $taxonomy_template ) {
+  if ( is_tax( [ 'customtaxonomy', 'producttaxonomy' ] ) )
+    return get_template_directory() . '/src/taxonomy.php';
+  return $taxonomy_template;
+} ) ;
