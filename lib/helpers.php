@@ -251,10 +251,12 @@ function get_wholesaler_terms_related_to_post_type( $post_type ): array
 /**
  * Separate thousands by non-break space
  */
-function separate_thousands( $num ): string
+function separate_thousands( $num, $decimals = false ): string
 {
   if ( ! is_numeric( $num ) ) return $num;
-  return number_format( $num, 0 , ',', '&nbsp;' );
+  if ( $decimals )
+    return str_replace(',00', '', (string)number_format( $num, 2, ',', '&nbsp;' ) );
+  return number_format( $num, 0, ',', '&nbsp;' );
 }
 
 /**
