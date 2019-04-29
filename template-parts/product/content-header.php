@@ -7,39 +7,16 @@
       <?php the_title(); ?>
     </h1>
 
-    <?php
-      if ( $related_wholesaler = get_field( "related_wholesaler" ) ):
-      // Set global post variable to related wholesaler post
-      global $post; 
-      $post = get_post( $related_wholesaler->ID );
-      setup_postdata( $post );
-    ?>
+    <?php if ( get_field( "category" ) ): ?>
     <dl class="dl-inline">
       <dt class="text-muted mr-1">
         <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
       </dt>
       <dd>
-        <ul class="list-comma">
-
-          <?php if ( get_field( "category" ) ):  ?>
-          <li><strong><a href="<?php echo get_archive_category_link( 'product', get_field( "category" ) ); ?>" title="<?php _e( 'Hlavní kategorie', 'shp-obchodiste' ); ?>"><?php echo get_field( "category" )->name; ?></a></strong></li>
-          <?php endif; ?>
-
-          <?php if ( get_field( "minor_category_1" ) ):  ?>
-          <li><a href="<?php echo get_archive_category_link( 'product', get_field( "minor_category_1" ) ); ?>"><?php echo get_field( "minor_category_1" )->name; ?></a></li>
-          <?php endif; ?>
-
-          <?php if ( get_field( "minor_category_2" ) ):  ?>
-          <li><a href="<?php echo get_archive_category_link( 'product', get_field( "minor_category_2" ) ); ?>"><?php echo get_field( "minor_category_2" )->name; ?></a></li>
-          <?php endif; ?>
-
-        </ul>
+        <a href="<?php echo get_term_link( get_field( "category" ) ); ?>"><?php echo get_field( "category" )->name; ?></a>
       </dd>
     </dl>
-    <?php
-      wp_reset_postdata();
-      endif;
-    ?>
+    <?php endif; ?>
 
     <?php if ( $short_description = get_field( "short_description" ) ): ?>
     <meta itemprop="description" content="<?php echo $short_description; ?>">

@@ -204,11 +204,38 @@ function get_cpt_product_args(): array
     'capability_type' => 'product',
     'map_meta_cap' => true,
     'hierarchical' => false,
-    'rewrite' => false,
     'query_var' => true,
     'rewrite' => [ 'slug' => 'produkt', 'with_front' => true ],
     'menu_icon' => 'dashicons-cart',
     'supports' => [ 'title', 'thumbnail', 'author' ],
+  ];
+  return $args;
+}
+
+/**
+ * Returns product custom post type taxonomy arguments
+ */
+function get_cpt_product_taxonomy_args(): array
+{
+  $labels = [
+    'name' => __( 'Kategorie', 'shp-obchodiste' ),
+    'singular_name' => __( 'Kategorie', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Kategorie', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'public' => true,
+    'hierarchical' => false,
+    'label' => 'Kategorie',
+    'show_ui' => true,
+    'show_in_menu' => true,
+    'show_in_nav_menus' => true,
+    'query_var' => true,
+    'rewrite' => [ 'slug' => 'produkty', 'with_front' => true ],
+    'show_admin_column' => false,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'show_in_quick_edit' => false,
   ];
   return $args;
 }
