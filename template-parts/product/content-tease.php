@@ -60,7 +60,7 @@
         <meta itemprop="price" content="<?php echo $price; ?>">
         <meta itemprop="priceCurrency" content="CZK">    
         <p class="mb-0">
-          <span class="font-weight-bold <?php if ( $is_product_tease_in_row ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price ); ?></span>
+          <span class="font-weight-bold <?php if ( $is_product_tease_in_row ) echo 'fs-125'; ?>"><?php echo separate_thousands( $price, true ); ?></span>
           <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
         </p>
 

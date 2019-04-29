@@ -34,7 +34,7 @@
             <meta itemprop="price" content="<?php echo $price; ?>">
             <meta itemprop="priceCurrency" content="CZK">
             <meta itemprop="url" content="<?php the_permalink(); ?>">
-            <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price ); ?></span>
+            <span class="fs-150 font-weight-bold"><?php echo separate_thousands( $price, true ); ?></span>
             <?php _e( '<span class="font-weight-bold">Kč</span>&nbsp;/&nbsp;ks', 'shp-obchodiste' ); ?>
           </dd>
 
