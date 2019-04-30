@@ -528,3 +528,17 @@ add_filter( 'taxonomy_template', function ( $taxonomy_template ) {
     return get_template_directory() . '/src/taxonomy.php';
   return $taxonomy_template;
 } ) ;
+
+/**
+ * Change single file path
+ */
+add_filter( 'single_template', function ( $single_template ) {
+  $object = get_queried_object();
+  switch ( $object->post_type ) {
+    case 'custom':
+    return get_template_directory() . '/src/single.php';
+    case 'product':
+    return get_template_directory() . '/src/single-product.php';
+  }
+  return $single_template;
+} ) ;
