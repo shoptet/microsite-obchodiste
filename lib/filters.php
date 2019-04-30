@@ -24,61 +24,53 @@ Disallow: /*s=*
 /**
  * Add products and wholesaler categories dropdown to main menu
  */
-add_filter( 'wp_nav_menu_items', function( $items, $args ) {
-  if( $args->menu_id !== 'shp_navigation' ) return $items;
+add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
+  if( $args->menu_id !== 'shp_navigation' ) return $items_html;
 
-  $products_taxonomy_items = '
-    <li class="shp_menu-item has-dropdown">
-      <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'product' ) . '">
-      ' . __( 'Produkty', 'shp-obchodiste' ) . '
-      </a>
-      <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-      <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
+  $menu_items_data = [
+    'product' => [
+      'title' => __( 'Produkty', 'shp-obchodiste' ),
+      'taxonomy' => 'producttaxonomy',
+    ],
+    'custom' => [
+      'title' => __( 'Velkoobchody', 'shp-obchodiste' ),
+      'taxonomy' => 'customtaxonomy',
+    ],
+  ];
+
+  $menu_items_html = '';
+
+  foreach ( $menu_items_data as $post_type => $data ) {
+
+    $menu_items_html .= '
+      <li class="shp_menu-item has-dropdown">
+        <a class="shp_menu-item-link" href="' . get_post_type_archive_link( $post_type ) . '">
+        ' . $data['title'] . '
+        </a>
+        <span class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+        <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right">
+          <li class="shp_menu-item">
+            <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( $post_type ) . '">
+            ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
+            </a>
+          </li>
+    ';
+
+    foreach ( get_terms( $data['taxonomy'] ) as $term ) {
+      $menu_items_html .= '
         <li class="shp_menu-item">
-          <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( 'product' ) . '">
-          ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
+          <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
+          ' . $term->name . '
           </a>
         </li>
-  ';
+      ';
+    }
+  
+    $menu_items_html .= '</ul></li>';
 
-  foreach ( get_wholesaler_terms_related_to_post_type( 'product' ) as $term ) {
-    $products_taxonomy_items .= '
-      <li class="shp_menu-item">
-        <a class="shp_menu-item-link dropdown-item" href="' . get_archive_category_link( 'product', $term ) . '">
-        ' . $term->name . '
-        </a>
-      </li>
-    ';
   }
 
-  $products_taxonomy_items .= '</ul></li>';
-
-  $wholesaler_taxonomy_items = '
-    <li class="shp_menu-item has-dropdown">
-      <a class="shp_menu-item-link" href="' . get_post_type_archive_link( 'custom' ) . '">
-      ' . __( 'Velkoobchody', 'shp-obchodiste' ) . '
-      </a>
-      <span id="categoriesDropdown" class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-      <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right" aria-labelledby="categoriesDropdown">
-        <li class="shp_menu-item">
-          <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( 'custom' ) . '">
-          ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
-          </a>
-        </li>
-  ';
-
-  foreach ( get_terms( 'customtaxonomy' ) as $term ) {
-    $wholesaler_taxonomy_items .= '
-      <li class="shp_menu-item">
-        <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
-        ' . $term->name . '
-        </a>
-      </li>
-    ';
-  }
-
-  $wholesaler_taxonomy_items .= '</ul></li>';
-  return $products_taxonomy_items . $wholesaler_taxonomy_items . $items;
+  return $menu_items_html . $items_html;
 }, 10, 2 );
 
 /**
