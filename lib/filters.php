@@ -336,10 +336,11 @@ add_filter( 'post_row_actions', function( $actions, $post ) {
 /**
  * Remove wholesaler, special offer and product bulk actions for subscribers
  */
-function remove_bulk_actions_for_subscribers() {
+function remove_bulk_actions_for_subscribers( $actions ) {
   global $current_user;
-	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  return ! user_can( $current_user, 'subscriber' );
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $actions;
+  return [];
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
