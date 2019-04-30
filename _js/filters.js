@@ -36,7 +36,7 @@ $(function() {
     });
     // Remove single category and default ordering
     data = data.filter(function (item) {
-      skipSingleCategory = (postType === 'custom' && categoryCount === 1 && item.name === 'category[]');
+      skipSingleCategory = (['custom', 'product'].includes(postType) && categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
       skipEmptyValue = ( item.value ? false : true );
       return !skipSingleCategory && !skipDefaultOrderBy && !skipEmptyValue;
@@ -46,7 +46,7 @@ $(function() {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.archiveUrl[ postType ];
-    url += ( (postType === 'custom' && categoryCount === 1) ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
+    url += ( (['custom', 'product'].includes(postType) && categoryCount === 1) ? window.terms[ postType ][ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };

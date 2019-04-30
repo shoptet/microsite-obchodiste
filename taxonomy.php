@@ -2,8 +2,7 @@
 
 <section class="section section-primary">
     <div class="section-inner container">
-    <?php get_template_part( 'src/template-parts/wholesaler/content', 'archive' ); ?>
-
+        <?php get_template_part( 'src/template-parts/common/content', 'archive' ); ?>
     </div>
 </section>
 

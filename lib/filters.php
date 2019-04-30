@@ -89,6 +89,8 @@ add_filter( 'add_meta_boxes', function() {
    // Hide category meta box
   remove_meta_box( 'tagsdiv-customtaxonomy', 'custom', 'side' );
   remove_meta_box( 'customtaxonomydiv', 'custom', 'side' ); // if taxonomy is hierarchical
+  remove_meta_box( 'tagsdiv-producttaxonomy', 'product', 'side' );
+  remove_meta_box( 'producttaxonomydiv', 'product', 'side' ); // if taxonomy is hierarchical
    // Hide featured image metabox
   remove_meta_box( 'postimagediv', 'custom', 'side' );
   remove_meta_box( 'postimagediv', 'product', 'side' );
@@ -369,7 +371,7 @@ add_filter('acf/load_field/name=related_wholesaler', function( $field ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( user_can( $current_user, 'subscriber' ) ) {
-    $field['required'] = 0;
+    $field['value'] = get_user_wholesaler( $current_user, 'public' );
   };
   return $field;
 } );
@@ -397,8 +399,8 @@ add_filter( 'post_type_labels_custom', function ( $labels ) {
 
   $labels->menu_name = __( 'Můj velkoobchod', 'shp-obchodiste' );
 
-  $wholesaler = get_user_wholesaler( $current_user );
-  if ( $wholesaler && $wholesaler->post_status === 'publish' ) {
+  $wholesaler = get_user_wholesaler( $current_user, 'publish' );
+  if ( $wholesaler ) {
     $labels->all_items = __( 'Upravit medailonek', 'shp-obchodiste' );
   } else {
     $labels->all_items = __( 'Přidat medailonek', 'shp-obchodiste' );
@@ -508,3 +510,21 @@ add_filter( 'wpseo_opengraph_type', function ( $type ) {
   }
   return $type;
 } );
+
+/**
+ * Change archive file path
+ */
+add_filter( 'archive_template', function ( $archive_template ) {
+  if ( is_post_type_archive( [ 'custom', 'special_offer', 'product' ] ) )
+    return get_template_directory() . '/src/archive.php';
+  return $archive_template;
+} ) ;
+
+/**
+ * Change taxonomy file path
+ */
+add_filter( 'taxonomy_template', function ( $taxonomy_template ) {
+  if ( is_tax( [ 'customtaxonomy', 'producttaxonomy' ] ) )
+    return get_template_directory() . '/src/taxonomy.php';
+  return $taxonomy_template;
+} ) ;

@@ -29,7 +29,7 @@
 
       <p class="mb-0">
         <?php _e( 'Cena:', 'shp-obchodiste' ); ?>
-        <strong><?php echo separate_thousands( get_field( "price" ) ); ?> <?php _e( 'Kč', 'shp-obchodiste' ); ?></strong>
+        <strong><?php echo separate_thousands( get_field( "price" ), true ); ?> <?php _e( 'Kč', 'shp-obchodiste' ); ?></strong>
         <?php if ( get_field( "amount" ) ) echo " / " . get_field( "amount" ); ?>
       </p>
 

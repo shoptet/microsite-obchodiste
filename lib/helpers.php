@@ -177,7 +177,7 @@ function get_related_wholesalers( $post_type ): array
 /**
  * Get not empty wholesaler regions by country
  */
-function get_used_regions_by_country( $post_type = false ): array
+function get_used_regions_by_country( $post_type ): array
 {
   $countries = [
     'cz' => [
@@ -192,10 +192,10 @@ function get_used_regions_by_country( $post_type = false ): array
   $regions_by_country = [];
 
   $is_region_used = function ( $region_id ) use ( &$post_type ) {
-    if ( $post_type )
-      $region_post_count = count( get_posts_by_region( $post_type, $region_id ) );
+    if ( $post_type === 'custom' )
+      $region_post_count = get_post_count_by_meta( 'region', $region_id, $post_type );
     else
-      $region_post_count = get_post_count_by_meta( 'region', $region_id, 'custom' );
+      $region_post_count = count( get_posts_by_region( $post_type, $region_id ) );
     return ( $region_post_count > 0 );
   };
 
@@ -251,10 +251,12 @@ function get_wholesaler_terms_related_to_post_type( $post_type ): array
 /**
  * Separate thousands by non-break space
  */
-function separate_thousands( $num ): string
+function separate_thousands( $num, $decimals = false ): string
 {
   if ( ! is_numeric( $num ) ) return $num;
-  return number_format( $num, 0 , ',', '&nbsp;' );
+  if ( $decimals )
+    return str_replace(',00', '', (string)number_format( $num, 2, ',', '&nbsp;' ) );
+  return number_format( $num, 0, ',', '&nbsp;' );
 }
 
 /**
@@ -287,11 +289,26 @@ function get_archive_category_link( $post_type, $category ): string
   return $archive_link . '?category[]=' . $category_id;
 }
 
-function get_user_wholesaler( $user ) {
-  $wp_query = new WP_Query( [
+function get_user_wholesaler( $user, $post_status = null ) {
+  $args = [
     'post_type' => 'custom',
     'posts_per_page' => 1,
     'author' => $user->ID,
-  ] );
+  ];
+  if ( $post_status ) $args['post_status'] = $post_status;
+  $wp_query = new WP_Query( $args );
   return $wp_query->post;
+}
+
+function get_post_type_in_archive_or_taxonomy () {
+  global $wp_query;
+  $post_type = $wp_query->get( 'post_type' );
+  if ( is_tax() ) {
+    $taxonomy = get_queried_object();
+    if ( $taxonomy->taxonomy === 'customtaxonomy' )
+      $post_type = 'custom';
+    elseif ( $taxonomy->taxonomy === 'producttaxonomy' )
+      $post_type = 'product';
+  }
+  return $post_type;
 }
