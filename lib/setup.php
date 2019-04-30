@@ -1003,7 +1003,7 @@ add_action( 'admin_head', function() {
 } );
 
 /**
- * Add admin notice if special offer or product limit exceeded
+ * Add admin notices for subscribers
  */
 add_action( 'admin_notices', function() {
   global $current_user, $pagenow, $wp_query, $post;
@@ -1014,6 +1014,19 @@ add_action( 'admin_notices', function() {
 
   $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
   if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+
+  if ( 'product' === $post_type && ! get_user_wholesaler( $current_user, 'publish' )  ) : ?>
+    <div class="notice notice-error">
+      <p>
+        <?php
+        printf(
+          __( 'Produkt bude možné odeslat ke schválení, až bude vytvořen a schválen <a href="%s" style="color:#c00" target="_blank">medailonek vašeho velkoobchodu</a>', 'shp-obchodiste' ),
+          admin_url( 'post-new.php?post_type=custom' )
+        );
+        ?>
+      </p>
+    </div>
+  <?php endif;
 
   $options = get_fields( 'options' );
   $special_offer_limit = $options[ $post_type . '_limit' ];
