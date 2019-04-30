@@ -787,25 +787,20 @@ add_action( 'transition_post_status',  function( $new_status, $old_status, $post
     $email_subject = $options[ 'pending_special_offer_email_subject' ];
     $email_body = $options[ 'pending_special_offer_email_body' ];
     $to_replace = [ '%offer_name%' => $title ];
-
-    if ( $related_wholesaler = get_field( 'related_wholesaler', $post->ID ) ) {
-      $to_replace['%wholesaler_name%'] = $related_wholesaler->post_title;
-    }
-
     break;
 
     case 'product':
     $email_subject = $options[ 'pending_product_email_subject' ];
     $email_body = $options[ 'pending_product_email_body' ];
     $to_replace = [ '%product_name%' => $title ];
-
-    if ( $related_wholesaler = get_field( 'related_wholesaler', $post->ID ) ) {
-      $to_replace['%wholesaler_name%'] = $related_wholesaler->post_title;
-    }
-
     break;
   }
-  
+
+  // Set option variables for related wholesaler
+  if ( $related_wholesaler = get_field( 'related_wholesaler', $post->ID ) ) {
+    $to_replace['%wholesaler_name%'] = $related_wholesaler->post_title ?: get_the_title( $related_wholesaler ); // when related wholesaler has not loaded its post data then load by its id
+  }
+
   // Replace e-mail body variables
   $email_body = strtr( $email_body, $to_replace );
 

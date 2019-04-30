@@ -356,15 +356,17 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
 } );
 
 /**
- * Set related wholesaler field not required for subscriber
+ * Set default related wholesaler for subscriber
  */
-add_filter('acf/load_field/name=related_wholesaler', function( $field ) {
+add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) ) {
-    $field['value'] = get_user_wholesaler( $current_user, 'public' );
-  };
-  return $field;
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $value;
+  if ( $related_wholesaler = get_user_wholesaler( $current_user, 'publish' ) )
+    $value = $related_wholesaler->ID;
+  else
+    $value = NULL;
+  return $value;
 } );
 
 /**
@@ -375,7 +377,7 @@ add_filter( 'acf/update_value/name=related_wholesaler', function( $value ) {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return $value;
 
-  if ( $wholesaler = get_user_wholesaler( $current_user ) ) {
+  if ( $wholesaler = get_user_wholesaler( $current_user, 'publish' ) ) {
     return $wholesaler->ID;
   }
 
