@@ -1,6 +1,7 @@
 <?php
 
 /**
+<<<<<<< HEAD
  * Edit robots.txt file
  */
 add_filter('robots_txt', function( $robots_text ) {
@@ -27,6 +28,8 @@ Disallow: /*s=*
 });
 
 /**
+=======
+>>>>>>> Remove robots.txt filter
  * Add products and wholesaler categories dropdown to main menu
  */
 add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
