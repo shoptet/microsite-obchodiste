@@ -767,14 +767,13 @@ add_action( 'edit_form_top', function( $post ) {
 add_action( 'transition_post_status',  function ( $new_status, $old_status, $post ) {
 
   $post_type = get_post_type( $post );
-
-  // Only new wholesaler, special offer or product post
-  if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
-
 	$options = get_fields( 'options' );
   
 	if ( $old_status === 'draft' && $new_status === 'pending' ) {
     // Set recipients for pending notification email
+
+    // Only new wholesaler, special offer or product post
+    if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
 
     // Check e-mail recipients
     if ( ! isset( $options[ 'pending_email_recipients' ] ) || ! is_array( $options[ 'pending_email_recipients' ] ) ) return;
@@ -791,6 +790,10 @@ add_action( 'transition_post_status',  function ( $new_status, $old_status, $pos
 
   } elseif ( $old_status === 'pending' && $new_status === 'publish' ) {
     // Set recipient for publish notification email
+    
+    // Only new wholesaler
+    if ( ! in_array( $post_type, [ 'custom' ] ) ) return;
+
     $email_recipients_emails = [];
     $author_id = get_post_field( 'post_author', $post->ID );
     $email_recipients_emails[] = get_the_author_meta( 'user_email', $author_id );
