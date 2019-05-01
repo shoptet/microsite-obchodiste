@@ -12,8 +12,12 @@ Disallow: /wp-register.php
 ';
   // Do not index filtering, ordering and searching
   $robots_text .= '
-Disallow: /*category=*
-Disallow: /*region=*
+Disallow: /*category[]=*
+Disallow: /*category%5B%5D=*
+Disallow: /*region[]=*
+Disallow: /*region%5B%5D=*
+Disallow: /*services[]=*
+Disallow: /*services%5B%5D=*
 Disallow: /*orderby=*
 Disallow: /*p=*
 Disallow: /*s=*
