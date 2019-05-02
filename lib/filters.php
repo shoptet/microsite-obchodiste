@@ -522,3 +522,16 @@ add_filter( 'single_template', function ( $single_template ) {
 add_filter( 'wpseo_metabox_prio', function () {
   return 'low';
 } );
+
+/**
+ * Add related wholesaler column to post list in admin
+ */
+add_filter( 'manage_edit-product_columns', function ( $columns ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) return $columns;
+	return
+		array_slice( $columns, 0, 3, true ) +
+		[ 'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ) ] +
+		array_slice( $columns, 3, 4, true );
+} );
