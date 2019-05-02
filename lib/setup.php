@@ -1189,12 +1189,14 @@ add_action( 'restrict_manage_posts', function ( $post_type ) {
     $selected = $_REQUEST[$request_attr];
   }
 
-  $the_query = new WP_Query( [
+  $wp_query = new WP_Query( [
     'post_type' => 'custom',
     'post_status' => 'any',
     'posts_per_page' => -1,
+    'orderby' => 'title',
+    'order' => 'ASC',
   ] );
-  $wholesalers = $the_query->posts;
+  $wholesalers = $wp_query->posts;
 
   echo '<select id="wholesaler" name="wholesaler">';
   echo '<option value="0">' . __( '— Velkoobchod —', 'shp-obchodiste' ) . ' </option>';
