@@ -1250,8 +1250,8 @@ add_action( 'admin_init', function () {
 add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
 	switch ( $column ) {
     case 'related_wholesaler':
-    $related_wholesaler = get_field( 'related_wholesaler', $post_id );
-    echo get_the_title( $related_wholesaler );
+    if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) )
+      echo get_the_title( $related_wholesaler );
 		break;
 	}
 }, 10, 2 );
