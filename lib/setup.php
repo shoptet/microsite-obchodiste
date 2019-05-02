@@ -1134,6 +1134,116 @@ add_action( 'admin_menu', function () {
 } );
 
 /**
+ * Add filtering by user to admin post list
+ */
+add_action( 'restrict_manage_posts', function ( $post_type ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) return;
+
+  if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
+  
+  $params = [
+    'name' => 'author',
+		'show_option_all' => __( '— Autor —', 'shp-obchodiste' ),
+  ];
+  
+  $request_attr = 'user';
+	if ( isset( $_REQUEST[ $request_attr ] ) )
+		$params['selected'] = $_REQUEST[ $request_attr ];
+ 
+	wp_dropdown_users( $params );
+
+} );
+
+/**
+ * Add filtering by wholesaler to admin post list
+ */
+add_action( 'restrict_manage_posts', function ( $post_type ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'subscriber' ) ) return;
+
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+  
+  $selected = '';
+  $request_attr = 'wholesaler';
+  if ( isset($_REQUEST[$request_attr]) ) {
+    $selected = $_REQUEST[$request_attr];
+  }
+
+  $wp_query = new WP_Query( [
+    'post_type' => 'custom',
+    'post_status' => 'any',
+    'posts_per_page' => -1,
+    'orderby' => 'title',
+    'order' => 'ASC',
+  ] );
+  $wholesalers = $wp_query->posts;
+
+  echo '<select id="wholesaler" name="wholesaler">';
+  echo '<option value="0">' . __( '— Velkoobchod —', 'shp-obchodiste' ) . ' </option>';
+  foreach( $wholesalers as $wholesaler ){
+    $select = ( $wholesaler->ID == $selected ) ? ' selected="selected"' : '' ;
+    echo '<option value="' . $wholesaler->ID . '"' . $select . '>' . $wholesaler->post_title . ' </option>';
+  }
+  echo '</select>';
+
+} );
+
+/**
+ * Filter special offers and product by wholesalers in admin
+ */
+add_action( 'pre_get_posts', function( $wp_query ) {
+  if( ! is_admin() || ! $wp_query->is_main_query() ) return;
+
+  $post_type = $wp_query->get( 'post_type' );
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+
+  $request_attr = 'wholesaler';
+  if ( ! isset($_REQUEST[$request_attr]) || 0 == $_REQUEST[$request_attr] ) return;
+
+  $meta_query = $wp_query->get( 'meta_query' );
+
+	if ( empty( $meta_query ) ) {
+		$meta_query = [];
+  }
+  
+  $meta_query = [ [
+    'key' => 'related_wholesaler',
+    'value' => $_REQUEST[$request_attr],
+  ] ];
+
+	$wp_query->set( 'meta_query', $meta_query );
+} );
+
+/**
+ * Remove Yoast SEO filters
+ */
+add_action( 'admin_init', function () {
+  global $wpseo_meta_columns;
+  if ( ! $wpseo_meta_columns ) return;
+  remove_action( 'restrict_manage_posts', [ $wpseo_meta_columns, 'posts_filter_dropdown' ] );
+  remove_action( 'restrict_manage_posts', [ $wpseo_meta_columns, 'posts_filter_dropdown_readability' ] );
+} );
+
+/**
+ * Add content to related wholesaler column
+ */
+add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
+	switch ( $column ) {
+    case 'related_wholesaler':
+    if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
+      echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
+      echo get_the_title( $related_wholesaler );
+      echo '</a>';
+    } else
+      echo '<em>Bez velkoobchodu</em>';
+		break;
+	}
+}, 10, 2 );
+
+/**
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
