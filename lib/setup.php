@@ -1255,7 +1255,7 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
       echo get_the_title( $related_wholesaler );
       echo '</a>';
     } else
-      echo '<em>Bez velkoobchodu</em>';
+      echo '<em>' . __( 'Bez velkoobchodu', 'shp-obchodiste' ) . '</em>';
 		break;
 	}
 }, 10, 2 );
