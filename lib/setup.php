@@ -1250,8 +1250,12 @@ add_action( 'admin_init', function () {
 add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
 	switch ( $column ) {
     case 'related_wholesaler':
-    if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) )
+    if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
+      echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
       echo get_the_title( $related_wholesaler );
+      echo '</a>';
+    } else
+      echo '<em>Bez velkoobchodu</em>';
 		break;
 	}
 }, 10, 2 );
