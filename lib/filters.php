@@ -515,3 +515,10 @@ add_filter( 'single_template', function ( $single_template ) {
   }
   return $single_template;
 } ) ;
+
+/**
+ * Move Yoast SEO plugin to bottom
+ */
+add_filter( 'wpseo_metabox_prio', function () {
+  return 'low';
+} );
