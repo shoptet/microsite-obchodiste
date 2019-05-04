@@ -535,3 +535,47 @@ add_filter( 'manage_edit-product_columns', function ( $columns ) {
 		[ 'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ) ] +
 		array_slice( $columns, 3, 4, true );
 } );
+
+/**
+ * Add related post and its type to message post list in admin
+ */
+add_filter( 'manage_edit-wholesaler_message_columns', function ( $columns ) {
+	return
+		array_slice( $columns, 0, 2, true ) +
+		[ 'related_post_type' => __( 'Typ zdroje', 'shp-obchodiste' ) ] +
+		[ 'related_post' => __( 'Zdroj', 'shp-obchodiste' ) ] +
+		array_slice( $columns, 2, 4, true );
+} );
+
+/**
+ * Add wholesaler and product filter links to message post list in admin
+ */
+add_filter( 'views_edit-wholesaler_message', function ( $views ) {
+  // Unset unnecessary views
+  unset( $views[ 'mine' ] );
+  unset( $views[ 'publish' ] );
+
+  $current = '';
+  if ( isset($_REQUEST['related_post_type']) ) {
+    $current = $_REQUEST['related_post_type'];
+  };
+
+  $custom_views_data = [
+    'custom' => __( 'Velkoobchody', 'shp-obchodiste' ),
+    'product' => __( 'Produkty', 'shp-obchodiste' ),
+  ];
+
+  // Genereate custom views
+  $custom_views = [];
+  foreach ( $custom_views_data as $post_type => $label ) {
+    $attr_href = admin_url( 'edit.php?post_type=wholesaler_message&related_post_type=' . $post_type );
+    $attr_class = ( $current == $post_type ? 'class="current"' : '' );
+    $custom_views[ $post_type ] = '<a href="' . $attr_href . '" ' . $attr_class . '>'. $label . '</a>';
+  }
+
+  // Add custom views after "All" item
+  return
+    array_slice( $views, 0, 1, true ) +
+		$custom_views +
+    array_slice( $views, 1, 5, true );
+} );

@@ -56,7 +56,7 @@
       </div>
       <div class="ml-2">
         <a
-          href="#wholesalerContactForm"
+          href="#productContactForm"
           class="btn btn-primary"
           data-wholesaler-contact="product"
           data-wholesaler-contact-item="<?php the_title(); ?>"
