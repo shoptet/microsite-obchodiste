@@ -28,12 +28,12 @@
 
     <?php get_template_part( 'src/template-parts/wholesaler/content', 'contact-person' ); ?>
 
-    <?php get_template_part( 'src/template-parts/wholesaler/content', 'contact-form' ); ?>
-
     <?php
       wp_reset_postdata();
       endif;
     ?>
+
+    <?php get_template_part( 'src/template-parts/wholesaler/content', 'contact-form' ); ?>
 
   </div>
 </div>

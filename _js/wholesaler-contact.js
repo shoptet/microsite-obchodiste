@@ -14,7 +14,7 @@ $(function() {
   $('[data-wholesaler-contact]').on('click', function (e) {
     e.preventDefault();
     var $this = $(this);
-    var $contactForm = $('#wholesalerContactForm');
+    var $contactForm = $('#wholesalerContactForm, #productContactForm');
     $('html, body').animate({
       scrollTop: $contactForm.offset().top,
     }, 500, function () {

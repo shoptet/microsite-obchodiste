@@ -1,10 +1,23 @@
+<?php
+$post_type  = get_post_type();
+$form_id = '';
+switch ( $post_type ) {
+  case 'custom':
+  $form_id = 'wholesalerContactForm';
+  break;
+  case 'product':
+  $form_id = 'productContactForm';
+  break;
+}
+?>
+
 <div class="sticky pb-2">
 
   <h2 class="h-heavy">
     <?php _e( 'Kontaktovat velkoobchod', 'shp-obchodiste' ); ?>
   </h2>
 
-  <form class="wholesaler-contact" id="wholesalerContactForm">
+  <form class="wholesaler-contact" id="<?php echo $form_id; ?>">
 
     <div class="form-group">
       <label class="required-asterisk" for="wholesalerContactFormName">
@@ -27,7 +40,8 @@
       <textarea class="form-control" name="message" rows="11" id="wholesalerContactFormMessage" required></textarea>
     </div>
 
-    <input type="hidden" name="wholesaler_id" value="<?php the_ID(); ?>">
+    <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
+    <input type="hidden" name="post_id" value="<?php the_ID(); ?>">
 
     <div class="g-recaptcha mb-3" data-sitekey="<?php echo G_RECAPTCHA_SITE_KEY; ?>"></div>
 
