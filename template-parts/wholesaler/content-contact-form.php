@@ -13,9 +13,13 @@ switch ( $post_type ) {
 
 <div class="sticky pb-2">
 
-  <h2 class="h-heavy">
+  <h2 class="h-heavy mb-2">
     <?php _e( 'Kontaktovat velkoobchod', 'shp-obchodiste' ); ?>
   </h2>
+
+  <p>
+    <?php _e( 'Máte zájem o&nbsp;dlouhodobou spolupráci s&nbsp;tímto velkoobchodem?', 'shp-obchodiste' ); ?>
+  </p>
 
   <form class="wholesaler-contact" id="<?php echo $form_id; ?>">
 
