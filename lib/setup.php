@@ -593,7 +593,7 @@ add_action( 'parse_query', function( $query ) {
 } );
 
 /**
- * Handle ajax wholesaler message request
+ * Handle ajax wholesaler and product message request
  */
 add_action( 'wp_ajax_wholesaler_message', 'handle_wholesaler_message' );
 add_action( 'wp_ajax_nopriv_wholesaler_message', 'handle_wholesaler_message' );
@@ -612,7 +612,8 @@ function handle_wholesaler_message() {
   $name = sanitize_text_field( $_POST[ 'name' ] );
   $email = sanitize_email( $_POST[ 'email' ] );
   $message = sanitize_textarea_field( $_POST[ 'message' ] );
-  $wholesaler_id = intval( $_POST[ 'wholesaler_id' ] );
+  $post_type = sanitize_text_field( $_POST[ 'post_type' ] );
+  $post_id = intval( $_POST[ 'post_id' ] );
 
   // WordPress comments blacklist check
   $user_url = '';
@@ -622,21 +623,43 @@ function handle_wholesaler_message() {
   $user_agent = substr( $user_agent, 0, 254 );
   $is_blacklisted = wp_blacklist_check( $name, $email, $user_url, $message, $user_ip, $user_agent );
 
+  $meta_input = [
+    'email' => $email,
+    'message' => $message,
+    'agent' => $user_agent,
+    'ip' => $user_ip,
+    'spam' => $is_blacklisted,
+  ];
+
+  $options = get_fields( 'options' );
+
+  switch ( $post_type ) {
+    case 'custom':
+    $meta_input['wholesaler'] = $post_id;
+    $wholesaler_id = $post_id;
+    $message_email_body = $options[ 'wholesaler_email_body' ];
+    $message_email_subject = $options[ 'wholesaler_email_subject' ];
+    break;
+    case 'product':
+    $meta_input['product'] = $post_id;
+    $wholesaler_id = get_field( 'related_wholesaler', $post_id, false );
+    $message_email_body = $options[ 'product_email_body' ];
+    $message_email_subject = $options[ 'product_email_subject' ];
+    break;
+  }
+
+  // Get wholesaler post fields
+  $wholesaler_title = get_the_title( $wholesaler_id );
+  $wholesaler_contact_email = get_field( 'contact_email', $wholesaler_id, false );
+
   // Insert wholesaler message post
   $postarr = [
     'post_type' => 'wholesaler_message',
     'post_title' => $name,
     'post_status' => 'publish',
-    'meta_input' => [
-      'email' => $email,
-      'message' => $message,
-      'wholesaler' => $wholesaler_id,
-      'agent' => $user_agent,
-      'ip' => $user_ip,
-      'spam' => $is_blacklisted,
-    ],
+    'meta_input' => $meta_input,
   ];
-  wp_insert_post( $postarr );
+  $post_message_id = wp_insert_post( $postarr );
 
   if ( $is_blacklisted ) {
     wp_die();
@@ -650,15 +673,8 @@ function handle_wholesaler_message() {
     update_post_meta( $wholesaler_id, 'contact_count', 1 );
   }
 
-  // Get wholesaler post fields
-  $wholesaler_title = get_the_title( $wholesaler_id );
-  $wholesaler_contact_email = get_post_meta( $wholesaler_id, 'contact_email' );
-
   // Get ACF e-mail options
-  $options = get_fields( 'options' );
   $email_from = $options[ 'email_from' ];
-  $wholesaler_email_body = $options[ 'wholesaler_email_body' ];
-  $wholesaler_email_subject = $options[ 'wholesaler_email_subject' ];
   $retailer_email_body = $options[ 'retailer_email_body' ];
   $retailer_email_subject = $options[ 'retailer_email_subject' ];
 
@@ -669,19 +685,30 @@ function handle_wholesaler_message() {
     '%contact_message%' => $message,
     '%wholesaler_name%' => $wholesaler_title,
   ];
-  $wholesaler_email_body = strtr( $wholesaler_email_body, $to_replace );
+  if ( 'product' == $post_type ) {
+    $to_replace[ '%product_name%' ] = get_the_title( $post_id );
+  }
+  $message_email_body = strtr( $message_email_body, $to_replace );
   $retailer_email_body = strtr( $retailer_email_body, $to_replace );
 
   // Send e-mail to wholesaler
   wp_mail(
     $wholesaler_contact_email,
-    $wholesaler_email_subject,
-    $wholesaler_email_body,
+    $message_email_subject,
+    $message_email_body,
     [
       'From: ' . $email_from,
       'Reply-to: ' . $email,
       'Content-Type: text/html; charset=UTF-8',
     ]
+  );
+
+  update_post_meta(
+    $post_message_id,
+    'sent_message', 
+    $wholesaler_contact_email . '
+    ' . $message_email_subject . '
+    ' . $message_email_body
   );
 
   // Send e-mail to retailer
@@ -1235,6 +1262,35 @@ add_action( 'pre_get_posts', function( $wp_query ) {
 } );
 
 /**
+ * Filter messages by wholesaler and product
+ */
+add_action( 'pre_get_posts', function( $wp_query ) {
+  if( ! is_admin() || ! $wp_query->is_main_query() ) return;
+  
+  $post_type = $wp_query->get( 'post_type' );
+  if ( $post_type !== 'wholesaler_message' ) return;
+  
+  $request_attr = 'related_post_type';
+  if ( ! isset($_REQUEST[$request_attr]) ) return;
+  
+  $meta_query = $wp_query->get( 'meta_query' );
+
+	if ( empty( $meta_query ) ) {
+		$meta_query = [];
+  }
+
+  $meta_query_key = $_REQUEST[$request_attr];
+  if ( $meta_query_key == 'custom' )
+    $meta_query_key = 'wholesaler';
+  
+  $meta_query = [ [
+    'key' => $meta_query_key,
+  ] ];
+
+	$wp_query->set( 'meta_query', $meta_query );
+} );
+
+/**
  * Remove Yoast SEO filters
  */
 add_action( 'admin_init', function () {
@@ -1245,10 +1301,11 @@ add_action( 'admin_init', function () {
 } );
 
 /**
- * Add content to related wholesaler column
+ * Add content to admin columns
  */
 add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
 	switch ( $column ) {
+    // Add related wholesaler to product
     case 'related_wholesaler':
     if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
       echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
@@ -1256,7 +1313,26 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
       echo '</a>';
     } else
       echo '<em>' . __( 'Bez velkoobchodu', 'shp-obchodiste' ) . '</em>';
-		break;
+    break;
+    // Add message source type to message
+    case 'related_post_type':
+    if ( get_field( 'wholesaler', $post_id ) )
+      echo __( 'Velkoobchod', 'shp-obchodiste' );
+    elseif ( $product_id = get_field( 'product', $post_id ) )
+      echo __( 'Produkt', 'shp-obchodiste' );
+    break;
+    // Add related post to message 
+    case 'related_post':
+    if ( $wholesaler_id = get_field( 'wholesaler', $post_id ) )
+      $related_post_id = $wholesaler_id;
+    elseif ( $product_id = get_field( 'product', $post_id ) )
+      $related_post_id = $product_id;
+    else
+      break;
+    echo '<a href="' . get_permalink( $related_post_id ) . '">';
+    echo get_the_title( $related_post_id );
+    echo '</a>';
+    break;
 	}
 }, 10, 2 );
 
