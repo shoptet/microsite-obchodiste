@@ -608,3 +608,34 @@ add_filter( 'views_edit-wholesaler_message', function ( $views ) {
 		$custom_views +
     array_slice( $views, 1, 5, true );
 } );
+
+/**
+ * Remove unimportant formats in mce editor
+ */
+add_filter( 'tiny_mce_before_init', function ( $formats ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $formats;
+  $formats[ 'block_formats' ] = 'Paragraph=p;';
+  $formats[ 'block_formats' ] .= __( 'Nadpis', 'shp-obchodiste' ) . '=h3;';
+  return $formats;
+} );
+
+/**
+ * Remove unimportant buttons in mce editor
+ */
+add_filter( 'mce_buttons', function ( $buttons ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! user_can( $current_user, 'subscriber' ) ) return $buttons;
+  $filtered_buttons = array_diff( $buttons, [
+    'alignleft',
+    'aligncenter',
+    'alignright',
+    'wp_more',
+    'spellchecker',
+    'fullscreen',
+    'wp_adv',
+  ] );
+  return $filtered_buttons;
+} );
