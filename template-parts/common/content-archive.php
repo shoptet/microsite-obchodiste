@@ -143,7 +143,7 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
         <?php else: ?>
 
         <p class="h3 mb-2">
-          <?php echo $archive_text[$post_type]['archive_empty_title']; ?>
+          <?php echo $archive_text[$post_type]['empty_title']; ?>
         </p>
         <p>
           <?php _e( 'Zkuste prosím snížit vaše požadavky pomocí filtrů.', 'shp-obchodiste' ); ?>
