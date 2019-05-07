@@ -1,6 +1,10 @@
 <div class="login header-login">
-    <?php if ( is_front_page() && ! is_user_logged_in() ): ?>
-      <a href="<?php echo admin_url( 'post-new.php?post_type=custom' ); ?>" class="btn btn-orange btn-add">
+    <?php
+    if ( is_front_page() && ! is_user_logged_in() ):
+      $admin_wholesaler_url = admin_url( 'post-new.php?post_type=custom' );
+      $add_wholesaler_url = is_user_logged_in() ? $admin_wholesaler_url : wp_login_url( $admin_wholesaler_url );
+    ?>
+      <a href="<?php echo $add_wholesaler_url; ?>" class="btn btn-orange btn-add">
         <i class="fas fa-plus-circle"></i>
         <?php _e( 'Přidat velkoobchod', 'shp-obchodiste' ); ?>
       </a>
