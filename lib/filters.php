@@ -599,7 +599,7 @@ add_filter( 'mce_buttons', function ( $buttons ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return $buttons;
-  $filtered_buttons = array_diff( $buttons, [
+  $buttons_to_remove = [
     'alignleft',
     'aligncenter',
     'alignright',
@@ -607,6 +607,12 @@ add_filter( 'mce_buttons', function ( $buttons ) {
     'spellchecker',
     'fullscreen',
     'wp_adv',
-  ] );
+  ];
+  $screen = get_current_screen();
+  // Remove format select from wholesaler edit page
+  if ( is_admin() && 'post' === $screen->base && 'custom' === $screen->post_type ) {
+    $buttons_to_remove[] = 'formatselect';
+  }
+  $filtered_buttons = array_diff( $buttons, $buttons_to_remove );
   return $filtered_buttons;
 } );
