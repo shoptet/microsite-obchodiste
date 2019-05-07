@@ -32,6 +32,9 @@ if ( is_tax() ) {
 if ( is_paged() ) {
   $archive_text[$post_type]['title'] .= sprintf( __( ', strana %d', 'shp-obchodiste' ), get_query_var('paged') );
 }
+
+$admin_new_post_url = admin_url( 'post-new.php?post_type=' . $post_type );
+$add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_post_url );
 ?>
 
 <form class="wholesaler-archive mt-2" method="get" id="archiveForm" data-post-type="<?php echo $post_type; ?>">
@@ -57,7 +60,7 @@ if ( is_paged() ) {
             <?php echo $archive_text[$post_type]['title']; ?>
           </h1>
           <div class="ml-md-3">
-            <a href="<?php echo admin_url( 'post-new.php?post_type=' . $post_type ); ?>" class="btn btn-orange btn-add">
+            <a href="<?php echo $add_url; ?>" class="btn btn-orange btn-add">
               <i class="fas fa-plus-circle"></i>
               <?php echo $archive_text[$post_type]['action_button_label']; ?>
             </a>
