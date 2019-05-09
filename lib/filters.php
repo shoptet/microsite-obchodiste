@@ -141,6 +141,79 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
 }, 10, 3 );
 
 /**
+ * Validate product import CSV file
+ */
+add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $value ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  $file_path = get_attached_file( $value );
+  $fp = fopen( $file_path, 'r' );
+
+  if ( ! $fp ) {
+    $valid =  __( 'Soubor nelze otevřít', 'shp-obchodiste' );
+    return $valid;
+  }
+
+  $header = fgetcsv( $fp, 0, ';' );
+  $mandatory = [
+    'code',
+    'name',
+  ];
+
+  // Check for mandatory fields
+  if ( count( array_intersect( $mandatory, $header ) ) !== count( $mandatory ) ) {
+    $valid =  __( 'Hlavička souboru neobsahuje všechny povinné položky', 'shp-obchodiste' );
+  }
+
+  $col_num = count( $header );
+  $data = [];
+  
+  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+
+    // Check the number of fields in a row to be equal to the header
+    if ( count( $row ) !== $col_num ) {
+      $valid =  __( 'Jeden nebo více řádků obsahují jiný počet položek než hlavička', 'shp-obchodiste' );
+    }
+
+    // Check the mandatory fields in row
+    $row = array_combine( $header, $row );
+    foreach ( $mandatory as $m ) {
+      if ( empty( $row[ $m ] ) ) {
+        $valid =  __( 'Jedna nebo více povinných položek nejsou vyplněny ve všech řádcích', 'shp-obchodiste' );
+      }
+    }
+  }
+
+  fclose( $fp );
+  
+  return $valid;
+}, 10, 2 );
+
+/**
+ * Proccess product import CSV file
+ */
+add_filter( 'acf/update_value/name=product_import_file', function( $value ) {
+  $file_path = get_attached_file( $value );
+  $fp = fopen( $file_path, 'r' );
+
+  if ( ! $fp ) return null;
+
+  $header = fgetcsv( $fp, 0, ';' );
+
+  $data = [];
+  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+    $data[] = array_combine( $header, $row );
+  }
+
+  fclose( $fp );
+
+  // Proccess data
+  
+  return null;
+} );
+
+/**
  * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
