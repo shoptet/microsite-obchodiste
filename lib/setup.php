@@ -1046,6 +1046,7 @@ add_action( 'admin_notices', function() {
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( ! $wp_query->query[ 'post_type' ] && ! $post ) return;
 
   $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
   if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
@@ -1085,6 +1086,7 @@ add_action( 'admin_head', function() {
 
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+  if ( ! $wp_query->query[ 'post_type' ] && ! $post ) return;
   $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
   if (
     ( in_array( $post_type, [ 'special_offer', 'product' ] ) && is_number_of_posts_exceeded( $post_type ) ) ||
@@ -1318,6 +1320,19 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
     break;
 	}
 }, 10, 2 );
+
+add_action( 'product_page_product-import', function () {
+  $content = ob_get_clean();
+  $options = get_fields( 'options' );
+
+  $content = str_replace(
+    '<div id="normal-sortables"',
+    $options[ 'product_import_description' ] . '<div id="normal-sortables"',
+    $content
+  );
+
+  echo $content;
+}, 200 );
 
 /**
  * Enable custom part of header
