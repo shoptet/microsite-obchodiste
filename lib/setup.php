@@ -1323,6 +1323,10 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
 	}
 }, 10, 2 );
 
+// Via: https://github.com/Hube2/acf-filters-and-functions/blob/master/customized-options-page.php
+add_action( 'product_page_product-import', function () {
+  ob_start();
+}, 1 );
 add_action( 'product_page_product-import', function () {
   $content = ob_get_clean();
   $options = get_fields( 'options' );
@@ -1334,7 +1338,7 @@ add_action( 'product_page_product-import', function () {
   );
 
   echo $content;
-}, 200 );
+}, 20 );
 
 /**
  * Enable custom part of header
