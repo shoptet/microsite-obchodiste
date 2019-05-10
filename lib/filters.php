@@ -174,13 +174,48 @@ add_filter( 'acf/update_value/name=product_import_file', function( $value ) {
 
   $data = [];
   while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+    foreach ( $row as $key => $value ) {
+      $row[$key] = iconv( 'CP1250', 'UTF-8', $value );
+    }
     $data[] = array_combine( $header, $row );
   }
 
   fclose( $fp );
 
   // Proccess data
-  
+  foreach ( $data as $data_item ) {
+
+    if ( is_number_of_posts_exceeded( 'product' ) ) break;
+
+    $query = new WP_Query( [
+      'post_type' => 'product',
+      'meta_query' => [ [
+        'key' => 'code',
+        'value' => $data_item['code'],
+      ] ],
+    ] );
+
+    // Skip already inserted products
+    if ( $query->found_posts !== 0 ) continue;
+
+    $meta_input = [
+      'short_description' => $data_item['shortDescription'] ?: '',
+      'description' => $data_item['description'] ?: '',
+      'price' => $data_item['price'] ? floatval( $data_item['price'] ) : '',
+      'minimal_order' => $data_item['minimumAmount'] ? $data_item['minimumAmount'] : '',
+      'ean' => $data_item['ean'] ?: '',
+    ];
+
+    $postarr = [
+      'post_type' => 'product',
+      'post_title' => $data_item['name'],
+      'post_status' => 'draft',
+      'meta_input' => $meta_input,
+    ];
+    $post_product_id = wp_insert_post( $postarr );
+    //insert_attachment_from_url( $data_item['image'], $post_product_id );
+  }
+
   return null;
 } );
 
