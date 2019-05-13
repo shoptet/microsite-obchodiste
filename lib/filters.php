@@ -15,6 +15,7 @@ Disallow: /wp-register.php
 Disallow: /*category=*
 Disallow: /*region=*
 Disallow: /*orderby=*
+Disallow: /*services=*
 Disallow: /*p=*
 Disallow: /*s=*
 ';

@@ -87,41 +87,6 @@
 
       <div class="filters-divider"></div>
 
-      <p class="h5 h-heavy mt-0 mb-2">
-        <?php _e( 'Co vám nabídneme?', 'shp-obchodiste' ); ?>
-      </p>
-
-      <?php
-      $checked_services = ( isset($_GET[ 'services' ]) && is_array($_GET[ 'services' ]) ) ? $_GET[ 'services' ] : [];
-      ?>
-
-      <?php foreach ( get_all_services() as $service ): ?>
-        <?php if ( $service !== 'Dropshipping' ) continue; // Show only Dropshiping option ?>
-        <?php $inputIdAttr = 'filterService' . preg_replace('/\s/', '', $service); // Remove whitespace ?>
-        <?php $service_post_count = get_post_count_by_meta( 'services', $service, 'custom', 'LIKE' ); ?>
-        <div class="custom-control custom-checkbox">
-          <input
-            class="custom-control-input"
-            type="checkbox"
-            value="<?php echo $service; ?>"
-            id="<?php echo $inputIdAttr; ?>"
-            name="services[]"
-            <?php if ( in_array ( $service, $checked_services ) ) echo "checked"; ?>
-          >
-          <label
-            class="custom-control-label"
-            for="<?php echo $inputIdAttr; ?>"
-          >
-            <?php echo $service; ?>
-            <span class="text-semilight">
-              (<?php echo $service_post_count; ?>)
-            </span>
-          </label>
-        </div>
-      <?php endforeach; ?>
-
-      <div class="filters-divider"></div>
-
       <a
         class="small"
         role="button"
