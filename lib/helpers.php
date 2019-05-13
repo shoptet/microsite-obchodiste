@@ -262,15 +262,18 @@ function separate_thousands( $num, $decimals = false ): string
 /**
  * Is number of posts exceeded for current user
  */
-function is_number_of_posts_exceeded( $post_type ): bool
+function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
 {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! $user_id ) {
+    global $current_user;
+    wp_get_current_user(); // Make sure global $current_user is set, if not set it
+    $user_id = $current_user->ID;
+  }
 
   $wp_query = new WP_Query( [
     'post_type' => $post_type,
     'posts_per_page' => -1,
-    'author' => $current_user->ID,
+    'author' => $user_id,
   ] );
 
   $options = get_fields( 'options' );
