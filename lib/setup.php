@@ -756,6 +756,112 @@ add_action( 'save_post', function( $post_id ) {
 } );
 
 /**
+ * Process CSV file before saving data
+ */
+add_action( 'acf/save_post', function() {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  $screen = get_current_screen();
+  
+  if ( 'product_page_product-import' !== $screen->base ) return;
+
+  // bail early if no ACF data
+  if( empty( $_POST['acf'] ) ) return;
+
+  $fields = $_POST['acf'];
+  foreach( $fields as $key => $value ) {
+    $field = acf_get_field( $key );
+    switch ( $field['name'] ) {
+      case 'related_wholesaler':
+      $related_wholesaler_id = $value;
+      case 'product_category':
+      $product_category_id = intval( $value );
+      case 'product_import_file':
+      $file_path = get_attached_file( $value );
+    }
+  }
+
+  if ( user_can( $current_user, 'subscriber' ) ) {
+    $related_wholesaler = get_user_wholesaler( $current_user );
+    $related_wholesaler_id = $related_wholesaler->ID;
+  }
+
+  if ( ! isset( $file_path ) ) return;
+
+  $fp = fopen( $file_path, 'r' );
+
+  if ( ! $fp ) return null;
+
+  $header = fgetcsv( $fp, 0, ';' );
+
+  $data = [];
+  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+    foreach ( $row as $key => $value ) {
+      $row[$key] = iconv( 'CP1250', 'UTF-8', $value );
+    }
+    $data[] = array_combine( $header, $row );
+  }
+
+  fclose( $fp );
+
+  // Proccess data
+  foreach ( $data as $data_item ) {
+
+    if ( is_number_of_posts_exceeded( 'product' ) ) break;
+
+    $query = new WP_Query( [
+      'post_type' => 'product',
+      'meta_query' => [ [
+        'key' => 'code',
+        'value' => $data_item['code'],
+      ] ],
+    ] );
+
+    // Skip already inserted products
+    //if ( $query->found_posts !== 0 ) continue;
+
+    $meta_input = [
+      'short_description' => isset( $data_item['shortDescription'] ) ? $data_item['shortDescription'] : '',
+      'description' => isset( $data_item['description'] ) ? $data_item['description'] : '',
+      'price' => isset( $data_item['price'] ) ? floatval( $data_item['price'] ) : '',
+      'minimal_order' => isset( $data_item['minimumAmount'] ) ? $data_item['minimumAmount'] : '',
+      'ean' => isset( $data_item['ean'] ) ? $data_item['ean'] : '',
+    ];
+
+    $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
+
+    $postarr = [
+      'post_type' => 'product',
+      'post_title' => $data_item['name'],
+      'post_author' => $wholesaler_author_id, // Set correct author id
+      'post_status' => 'draft',
+      'meta_input' => $meta_input,
+    ];
+    $post_product_id = wp_insert_post( $postarr );
+
+    update_field( 'related_wholesaler', $related_wholesaler_id, $post_product_id ); // Update acf relationship field
+
+    // Set product taxonomy
+    if ( isset( $data_item['category'] ) && ! empty( $data_item['category'] ) ) {
+      $category_id = intval( $data_item['category'] );
+      if ( term_exists( $category_id, 'producttaxonomy' ) ) {
+        $product_category_id = $category_id;
+      }
+    }
+
+    if ( $product_category_id ) {
+      wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
+    }
+
+    if ( isset( $data_item['image'] ) ) {
+      //insert_attachment_from_url( $data_item['image'], $post_product_id );
+    }
+  }
+
+  $_POST['acf'] = []; // Do not save any data
+}, 1 );
+
+/**
  * Add instructions above custom post title
  */
 add_action( 'edit_form_top', function( $post ) {
@@ -1043,20 +1149,26 @@ add_action( 'admin_head', function() {
 add_action( 'admin_notices', function() {
   global $current_user, $pagenow, $wp_query, $post;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-
+  $screen = get_current_screen();
+  
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
-  if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
-  if ( ! $wp_query->query[ 'post_type' ] && ! $post ) return;
 
-  $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
-  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+  if ( 'product_page_product-import' === $screen->base ) {
+    $post_type = 'product';
+  } else {
+    if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;
+    if ( ! $wp_query->query[ 'post_type' ] && ! $post ) return;
+  
+    $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
+    if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
+  }
 
   if ( 'product' === $post_type && ! get_user_wholesaler( $current_user, 'publish' )  ) : ?>
     <div class="notice notice-error">
       <p>
         <?php
         printf(
-          __( 'Produkt bude možné odeslat ke schválení, až bude vytvořen a schválen <a href="%s" style="color:#c00" target="_blank">medailonek vašeho velkoobchodu</a>', 'shp-obchodiste' ),
+          __( 'Produkty bude možné odesílat ke schválení, až bude vytvořen a schválen <a href="%s" style="color:#c00" target="_blank">medailonek vašeho velkoobchodu</a>', 'shp-obchodiste' ),
           admin_url( 'post-new.php?post_type=custom' )
         );
         ?>

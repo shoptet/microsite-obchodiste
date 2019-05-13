@@ -128,7 +128,6 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
 
   $header = fgetcsv( $fp, 0, ';' );
   $mandatory = [
-    'code',
     'name',
   ];
 
@@ -160,64 +159,6 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
   
   return $valid;
 }, 10, 2 );
-
-/**
- * Proccess product import CSV file
- */
-add_filter( 'acf/update_value/name=product_import_file', function( $value ) {
-  $file_path = get_attached_file( $value );
-  $fp = fopen( $file_path, 'r' );
-
-  if ( ! $fp ) return null;
-
-  $header = fgetcsv( $fp, 0, ';' );
-
-  $data = [];
-  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
-    foreach ( $row as $key => $value ) {
-      $row[$key] = iconv( 'CP1250', 'UTF-8', $value );
-    }
-    $data[] = array_combine( $header, $row );
-  }
-
-  fclose( $fp );
-
-  // Proccess data
-  foreach ( $data as $data_item ) {
-
-    if ( is_number_of_posts_exceeded( 'product' ) ) break;
-
-    $query = new WP_Query( [
-      'post_type' => 'product',
-      'meta_query' => [ [
-        'key' => 'code',
-        'value' => $data_item['code'],
-      ] ],
-    ] );
-
-    // Skip already inserted products
-    if ( $query->found_posts !== 0 ) continue;
-
-    $meta_input = [
-      'short_description' => $data_item['shortDescription'] ?: '',
-      'description' => $data_item['description'] ?: '',
-      'price' => $data_item['price'] ? floatval( $data_item['price'] ) : '',
-      'minimal_order' => $data_item['minimumAmount'] ? $data_item['minimumAmount'] : '',
-      'ean' => $data_item['ean'] ?: '',
-    ];
-
-    $postarr = [
-      'post_type' => 'product',
-      'post_title' => $data_item['name'],
-      'post_status' => 'draft',
-      'meta_input' => $meta_input,
-    ];
-    $post_product_id = wp_insert_post( $postarr );
-    //insert_attachment_from_url( $data_item['image'], $post_product_id );
-  }
-
-  return null;
-} );
 
 /**
  * Update wholesaler breadcrumb items
@@ -449,12 +390,28 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
 add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! is_admin() ) return $value;
   if ( ! user_can( $current_user, 'subscriber' ) ) return $value;
   if ( $related_wholesaler = get_user_wholesaler( $current_user, 'publish' ) )
     $value = $related_wholesaler->ID;
   else
     $value = NULL;
   return $value;
+} );
+
+/**
+ * Remove related wholesaler for product import page field
+ */
+add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! is_admin() ) return $value;
+  $screen = get_current_screen();
+  if ( 'product_page_product-import' !== $screen->base ) return $value;
+  if ( ! user_can( $current_user, 'subscriber' ) ) return NULL;
+  if ( $related_wholesaler = get_user_wholesaler( $current_user ) )
+    return $related_wholesaler->ID;
+  return NULL;
 } );
 
 /**

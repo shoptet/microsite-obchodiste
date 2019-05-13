@@ -314,42 +314,23 @@ function get_post_type_in_archive_or_taxonomy () {
 }
 
 function insert_attachment_from_url( $url, $post_id ) {
-  // Gives us access to the download_url() and wp_handle_sideload() functions
-  require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
   $timeout_seconds = 5;
-
   // Download file to temp dir
   $temp_file = download_url( $url, $timeout_seconds );
 
-  if ( !is_wp_error( $temp_file ) ) {
+  if ( is_wp_error( $temp_file ) ) return $temp_file;
 
-    // Array based on $_FILE as seen in PHP file uploads
-    $file = [
-      'name' => basename($url),
-      'type' => mime_content_type($url),
-      'tmp_name' => $temp_file,
-      'error' => 0,
-      'size' => filesize($temp_file),
-    ];
+  $file = [
+    'name' => basename($url),
+    'tmp_name' => $temp_file,
+  ];
 
-    $overrides = [
-      'test_form' => false,
-    ];
+  $id = media_handle_sideload( $file, $post_id );
 
-    // Move the temporary file into the uploads directory
-    $results = wp_handle_sideload( $file, $overrides );
-
-    if ( !empty( $results['error'] ) ) {
-      // Insert any error handling here
-    } else {
-
-      $filename  = $results['file']; // Full path to the file
-      $local_url = $results['url'];  // URL to the file in the uploads dir
-      $type = $results['type']; // MIME type of the file
-
-      // Perform any actions here based in the above results
-    }
-
+  // If error storing permanently, unlink.
+  if ( is_wp_error( $id ) ) {
+    @unlink( $file['tmp_name'] );
+    return $id;
   }
+  return set_post_thumbnail( $post_id, $id );
 }
