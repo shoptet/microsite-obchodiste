@@ -823,9 +823,11 @@ add_action( 'acf/save_post', function() {
   fclose( $fp );
 
   // Proccess data
+  $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
+
   foreach ( $data as $data_item ) {
 
-    if ( is_number_of_posts_exceeded( 'product' ) ) break;
+    if ( is_number_of_posts_exceeded( 'product', $wholesaler_author_id ) ) break;
 
     $query = new WP_Query( [
       'post_type' => 'product',
@@ -845,8 +847,6 @@ add_action( 'acf/save_post', function() {
       'minimal_order' => isset( $data_item['minimumAmount'] ) ? $data_item['minimumAmount'] : '',
       'ean' => isset( $data_item['ean'] ) ? $data_item['ean'] : '',
     ];
-
-    $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
 
     $postarr = [
       'post_type' => 'product',
