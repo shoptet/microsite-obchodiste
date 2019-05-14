@@ -855,8 +855,11 @@ add_action( 'acf/save_post', function() {
       wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
     }
 
-    if ( isset( $data_item['image'] ) ) {
-      //insert_attachment_from_url( $data_item['image'], $post_product_id );
+    if (
+      isset( $data_item['image'] ) &&
+      $post_image_id = insert_image_from_url( $data_item['image'], $post_product_id )
+    ) {
+      update_field( 'thumbnail', $post_image_id, $post_product_id ); // Update acf thumbnail field
     }
   }
 

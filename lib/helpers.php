@@ -316,24 +316,33 @@ function get_post_type_in_archive_or_taxonomy () {
   return $post_type;
 }
 
-function insert_attachment_from_url( $url, $post_id ) {
+function insert_image_from_url( $url, $post_id ) {
   $timeout_seconds = 5;
-  // Download file to temp dir
-  $temp_file = download_url( $url, $timeout_seconds );
 
-  if ( is_wp_error( $temp_file ) ) return $temp_file;
+  $tmp_file = download_url( $url, $timeout_seconds );
 
+  if ( is_wp_error( $tmp_file ) ) {
+    return false;
+  }
+  
+  // fix file filename for query strings
+  preg_match( '/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $url, $matches );
   $file = [
-    'name' => basename($url),
-    'tmp_name' => $temp_file,
+    'name' => basename( $matches[0] ),
+    'tmp_name' => $tmp_file,
   ];
 
   $id = media_handle_sideload( $file, $post_id );
 
   // If error storing permanently, unlink.
   if ( is_wp_error( $id ) ) {
-    @unlink( $file['tmp_name'] );
-    return $id;
+    @unlink( $tmp_file );
+    return false;
   }
-  return set_post_thumbnail( $post_id, $id );
+
+  // attach image to post thumbnail
+  $post_meta_id = set_post_thumbnail( $post_id, $id );
+  if ( ! $post_meta_id  ) return false;
+
+  return $id;
 }
