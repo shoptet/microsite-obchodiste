@@ -1443,10 +1443,26 @@ add_action( 'product_page_product-import', function () {
 add_action( 'product_page_product-import', function () {
   $content = ob_get_clean();
   $options = get_fields( 'options' );
+  
+  $product_taxonomy_terms = get_terms( 'producttaxonomy', [
+    'hide_empty' => false,
+  ] );
+    
+  $terms_by_id_html = '<h3>' . __( 'Kategorie produktů a jejich ID', 'shp-obchodiste' ). '</h3>';
+  $terms_by_id_html .= '<p>';
+  foreach ( $product_taxonomy_terms as $term ) {
+    $terms_by_id_html .= '<span style="display:inline-block;margin-right:13px;margin-bottom:10px;">';
+    $terms_by_id_html .= $term->name . '&nbsp;';
+    $terms_by_id_html .= '<code style="font-size:75%">ID: ' . $term->term_id . '</code>';
+    $terms_by_id_html .= '</span>';
+  }
+  $terms_by_id_html .= '</p>';
 
   $content = str_replace(
     '<div id="normal-sortables"',
-    $options[ 'product_import_description' ] . '<div id="normal-sortables"',
+    $options[ 'product_import_description' ] .
+    $terms_by_id_html .
+    '<div id="normal-sortables"',
     $content
   );
 
