@@ -178,10 +178,24 @@ add_action( 'admin_footer', function() {
  */
 add_action( 'admin_footer', function() {
   global $post, $pagenow, $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it  
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || 'product' !== $post->post_type  ) return;
-  if ( get_user_wholesaler( $current_user, 'publish' )  ) return;
+  if ( get_user_wholesaler( $current_user, 'publish' ) ) return;
+  echo '<script>document.getElementById("publish").disabled = true;</script>';
+} );
+
+/**
+ * Disable import products csv when no own wholesaler is created
+ */
+add_action( 'admin_footer', function() {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  $screen = get_current_screen();
+  
+  if ( ! user_can( $current_user, 'subscriber' ) ) return;
+  if ('product_page_product-import' !== $screen->base ) return;
+  if ( get_user_wholesaler( $current_user ) ) return;
   echo '<script>document.getElementById("publish").disabled = true;</script>';
 } );
 
@@ -193,7 +207,7 @@ add_action( 'post_submitbox_misc_actions', function() {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || 'product' !== $post->post_type  ) return;
-  if ( get_user_wholesaler( $current_user, 'publish' )  ) return;
+  if ( get_user_wholesaler( $current_user, 'publish' ) ) return;
   echo '<div class="misc-pub-section" style="color:#c00">';
   printf(
     __( 'Produkt bude možné odeslat ke schválení, až bude vytvořen a schválen <a href="%s" style="color:#c00" target="_blank">medailonek vašeho velkoobchodu</a>', 'shp-obchodiste' ),
