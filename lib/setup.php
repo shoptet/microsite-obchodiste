@@ -829,17 +829,6 @@ add_action( 'acf/save_post', function() {
 
     if ( is_number_of_posts_exceeded( 'product', $wholesaler_author_id ) ) break;
 
-    $query = new WP_Query( [
-      'post_type' => 'product',
-      'meta_query' => [ [
-        'key' => 'code',
-        'value' => $data_item['code'],
-      ] ],
-    ] );
-
-    // Skip already inserted products
-    //if ( $query->found_posts !== 0 ) continue;
-
     $meta_input = [
       'short_description' => isset( $data_item['shortDescription'] ) ? $data_item['shortDescription'] : '',
       'description' => isset( $data_item['description'] ) ? $data_item['description'] : '',
@@ -1466,11 +1455,11 @@ add_action( 'product_page_product-import', function () {
     'hide_empty' => false,
   ] );
     
-  $terms_by_id_html = '<h3>' . __( 'Kategorie produktů a jejich ID', 'shp-obchodiste' ). '</h3>';
+  $terms_by_id_html = '<h4>' . __( 'Kategorie produktů a jejich ID:', 'shp-obchodiste' ). '</h4>';
   $terms_by_id_html .= '<p>';
   foreach ( $product_taxonomy_terms as $term ) {
-    $terms_by_id_html .= '<span style="display:inline-block;margin-right:13px;margin-bottom:10px;">';
-    $terms_by_id_html .= $term->name . '&nbsp;';
+    $terms_by_id_html .= '<span style="margin-right:10px;">';
+    $terms_by_id_html .= $term->name . ':&nbsp;';
     $terms_by_id_html .= '<code style="font-size:75%">ID: ' . $term->term_id . '</code>';
     $terms_by_id_html .= '</span>';
   }
