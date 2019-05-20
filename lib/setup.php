@@ -1480,7 +1480,11 @@ add_action( 'acf/save_post', function() {
 
   foreach ( $data as $data_item ) {
 
-    if ( is_number_of_posts_exceeded( 'product', $wholesaler_author_id ) ) break;
+    // break importing for subscriber if number of products exceeded
+    if (
+      user_can( $current_user, 'subscriber' ) &&
+      is_number_of_posts_exceeded( 'product', $wholesaler_author_id )
+    ) break;
 
     $meta_input = [
       'short_description' => isset( $data_item['shortDescription'] ) ? $data_item['shortDescription'] : '',
