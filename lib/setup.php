@@ -1508,6 +1508,20 @@ add_action( 'acf/save_post', function() {
       update_field( 'thumbnail', $post_image_id, $post_product_id ); // Update acf thumbnail field
     }
 
+    // fill gallery field
+    $gallery_array = [];
+    $max_images_in_gallery = 5;
+    for ($i = 2; $i <= $max_images_in_gallery; $i++) {
+      if (
+        isset( $data_item[ 'image' . $i ] ) &&
+        $gallery_image_id = insert_image_from_url( $data_item[ 'image' . $i ], $post_product_id )
+      )
+        $gallery_array[] = $gallery_image_id;
+    }
+    if ( ! empty( $gallery_array ) ) {
+      update_field( 'gallery', $gallery_array, $post_product_id ); // Update acf gallery field
+    }
+
     // Set to pending status
     if (
       $set_pending_status && $post_image_id && $product_category_id && $is_related_wholesaler_publish &&
