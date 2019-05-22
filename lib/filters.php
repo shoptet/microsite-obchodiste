@@ -625,13 +625,14 @@ add_filter( 'wpseo_metabox_prio', function () {
 add_filter( 'manage_edit-product_columns', function ( $columns ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) ) return $columns;
+  $custom_columns = [];
+  if ( ! user_can( $current_user, 'subscriber' ) ) {
+    $custom_columns['related_wholesaler'] = __( 'Velkoobchod', 'shp-obchodiste' );
+  }
+  $custom_columns['sync_state'] = __( 'Stav synchronizace', 'shp-obchodiste' );
 	return
 		array_slice( $columns, 0, 3, true ) +
-		[
-      'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ),
-      'sync_state' => __( 'Stav synchronizace', 'shp-obchodiste' ),
-    ] +
+		$custom_columns +
 		array_slice( $columns, 3, 4, true );
 } );
 
