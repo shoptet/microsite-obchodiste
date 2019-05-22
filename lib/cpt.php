@@ -239,3 +239,51 @@ function get_cpt_product_taxonomy_args(): array
   ];
   return $args;
 }
+
+/**
+ * Returns wholesaler message custom post type arguments
+ */
+function get_cpt_sync_args(): array
+{
+  $labels = [
+    'name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'singular_name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'menu_name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'all_items' => __( 'Všechny položky', 'shp-obchodiste' ),
+    'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
+    'add_new_item' => __( 'Přidat novou položku', 'shp-obchodiste' ),
+    'edit_item' => __( 'Upravit položku', 'shp-obchodiste' ),
+    'new_item' => __( 'Nová položka', 'shp-obchodiste' ),
+    'view_item' => __( 'Zobrazit položku', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit položky', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat položku', 'shp-obchodiste' ),
+    'not_found' => __( 'Nebyla nalezena žádná položka', 'shp-obchodiste' ),
+    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná položka', 'shp-obchodiste' ),
+    'archives' => __( 'Archiv položek', 'shp-obchodiste' ),
+    'items_list' => __( 'Výpis položek', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'description' => '',
+    'public' => false,
+    'publicly_queryable' => false,
+    'show_ui' => true,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'has_archive' => false,
+    'show_in_menu' => true,
+    'exclude_from_search' => true,
+    'capability_type' => 'sync',
+    'capabilities' => [
+      'create_posts' => 'do_not_allow',
+    ],
+    'map_meta_cap' => true,
+    'hierarchical' => false,
+    'rewrite' => false,
+    'query_var' => true,
+    'menu_icon' => 'dashicons-update',
+    'supports' => [ 'title' ],
+  ];
+  return $args;
+}
