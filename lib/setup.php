@@ -1413,6 +1413,17 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
     echo get_the_title( $related_post_id );
     echo '</a>';
     break;
+    case 'sync_state':
+    $sync_state = get_field( 'sync_state', $post_id );
+    if ( $sync_state === 'waiting' )
+      echo '<strong style="color:#ffb900"><em>' . __( 'Čeká na zpracování obrázků...', 'shp-obchodiste' ) . '</em></strong>';
+    elseif ( $sync_state === 'error' )
+      echo '<strong style="color:#a00">' . __( 'Chyba při stahování obrázků', 'shp-obchodiste' ) . '</strong>';
+    elseif ( $sync_state === 'done' )
+      echo '<strong style="color:#006505">✔ ' . __( 'Obrázky staženy', 'shp-obchodiste' ) . '</strong>';
+    else
+      echo '–';
+    break;
 	}
 }, 10, 2 );
 
@@ -1563,6 +1574,11 @@ add_action( 'acf/save_post', function() {
         ],
       ];
       wp_insert_post( $postarr );
+      $product_sync_state = 'waiting';
+    }
+
+    if ( $product_sync_state ) {
+      update_post_meta( $post_product_id, 'sync_state', $product_sync_state );
     }
 
     // Set to pending status
@@ -1613,11 +1629,12 @@ add_action( 'sync_items', function() {
     $is_thumbnail = boolval( intval( get_post_meta( $item->ID, 'is_thumbnail', true ) ) );
     $attemps = intval( get_post_meta( $item->ID, 'attemps', true ) );
     if ( $attemps >= 3 ) {
-      // Set error status
+      // Set error status to sync item and product
       wp_update_post( [
         'ID' => $item->ID,
         'post_status' => 'error',
       ] );
+      update_post_meta( $product_id, 'sync_state', 'error' );
       continue;
     } 
     update_post_meta( $item->ID, 'attemps', $attemps + 1 ); // Update attemps
@@ -1637,6 +1654,19 @@ add_action( 'sync_items', function() {
       'ID' => $item->ID,
       'post_status' => 'done',
     ] );
+
+    // Check related product sync is done
+    $query = new WP_Query( [
+      'post_type' => 'sync',
+      'post_status' => 'waiting',
+      'meta_query' => [ [
+        'key' => 'product',
+        'value' => $product_id,
+      ] ],
+    ] );
+    if ( ! $query->found_posts ) {
+      update_post_meta( $product_id, 'sync_state', 'done' );
+    }
   }
 });
 
