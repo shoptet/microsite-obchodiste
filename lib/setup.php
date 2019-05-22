@@ -10,6 +10,7 @@ add_action( 'init', function() {
   register_post_type( 'product', get_cpt_product_args() );
   register_taxonomy( 'producttaxonomy', 'product', get_cpt_product_taxonomy_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
+  register_post_type( 'sync', get_cpt_sync_args() );
 } );
 
 /**
@@ -34,6 +35,36 @@ add_action( 'init', function() {
 	if ( user_can( $current_user, 'subscriber' ) ) {
     remove_action( 'admin_init', [ $GLOBALS['wpseo_meta_columns'], 'setup_hooks' ] ); // Remove Yoast page analysis columns from post lists
   }
+} );
+
+/**
+ * Add new post status for sync post
+ */
+add_action( 'init', function() {
+  register_post_status( 'waiting', [
+    'label' => __( 'Čeká na zpracování', 'shp-obchodiste' ),
+    'public' => true,
+		'show_in_admin_all_list' => true,
+		'show_in_admin_status_list' => false,
+		'post_type' => [ 'sync' ],
+		'label_count' => _n_noop( 'Čeká na zpracování <span class="count">(%s)</span>', 'Čeká na zpracování <span class="count">(%s)</span>' ),
+  ] );
+  register_post_status( 'done', [
+    'label' => __( 'Zpracováno', 'shp-obchodiste' ),
+    'public' => false,
+		'show_in_admin_all_list' => false,
+		'show_in_admin_status_list' => true,
+		'post_type' => [ 'sync' ],
+		'label_count' => _n_noop( 'Zpracováno <span class="count">(%s)</span>', 'Zpracováno <span class="count">(%s)</span>' ),
+  ] );
+  register_post_status( 'error', [
+    'label' => __( 'Chyba', 'shp-obchodiste' ),
+    'public' => false,
+		'show_in_admin_all_list' => false,
+		'show_in_admin_status_list' => true,
+		'post_type' => [ 'sync' ],
+		'label_count' => _n_noop( 'Chyba <span class="count">(%s)</span>', 'Chyba <span class="count">(%s)</span>' ),
+	] );
 } );
 
 /**
@@ -1499,38 +1530,34 @@ add_action( 'acf/save_post', function() {
       wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
     }
 
-    if (
-      isset( $data_item['image'] ) &&
-      $post_image_id = insert_image_from_url( $data_item['image'], $post_product_id )
-    ) {
-      update_field( 'thumbnail', $post_image_id, $post_product_id ); // Update acf thumbnail field
-    }
-
-    // fill gallery field
-    $gallery_array = [];
-    $max_images_in_gallery = 5;
-    for ($i = 2; $i <= $max_images_in_gallery; $i++) {
-      if (
-        isset( $data_item[ 'image' . $i ] ) &&
-        $gallery_image_id = insert_image_from_url( $data_item[ 'image' . $i ], $post_product_id )
-      )
-        $gallery_array[] = $gallery_image_id;
-    }
-    if ( ! empty( $gallery_array ) ) {
-      update_field( 'gallery', $gallery_array, $post_product_id ); // Update acf gallery field
+    $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];
+    foreach ( $image_items as $image_key ) {
+      if ( ! isset( $data_item[$image_key] ) || empty( $data_item[$image_key] ) ) continue;
+      $postarr = [
+        'post_type' => 'sync',
+        'post_title' => $data_item['name'] . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
+        'post_status' => 'waiting',
+        'meta_input' => [
+          'product' => $post_product_id,
+          'url' => $data_item[$image_key],
+          'is_thumbnail' => ( $image_key === 'image' ),
+          'attemps' => 0,
+        ],
+      ];
+      wp_insert_post( $postarr );
     }
 
     // Set to pending status
-    if (
-      $set_pending_status && $post_image_id && $product_category_id && $is_related_wholesaler_publish &&
-      isset( $data_item['shortDescription'] ) && ! empty( $data_item['shortDescription'] ) &&
-      isset( $data_item['description'] ) && ! empty( $data_item['description'] )
-    ) {
-      wp_update_post( [
-        'ID' => $post_product_id,
-        'post_status' => 'pending',
-      ] );
-    }
+    // if (
+    //   $set_pending_status && $post_image_id && $product_category_id && $is_related_wholesaler_publish &&
+    //   isset( $data_item['shortDescription'] ) && ! empty( $data_item['shortDescription'] ) &&
+    //   isset( $data_item['description'] ) && ! empty( $data_item['description'] )
+    // ) {
+    //   wp_update_post( [
+    //     'ID' => $post_product_id,
+    //     'post_status' => 'pending',
+    //   ] );
+    // }
 
     $products_imported++;
   }
@@ -1541,6 +1568,57 @@ add_action( 'acf/save_post', function() {
   wp_redirect( add_query_arg( [ 'products_imported' => $products_imported ] ) );
   exit;
 }, 1 );
+
+add_action( 'init', function() {
+  if ( ! wp_next_scheduled( 'sync_items' ) ) {
+    wp_schedule_event( time(), 'one_second', 'sync_items' );
+  }
+} );
+
+add_action( 'sync_items', function() {
+  $options = get_fields( 'options' );
+
+	$wp_query = new WP_Query( [
+    'post_type' => 'sync',
+    'post_status' => 'waiting',
+    'posts_per_page' => $options[ 'product_image_sync_count' ],
+    'orderby' => 'date',
+    'order' => 'ASC',
+  ] );
+  $items = $wp_query->posts;
+
+  foreach ( $items as $item ) {
+    $product_id = get_post_meta( $item->ID, 'product', true );
+    $url = get_post_meta( $item->ID, 'url', true );
+    $is_thumbnail = boolval( intval( get_post_meta( $item->ID, 'is_thumbnail', true ) ) );
+    $attemps = intval( get_post_meta( $item->ID, 'attemps', true ) );
+    if ( $attemps >= 3 ) {
+      // Set error status
+      wp_update_post( [
+        'ID' => $item->ID,
+        'post_status' => 'error',
+      ] );
+      continue;
+    } 
+    update_post_meta( $item->ID, 'attemps', $attemps + 1 ); // Update attemps
+    $image_id = insert_image_from_url( $url, $product_id );
+    if ( ! $image_id ) continue;
+    if ( $is_thumbnail ) {
+      // Set thumbnail
+      update_field( 'thumbnail', $image_id, $product_id );
+    } else {
+      // Add image to gallery
+      $gallery = get_post_meta( $product_id, 'gallery', true );
+      if ( empty( $gallery ) ) $gallery = [];
+      $gallery[] = $image_id;
+      update_field( 'gallery', $gallery, $product_id );
+    }
+    wp_update_post( [
+      'ID' => $item->ID,
+      'post_status' => 'done',
+    ] );
+  }
+});
 
 /**
  * Enable custom part of header
