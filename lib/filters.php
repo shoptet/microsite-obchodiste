@@ -1,5 +1,7 @@
 <?php
 
+require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+
 /**
 <<<<<<< HEAD
  * Edit robots.txt file
@@ -710,3 +712,37 @@ add_filter( 'mce_buttons', function ( $buttons ) {
   $filtered_buttons = array_diff( $buttons, $buttons_to_remove );
   return $filtered_buttons;
 } );
+
+/**
+ * Add post status to admin list
+ */
+add_filter( 'display_post_states', function ( $states, $post ) {
+  switch ( $post->post_status ) {
+    case 'waiting':
+    $states[] = __( 'Čeká na zpracování...', 'shp-obchodiste' );
+    break;
+    case 'done':
+    $states[] = __( 'Hotovo', 'shp-obchodiste' );
+    break;
+    case 'error':
+    $states[] = __( 'Chyba', 'shp-obchodiste' );
+    break;
+  }
+  return $states;
+}, 10, 2 );
+
+add_filter( 'cron_schedules', function ( $schedules ) {
+	$schedules['one_second'] = [
+		'interval' => 1,
+		'display' => __( 'Každou 1 sekundu', 'shp-obchodiste' ),
+  ];
+  $schedules['one_minute'] = [
+		'interval' => 60,
+		'display' => __( 'Každou 1 minutu', 'shp-obchodiste' ),
+  ];
+  $schedules['five_minutes'] = [
+		'interval' => 5*60,
+		'display' => __( 'Každých 5 minut', 'shp-obchodiste' ),
+  ];
+	return $schedules;
+} ); 

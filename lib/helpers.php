@@ -1,5 +1,9 @@
 <?php
 
+require_once( ABSPATH . 'wp-admin/includes/file.php' );
+require_once( ABSPATH . 'wp-admin/includes/media.php' );
+require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
 /**
  * Check whether a post is new
  */
@@ -318,7 +322,6 @@ function get_post_type_in_archive_or_taxonomy () {
 
 function insert_image_from_url( $url, $post_id ) {
   $timeout_seconds = 5;
-
   $tmp_file = download_url( $url, $timeout_seconds );
 
   if ( is_wp_error( $tmp_file ) ) {
