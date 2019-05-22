@@ -599,7 +599,10 @@ add_filter( 'manage_edit-product_columns', function ( $columns ) {
   if ( user_can( $current_user, 'subscriber' ) ) return $columns;
 	return
 		array_slice( $columns, 0, 3, true ) +
-		[ 'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ) ] +
+		[
+      'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ),
+      'sync_state' => __( 'Stav synchronizace', 'shp-obchodiste' ),
+    ] +
 		array_slice( $columns, 3, 4, true );
 } );
 
