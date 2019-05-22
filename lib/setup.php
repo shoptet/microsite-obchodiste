@@ -1566,16 +1566,18 @@ add_action( 'acf/save_post', function() {
     }
 
     // Set to pending status
-    // if (
-    //   $set_pending_status && $post_image_id && $product_category_id && $is_related_wholesaler_publish &&
-    //   isset( $data_item['shortDescription'] ) && ! empty( $data_item['shortDescription'] ) &&
-    //   isset( $data_item['description'] ) && ! empty( $data_item['description'] )
-    // ) {
-    //   wp_update_post( [
-    //     'ID' => $post_product_id,
-    //     'post_status' => 'pending',
-    //   ] );
-    // }
+    if (
+      $set_pending_status &&
+      $product_category_id && $is_related_wholesaler_publish &&
+      isset( $data_item['image'] ) && ! empty( $data_item['image'] ) &&
+      isset( $data_item['shortDescription'] ) && ! empty( $data_item['shortDescription'] ) &&
+      isset( $data_item['description'] ) && ! empty( $data_item['description'] )
+    ) {
+      wp_update_post( [
+        'ID' => $post_product_id,
+        'post_status' => 'pending',
+      ] );
+    }
 
     $products_imported++;
   }
