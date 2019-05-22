@@ -901,9 +901,9 @@ add_action( 'transition_post_status',  function ( $new_status, $old_status, $pos
     break;
   }
 
-  // Set option variables for related wholesaler
-  if ( $related_wholesaler = get_field( 'related_wholesaler', $post->ID ) ) {
-    $to_replace['%wholesaler_name%'] = $related_wholesaler->post_title ?: get_the_title( $related_wholesaler ); // when related wholesaler has not loaded its post data then load by its id
+  // Set option variables for related wholesaler  
+  if ( $related_wholesaler_id = get_post_meta( $post->ID, 'related_wholesaler', true ) ) {
+    $to_replace['%wholesaler_name%'] = get_the_title( $related_wholesaler_id );
   }
 
   // Replace e-mail body variables
