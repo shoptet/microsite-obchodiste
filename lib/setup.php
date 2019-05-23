@@ -1198,6 +1198,22 @@ add_action( 'admin_notices', function() {
       </div>
     <?php endif;
   }
+  if ( isset( $_GET['images_to_sync'] ) ) {
+    $images_to_sync = intval( $_GET['images_to_sync'] );
+    
+    // Remove query param from url
+    ?>
+    <script>
+      var newUrl = window.location.href.replace('&images_to_sync=<?php echo $images_to_sync; ?>','');
+      history.pushState({}, null, newUrl);
+    </script>
+    <?php 
+    if ( $images_to_sync > 0 ): ?>
+      <div class="notice notice-warning">
+        <p><?php printf( __( 'Obrázky produktů přidány do fronty na stažení. Celkem přidáno obrázků ke stažení: %d', 'shp-obchodiste' ), $images_to_sync ); ?></p>
+      </div>
+    <?php endif;
+  }
 } );
 
 /**
@@ -1556,6 +1572,7 @@ add_action( 'acf/save_post', function() {
   $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
   $is_related_wholesaler_publish = ( 'publish' === get_post_status( $related_wholesaler_id ) );
   $products_imported = 0;
+  $images_to_sync = 0;
 
   foreach ( $data as $data_item ) {
 
@@ -1612,6 +1629,7 @@ add_action( 'acf/save_post', function() {
       ];
       wp_insert_post( $postarr );
       $product_sync_state = 'waiting';
+      $images_to_sync++;
     }
 
     if ( $product_sync_state ) {
@@ -1638,7 +1656,10 @@ add_action( 'acf/save_post', function() {
   $_POST['acf'] = []; // Do not save any data
 
   // Add query param to url for admin notice
-  wp_redirect( add_query_arg( [ 'products_imported' => $products_imported ] ) );
+  wp_redirect( add_query_arg( [
+    'products_imported' => $products_imported,
+    'images_to_sync' => $images_to_sync,
+  ] ) );
   exit;
 }, 1 );
 
