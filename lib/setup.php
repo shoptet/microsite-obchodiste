@@ -1194,7 +1194,7 @@ add_action( 'admin_notices', function() {
     <?php 
     if ( $images_to_sync > 0 ): ?>
       <div class="notice notice-warning">
-        <p><?php printf( __( 'Obrázky produktů přidány do fronty na stažení. Celkem přidáno obrázků ke stažení: %d', 'shp-obchodiste' ), $images_to_sync ); ?></p>
+        <p><?php printf( __( 'Celkem obrázků přidáno do fronty ke stažení: %d', 'shp-obchodiste' ), $images_to_sync ); ?></p>
       </div>
     <?php endif;
   }
