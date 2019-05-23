@@ -1150,6 +1150,34 @@ add_action( 'admin_notices', function() {
  * Add admin notices for subscribers
  */
 add_action( 'admin_notices', function() {
+  global $pagenow, $post;
+  
+  if ( 'post.php' !== $pagenow || 'product' !== $post->post_type ) return;
+  $sync_state = get_post_meta( $post->ID, 'sync_state', true );
+  if ( 'waiting' === $sync_state ) :
+    $query = new WP_Query( [
+      'post_type' => 'sync',
+      'post_status' => 'waiting',
+      'meta_query' => [ [
+        'key' => 'product',
+        'value' => $post->ID,
+      ] ],
+    ] );
+  ?>
+    <div class="notice notice-warning">
+      <p><?php printf( __( 'Čeká na stažení obrázků (%d)...', 'shp-obchodiste' ), $query->found_posts ); ?></p>
+    </div>
+  <?php elseif ( 'error' === $sync_state ) : ?>
+    <div class="notice notice-error">
+      <p><?php _e( 'Chyba při stahování obrázků', 'shp-obchodiste' ); ?></p>
+    </div>
+  <?php endif;
+} );
+
+/**
+ * Add admin notices for subscribers
+ */
+add_action( 'admin_notices', function() {
   if ( isset( $_GET['products_imported'] ) ) {
     $products_imported = intval( $_GET['products_imported'] );
     
@@ -1415,8 +1443,17 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
     break;
     case 'sync_state':
     $sync_state = get_field( 'sync_state', $post_id );
-    if ( $sync_state === 'waiting' )
-      echo '<strong style="color:#ffb900"><em>' . __( 'Čeká na zpracování obrázků...', 'shp-obchodiste' ) . '</em></strong>';
+    if ( $sync_state === 'waiting' ) {
+      $query = new WP_Query( [
+        'post_type' => 'sync',
+        'post_status' => 'waiting',
+        'meta_query' => [ [
+          'key' => 'product',
+          'value' => $post_id,
+        ] ],
+      ] );
+      echo '<strong style="color:#ffb900"><em>' . sprintf( __( 'Čeká na stažení obrázků (%d)...', 'shp-obchodiste' ), $query->found_posts )  . '</em></strong>';
+    }
     elseif ( $sync_state === 'error' )
       echo '<strong style="color:#a00">' . __( 'Chyba při stahování obrázků', 'shp-obchodiste' ) . '</strong>';
     elseif ( $sync_state === 'done' )
