@@ -1647,7 +1647,7 @@ add_action( 'acf/save_post', function() {
 
 add_action( 'init', function() {
   if ( ! wp_next_scheduled( 'sync_items' ) ) {
-    wp_schedule_event( time(), 'one_second', 'sync_items' );
+    wp_schedule_event( time(), 'five_minutes', 'sync_items' );
   }
 } );
 
