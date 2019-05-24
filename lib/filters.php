@@ -735,6 +735,9 @@ add_filter( 'display_post_states', function ( $states, $post ) {
   return $states;
 }, 10, 2 );
 
+/**
+ * Add cron schedule interval options
+ */
 add_filter( 'cron_schedules', function ( $schedules ) {
 	$schedules['one_second'] = [
 		'interval' => 1,
@@ -749,4 +752,17 @@ add_filter( 'cron_schedules', function ( $schedules ) {
 		'display' => __( 'Každých 5 minut', 'shp-obchodiste' ),
   ];
 	return $schedules;
-} ); 
+} );
+
+/**
+ * Fix large CSV file upload
+ */
+add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename, $mimes ) {
+  $wp_filetype = wp_check_filetype( $filename, $mimes );
+
+  $ext = $wp_filetype['ext'];
+  $type = $wp_filetype['type'];
+  $proper_filename = $data['proper_filename'];
+
+  return compact( 'ext', 'type', 'proper_filename' );
+}, 10, 4 );
