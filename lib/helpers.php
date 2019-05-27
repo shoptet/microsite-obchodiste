@@ -4,6 +4,13 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 require_once( ABSPATH . 'wp-admin/includes/media.php' );
 require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
+
+function sentry_capture_message( $message ) {
+  if ( ! class_exists( 'WP_Sentry_Php_Tracker' ) ) return;
+  $sentryClient = WP_Sentry_Php_Tracker::get_instance()->get_client();
+  $sentryClient->captureMessage( $message );
+}
+
 /**
  * Check whether a post is new
  */
@@ -325,6 +332,7 @@ function insert_image_from_url( $url, $post_id ) {
   $tmp_file = download_url( $url, $timeout_seconds );
 
   if ( is_wp_error( $tmp_file ) ) {
+    sentry_capture_message( $tmp_file->get_error_message() );
     return false;
   }
   
@@ -339,6 +347,7 @@ function insert_image_from_url( $url, $post_id ) {
 
   // If error storing permanently, unlink.
   if ( is_wp_error( $id ) ) {
+    sentry_capture_message( $id->get_error_message() );
     @unlink( $tmp_file );
     return false;
   }
