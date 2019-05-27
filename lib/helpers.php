@@ -1,5 +1,9 @@
 <?php
 
+require_once( ABSPATH . 'wp-admin/includes/file.php' );
+require_once( ABSPATH . 'wp-admin/includes/media.php' );
+require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
 /**
  * Check whether a post is new
  */
@@ -262,15 +266,18 @@ function separate_thousands( $num, $decimals = false ): string
 /**
  * Is number of posts exceeded for current user
  */
-function is_number_of_posts_exceeded( $post_type ): bool
+function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
 {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! $user_id ) {
+    global $current_user;
+    wp_get_current_user(); // Make sure global $current_user is set, if not set it
+    $user_id = $current_user->ID;
+  }
 
   $wp_query = new WP_Query( [
     'post_type' => $post_type,
     'posts_per_page' => -1,
-    'author' => $current_user->ID,
+    'author' => $user_id,
   ] );
 
   $options = get_fields( 'options' );
@@ -311,4 +318,34 @@ function get_post_type_in_archive_or_taxonomy () {
       $post_type = 'product';
   }
   return $post_type;
+}
+
+function insert_image_from_url( $url, $post_id ) {
+  $timeout_seconds = 5;
+  $tmp_file = download_url( $url, $timeout_seconds );
+
+  if ( is_wp_error( $tmp_file ) ) {
+    return false;
+  }
+  
+  // fix file filename for query strings
+  preg_match( '/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $url, $matches );
+  $file = [
+    'name' => basename( $matches[0] ),
+    'tmp_name' => $tmp_file,
+  ];
+
+  $id = media_handle_sideload( $file, $post_id );
+
+  // If error storing permanently, unlink.
+  if ( is_wp_error( $id ) ) {
+    @unlink( $tmp_file );
+    return false;
+  }
+
+  // attach image to post thumbnail
+  $post_meta_id = set_post_thumbnail( $post_id, $id );
+  if ( ! $post_meta_id  ) return false;
+
+  return $id;
 }

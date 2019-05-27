@@ -1,5 +1,7 @@
 <?php
 
+require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+
 /**
  * Add products and wholesaler categories dropdown to main menu
  */
@@ -110,6 +112,55 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
   }
   return $value;
 }, 10, 3 );
+
+/**
+ * Validate product import CSV file
+ */
+add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $value ) {
+  // bail early if value is already invalid
+  if( ! $valid ) return $valid;
+
+  $file_path = get_attached_file( $value );
+  $fp = fopen( $file_path, 'r' );
+
+  if ( ! $fp ) {
+    $valid =  __( 'Soubor nelze otevřít', 'shp-obchodiste' );
+    return $valid;
+  }
+
+  $header = fgetcsv( $fp, 0, ';' );
+  $mandatory = [
+    'name',
+  ];
+
+  // Check for mandatory fields
+  if ( count( array_intersect( $mandatory, $header ) ) !== count( $mandatory ) ) {
+    $valid =  __( 'Hlavička souboru neobsahuje všechny povinné položky', 'shp-obchodiste' );
+  }
+
+  $col_num = count( $header );
+  $data = [];
+  
+  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+
+    // Check the number of fields in a row to be equal to the header
+    if ( count( $row ) !== $col_num ) {
+      $valid =  __( 'Jeden nebo více řádků obsahují jiný počet položek než hlavička', 'shp-obchodiste' );
+    }
+
+    // Check the mandatory fields in row
+    $row = array_combine( $header, $row );
+    foreach ( $mandatory as $m ) {
+      if ( empty( $row[ $m ] ) ) {
+        $valid =  __( 'Jedna nebo více povinných položek nejsou vyplněny ve všech řádcích', 'shp-obchodiste' );
+      }
+    }
+  }
+
+  fclose( $fp );
+  
+  return $valid;
+}, 10, 2 );
 
 /**
  * Update wholesaler breadcrumb items
@@ -317,8 +368,8 @@ add_filter( 'post_row_actions', function( $actions, $post ) {
 function remove_bulk_actions_for_subscribers( $actions ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( ! user_can( $current_user, 'subscriber' ) ) return $actions;
-  return [];
+  if ( user_can( $current_user, 'subscriber' ) ) unset( $actions['edit'] );
+  return $actions;
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
@@ -341,12 +392,28 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
 add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! is_admin() ) return $value;
   if ( ! user_can( $current_user, 'subscriber' ) ) return $value;
   if ( $related_wholesaler = get_user_wholesaler( $current_user, 'publish' ) )
     $value = $related_wholesaler->ID;
   else
     $value = NULL;
   return $value;
+} );
+
+/**
+ * Remove related wholesaler for product import page field
+ */
+add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( ! is_admin() ) return $value;
+  $screen = get_current_screen();
+  if ( 'product_page_product-import' !== $screen->base ) return $value;
+  if ( ! user_can( $current_user, 'subscriber' ) ) return NULL;
+  if ( $related_wholesaler = get_user_wholesaler( $current_user ) )
+    return $related_wholesaler->ID;
+  return NULL;
 } );
 
 /**
@@ -529,10 +596,14 @@ add_filter( 'wpseo_metabox_prio', function () {
 add_filter( 'manage_edit-product_columns', function ( $columns ) {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) ) return $columns;
+  $custom_columns = [];
+  if ( ! user_can( $current_user, 'subscriber' ) ) {
+    $custom_columns['related_wholesaler'] = __( 'Velkoobchod', 'shp-obchodiste' );
+  }
+  $custom_columns['sync_state'] = __( 'Stav synchronizace', 'shp-obchodiste' );
 	return
 		array_slice( $columns, 0, 3, true ) +
-		[ 'related_wholesaler' => __( 'Velkoobchod', 'shp-obchodiste' ) ] +
+		$custom_columns +
 		array_slice( $columns, 3, 4, true );
 } );
 
@@ -616,3 +687,53 @@ add_filter( 'mce_buttons', function ( $buttons ) {
   $filtered_buttons = array_diff( $buttons, $buttons_to_remove );
   return $filtered_buttons;
 } );
+
+/**
+ * Add post status to admin list
+ */
+add_filter( 'display_post_states', function ( $states, $post ) {
+  switch ( $post->post_status ) {
+    case 'waiting':
+    $states[] = __( 'Čeká na zpracování...', 'shp-obchodiste' );
+    break;
+    case 'done':
+    $states[] = __( 'Hotovo', 'shp-obchodiste' );
+    break;
+    case 'error':
+    $states[] = __( 'Chyba', 'shp-obchodiste' );
+    break;
+  }
+  return $states;
+}, 10, 2 );
+
+/**
+ * Add cron schedule interval options
+ */
+add_filter( 'cron_schedules', function ( $schedules ) {
+	$schedules['one_second'] = [
+		'interval' => 1,
+		'display' => __( 'Každou 1 sekundu', 'shp-obchodiste' ),
+  ];
+  $schedules['one_minute'] = [
+		'interval' => 60,
+		'display' => __( 'Každou 1 minutu', 'shp-obchodiste' ),
+  ];
+  $schedules['five_minutes'] = [
+		'interval' => 5*60,
+		'display' => __( 'Každých 5 minut', 'shp-obchodiste' ),
+  ];
+	return $schedules;
+} );
+
+/**
+ * Fix large CSV file upload
+ */
+add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename, $mimes ) {
+  $wp_filetype = wp_check_filetype( $filename, $mimes );
+
+  $ext = $wp_filetype['ext'];
+  $type = $wp_filetype['type'];
+  $proper_filename = $data['proper_filename'];
+
+  return compact( 'ext', 'type', 'proper_filename' );
+}, 10, 4 );
