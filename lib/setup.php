@@ -1652,6 +1652,8 @@ add_action( 'init', function() {
 } );
 
 add_action( 'sync_items', function() {
+  $start_time = time();
+  $processed_items = 0;
   $options = get_fields( 'options' );
 
 	$wp_query = new WP_Query( [
@@ -1707,6 +1709,14 @@ add_action( 'sync_items', function() {
     if ( ! $query->found_posts ) {
       update_post_meta( $product_id, 'sync_state', 'done' );
     }
+    $processed_items++;
+  }
+
+  if ( $processed_items > 0 ) {
+    $end_time = time();
+    $execution_time = ( $end_time - $start_time );
+    $message = sprintf( 'Sync: %d items in %d seconds, %.1f seconds per item on average', $processed_items, $execution_time, ( $execution_time / $processed_items ) );
+    capture_sentry_message( $message );
   }
 });
 
