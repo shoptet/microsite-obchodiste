@@ -4,11 +4,10 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 require_once( ABSPATH . 'wp-admin/includes/media.php' );
 require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-
-function sentry_capture_message( $message ) {
-  if ( ! class_exists( 'WP_Sentry_Php_Tracker' ) ) return;
-  $sentryClient = WP_Sentry_Php_Tracker::get_instance()->get_client();
-  $sentryClient->captureMessage( $message );
+function capture_sentry_message( $message ) {
+  if ( ! class_exists( 'WP_Sentry_Php_Tracker' ) || empty( $message ) ) return;
+  $sentry_client = WP_Sentry_Php_Tracker::get_instance()->get_client();
+  $sentry_client->captureMessage( $message );
 }
 
 /**

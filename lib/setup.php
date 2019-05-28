@@ -1669,6 +1669,8 @@ add_action( 'init', function() {
 } );
 
 add_action( 'sync_items', function() {
+  $start_time = time();
+  $processed_items = 0;
   $options = get_fields( 'options' );
 
 	$wp_query = new WP_Query( [
@@ -1724,8 +1726,34 @@ add_action( 'sync_items', function() {
     if ( ! $query->found_posts ) {
       update_post_meta( $product_id, 'sync_state', 'done' );
     }
+    $processed_items++;
+  }
+
+  if ( $processed_items > 0 ) {
+    $end_time = time();
+    $execution_time = ( $end_time - $start_time );
+    $message = sprintf( 'Sync: %d items in %d seconds, %.1f seconds per item on average', $processed_items, $execution_time, ( $execution_time / $processed_items ) );
+    capture_sentry_message( $message );
   }
 });
+
+/**
+ * Show age test modal at selected single pages
+ */
+add_action( 'wp_footer', function () {
+  $options = get_fields( 'options' );
+  $show_age_test = false;
+  if ( is_singular( 'product' ) ) {
+    $age_test_product_categories = $options['age_test_product_categories'];
+    $show_age_test = has_term( $age_test_product_categories, 'producttaxonomy' );
+  } elseif ( is_singular( 'custom' ) ) {
+    $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
+    $show_age_test = has_term( $age_test_wholesaler_categories, 'customtaxonomy' );
+  }
+  if ( $show_age_test ) {
+    get_template_part( 'src/template-parts/common/content', 'age-test' );
+  }
+} );
 
 /**
  * Enable custom part of header
