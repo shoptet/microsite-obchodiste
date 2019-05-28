@@ -24,6 +24,7 @@
     "../scaffolding/vendor/bs/js/util.js",
     "../scaffolding/vendor/bs/js/dropdown.js",
     "../scaffolding/vendor/bs/js/toggle.js",
+    "../scaffolding/vendor/bs/js/modal.js",
     "../scaffolding/vendor/bs/js/collapse.js",
     "../scaffolding/vendor/jquery.colorbox-min.js",
     "../scaffolding/shoptet/js/shoptet.js",
