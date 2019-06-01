@@ -1,8 +1,18 @@
 <?php
+$options = get_fields( 'options' );
+$age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
 $the_query = new WP_Query( [
   'post_type' => 'custom',
   'posts_per_page' => 8,
   'post_status' => 'publish',
+  'tax_query' => [
+    [
+      'taxonomy' => 'customtaxonomy',
+			'field' => 'term_id',
+			'terms' => $age_test_wholesaler_categories,
+			'operator' => 'NOT IN',
+    ],
+  ],
 ] );
 ?>
 <section class="section section-primary py-5">
