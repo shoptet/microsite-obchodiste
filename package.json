@@ -28,6 +28,7 @@
     "../scaffolding/vendor/bs/js/collapse.js",
     "../scaffolding/vendor/jquery.colorbox-min.js",
     "../scaffolding/shoptet/js/shoptet.js",
+    "_js/age-test.js",
     "_js/wholesaler-location.js",
     "_js/wholesaler-message.js",
     "_js/wholesaler-contact.js",
