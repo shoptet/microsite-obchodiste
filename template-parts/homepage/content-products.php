@@ -1,9 +1,19 @@
 <?php
+$options = get_fields( 'options' );
+$age_test_product_categories = $options['age_test_product_categories'];
 $the_query = new WP_Query( [
   'post_type' => 'product',
   'posts_per_page' => 18,
   'post_status' => 'publish',
   'orderby' => 'rand',
+  'tax_query' => [
+    [
+      'taxonomy' => 'producttaxonomy',
+			'field' => 'term_id',
+			'terms' => $age_test_product_categories,
+			'operator' => 'NOT IN',
+    ],
+  ],
 ] );
 ?>
 <?php if ( $the_query->have_posts() ) : ?>
