@@ -14,10 +14,18 @@ $(function() {
     $.ajax({
       url: url,
       success: function (response) {
-        $('#archiveList').html($(response).find('#archiveList'));
+        var $response = $(response);
+
+        $('#archiveList').html($response.find('#archiveList'));
         $archiveForm.removeClass('is-loading');
         initOrderSelect(); // initialize order select change event
         if (moveToTop) $('html, body').animate({scrollTop: $archiveForm.offset().top});
+
+        var $ageTest = $response.find('#ageTest');
+        if ($ageTest.length && $('#ageTest').length == 0) {
+          $('body').append($ageTest);
+          initAgeTest();
+        }
       },
     });
   };

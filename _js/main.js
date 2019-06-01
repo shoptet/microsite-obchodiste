@@ -12,16 +12,6 @@ $(function() {
     maxWidth: '98%',
   });
 
-  // Kick off age test modal window
-  if ( ! localStorage.getItem('ageTest') ) {
-    $('#ageTest').modal({
-      backdrop: 'static',
-      keyboard: false,
-    });
-    $('#ageTestButton').on('click', function () {
-      localStorage.setItem('ageTest', 'true');
-      $('#ageTest').modal('hide');
-    });
-  }
+  initAgeTest();
 
 });
