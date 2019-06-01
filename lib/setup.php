@@ -424,16 +424,30 @@ add_action('pre_get_posts', function( $wp_query ) {
   }
 
   $wp_query->set( 'meta_query', $meta_query );
+
+  $tax_query = [];
+
+  // Exclude adult wholesalers from archive page when no category selected
+  if( ! $wp_query->is_tax( 'customtaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+    $options = get_fields( 'options' );
+    $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
+    $tax_query[] = [
+      'taxonomy' => 'customtaxonomy',
+			'terms' => $age_test_wholesaler_categories,
+			'operator' => 'NOT IN',
+    ];
+  }
   
   // Set taxonomy query
-  if( !$wp_query->is_tax( 'customtaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
-    $wp_query->set( 'tax_query', [[
+  if( ! $wp_query->is_tax( 'customtaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $tax_query[] = [
       'taxonomy' => 'customtaxonomy',
-      'field' => 'term_id',
       'terms' => $_GET[ 'category' ],
       'operator'	=> 'IN',
-    ]]);
+    ];
   }
+
+  $wp_query->set( 'tax_query', $tax_query );
 } );
 
 /**
@@ -612,16 +626,30 @@ add_action('pre_get_posts', function( $wp_query ) {
   ]];
 
   $wp_query->set( 'meta_query', $meta_query );
+
+  $tax_query = [];
+
+  // Exclude adult products from archive page when no category selected
+  if( ! $wp_query->is_tax( 'producttaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+    $options = get_fields( 'options' );
+    $age_test_product_categories = $options['age_test_product_categories'];
+    $tax_query[] = [
+      'taxonomy' => 'producttaxonomy',
+			'terms' => $age_test_product_categories,
+			'operator' => 'NOT IN',
+    ];
+  }
   
   // Set taxonomy query
-  if( !$wp_query->is_tax( 'producttaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
-    $wp_query->set( 'tax_query', [[
+  if( ! $wp_query->is_tax( 'producttaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $tax_query[] = [
       'taxonomy' => 'producttaxonomy',
-      'field' => 'term_id',
       'terms' => $_GET[ 'category' ],
       'operator'	=> 'IN',
-    ]]);
+    ];
   }
+
+  $wp_query->set( 'tax_query', $tax_query );
 } );
 
 /**
