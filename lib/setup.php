@@ -426,16 +426,30 @@ add_action('pre_get_posts', function( $wp_query ) {
   }
 
   $wp_query->set( 'meta_query', $meta_query );
+
+  $tax_query = [];
+
+  // Exclude adult wholesalers from archive page when no category selected
+  if( ! $wp_query->is_tax( 'customtaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+    $options = get_fields( 'options' );
+    $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
+    $tax_query[] = [
+      'taxonomy' => 'customtaxonomy',
+			'terms' => $age_test_wholesaler_categories,
+			'operator' => 'NOT IN',
+    ];
+  }
   
   // Set taxonomy query
-  if( !$wp_query->is_tax( 'customtaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
-    $wp_query->set( 'tax_query', [[
+  if( ! $wp_query->is_tax( 'customtaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $tax_query[] = [
       'taxonomy' => 'customtaxonomy',
-      'field' => 'term_id',
       'terms' => $_GET[ 'category' ],
       'operator'	=> 'IN',
-    ]]);
+    ];
   }
+
+  $wp_query->set( 'tax_query', $tax_query );
 } );
 
 /**
@@ -614,16 +628,30 @@ add_action('pre_get_posts', function( $wp_query ) {
   ]];
 
   $wp_query->set( 'meta_query', $meta_query );
+
+  $tax_query = [];
+
+  // Exclude adult products from archive page when no category selected
+  if( ! $wp_query->is_tax( 'producttaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+    $options = get_fields( 'options' );
+    $age_test_product_categories = $options['age_test_product_categories'];
+    $tax_query[] = [
+      'taxonomy' => 'producttaxonomy',
+			'terms' => $age_test_product_categories,
+			'operator' => 'NOT IN',
+    ];
+  }
   
   // Set taxonomy query
-  if( !$wp_query->is_tax( 'producttaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
-    $wp_query->set( 'tax_query', [[
+  if( ! $wp_query->is_tax( 'producttaxonomy' ) && isset( $_GET[ 'category' ] ) && is_array( $_GET[ 'category' ] ) ) {
+    $tax_query[] = [
       'taxonomy' => 'producttaxonomy',
-      'field' => 'term_id',
       'terms' => $_GET[ 'category' ],
       'operator'	=> 'IN',
-    ]]);
+    ];
   }
+
+  $wp_query->set( 'tax_query', $tax_query );
 } );
 
 /**
@@ -1742,15 +1770,32 @@ add_action( 'sync_items', function() {
  */
 add_action( 'wp_footer', function () {
   $options = get_fields( 'options' );
-  $show_age_test = false;
-  if ( is_singular( 'product' ) ) {
-    $age_test_product_categories = $options['age_test_product_categories'];
-    $show_age_test = has_term( $age_test_product_categories, 'producttaxonomy' );
-  } elseif ( is_singular( 'custom' ) ) {
-    $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
-    $show_age_test = has_term( $age_test_wholesaler_categories, 'customtaxonomy' );
-  }
-  if ( $show_age_test ) {
+  $age_test_product_categories = $options['age_test_product_categories'];
+  $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
+  if (
+    is_tax( 'producttaxonomy', $age_test_product_categories ) ||
+    is_tax( 'customtaxonomy', $age_test_wholesaler_categories ) ||
+    (
+      is_singular('product') &&
+      has_term( $age_test_product_categories, 'producttaxonomy' )
+    ) ||
+    (
+      is_singular('custom') &&
+      has_term( $age_test_wholesaler_categories, 'customtaxonomy' )
+    ) ||
+    (
+      is_post_type_archive( 'product' ) &&
+      isset( $_GET['category'] ) &&
+      is_array( $_GET['category'] ) &&
+      ! empty( array_intersect( $_GET['category'], $age_test_product_categories ) )
+    ) ||
+    (
+      is_post_type_archive( 'custom' ) &&
+      isset( $_GET['category'] ) &&
+      is_array( $_GET['category'] ) &&
+      ! empty( array_intersect( $_GET['category'], $age_test_wholesaler_categories ) )
+    )
+  ) {
     get_template_part( 'src/template-parts/common/content', 'age-test' );
   }
 } );
