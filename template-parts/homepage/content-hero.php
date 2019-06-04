@@ -19,7 +19,7 @@
               </option>
             </select>
           </div>
-          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Jaký produkt byste chtěli prodávat?', 'shp-obchodiste' ); ?>" required>
+          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Jaký produkt byste chtěli prodávat?', 'shp-obchodiste' ); ?>">
         </div>
 
         <div class="mt-2 d-sm-none">

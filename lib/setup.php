@@ -351,7 +351,7 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle searching
 	 */
 
-	if( isset( $_GET[ 's' ] ) ) {
+	if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
 		$wp_query->set( 's', $_GET[ 's' ] );
 	}
 
@@ -430,7 +430,11 @@ add_action('pre_get_posts', function( $wp_query ) {
   $tax_query = [];
 
   // Exclude adult wholesalers from archive page when no category selected
-  if( ! $wp_query->is_tax( 'customtaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+  if(
+    ! $wp_query->is_tax( 'customtaxonomy' ) &&
+    ! isset( $_GET[ 'category' ] ) &&
+    ( ! isset( $_GET[ 's' ] ) || empty( $_GET[ 's' ] ) )
+  ) {
     $options = get_fields( 'options' );
     $age_test_wholesaler_categories = $options['age_test_wholesaler_categories'];
     $tax_query[] = [
@@ -471,7 +475,7 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle searching
 	 */
 
-	if( isset( $_GET[ 's' ] ) ) {
+	if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
 		$wp_query->set( 's', $_GET[ 's' ] );
 	}
 
@@ -565,7 +569,7 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle searching
 	 */
 
-	if( isset( $_GET[ 's' ] ) ) {
+	if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
 		$wp_query->set( 's', $_GET[ 's' ] );
 	}
 
@@ -632,7 +636,11 @@ add_action('pre_get_posts', function( $wp_query ) {
   $tax_query = [];
 
   // Exclude adult products from archive page when no category selected
-  if( ! $wp_query->is_tax( 'producttaxonomy' ) && ! isset( $_GET[ 'category' ] ) ) {
+  if (
+    ! $wp_query->is_tax( 'producttaxonomy' ) &&
+    ! isset( $_GET[ 'category' ] ) &&
+    ( ! isset( $_GET[ 's' ] ) || empty( $_GET[ 's' ] ) )
+  ) {
     $options = get_fields( 'options' );
     $age_test_product_categories = $options['age_test_product_categories'];
     $tax_query[] = [
@@ -1794,6 +1802,21 @@ add_action( 'wp_footer', function () {
       isset( $_GET['category'] ) &&
       is_array( $_GET['category'] ) &&
       ! empty( array_intersect( $_GET['category'], $age_test_wholesaler_categories ) )
+    ) ||
+    (
+      ! isset( $_GET['category'] ) &&
+      isset( $_GET['s'] ) &&
+      ! empty( $_GET['s'] ) &&
+      (
+        (
+          is_post_type_archive('product') &&
+          has_query_terms( $age_test_product_categories, 'producttaxonomy' )
+        ) ||
+        (
+          is_post_type_archive('custom') &&
+          has_query_terms( $age_test_wholesaler_categories, 'customtaxonomy' )
+        )
+      )
     )
   ) {
     get_template_part( 'src/template-parts/common/content', 'age-test' );
