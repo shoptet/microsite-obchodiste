@@ -357,3 +357,16 @@ function insert_image_from_url( $url, $post_id ) {
 
   return $id;
 }
+
+function has_query_terms( $terms, $taxonomy ): bool
+{
+  $result = false;
+  while ( have_posts() ) {
+    the_post();
+    if ( ! has_term( $terms, $taxonomy ) ) continue;
+    $result = true;
+    break;
+  }
+  wp_reset_query();
+  return $result;
+}
