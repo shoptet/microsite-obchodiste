@@ -331,6 +331,7 @@ function insert_image_from_url( $url, $post_id ) {
   $tmp_file = download_url( $url, $timeout_seconds );
 
   if ( is_wp_error( $tmp_file ) ) {
+    capture_sentry_message( $tmp_file->get_error_message() );
     return false;
   }
   
@@ -345,6 +346,7 @@ function insert_image_from_url( $url, $post_id ) {
 
   // If error storing permanently, unlink.
   if ( is_wp_error( $id ) ) {
+    capture_sentry_message( $id->get_error_message() );
     @unlink( $tmp_file );
     return false;
   }
