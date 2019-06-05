@@ -70,7 +70,7 @@
     <div class="mt-2 small text-right">
       <a
         class="text-muted"
-        href="mailto:info@obchodiste?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
+        href="mailto:info@obchodiste.cz?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
       >
         <?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>
       </a>
