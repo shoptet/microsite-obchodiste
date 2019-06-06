@@ -1153,6 +1153,16 @@ add_action( 'admin_notices', function() {
     </div>
   <?php endif;
 
+  if ( 'product' === $post_type && 'post-new.php' === $pagenow ): ?>
+    <div class="notice notice-info">
+      <p>
+        <a href="<?php echo admin_url( 'edit.php?post_type=product&page=product-import' ); ?>">
+          <?php _e( 'Více produktů nahrajete vložením CSV souboru', 'shp-obchodiste' ); ?>
+        </a>
+      </p>
+    </div>
+  <?php endif;
+
   $options = get_fields( 'options' );
   $special_offer_limit = $options[ $post_type . '_limit' ];
   if ( is_number_of_posts_exceeded( $post_type ) ): ?>
