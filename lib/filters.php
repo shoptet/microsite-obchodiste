@@ -165,6 +165,7 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
   // Check for mandatory fields
   if ( count( array_intersect( $mandatory, $header ) ) !== count( $mandatory ) ) {
     $valid =  __( 'Hlavička souboru neobsahuje všechny povinné položky', 'shp-obchodiste' );
+    return $valid;
   }
 
   $col_num = count( $header );
@@ -175,6 +176,7 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
     // Check the number of fields in a row to be equal to the header
     if ( count( $row ) !== $col_num ) {
       $valid =  __( 'Jeden nebo více řádků obsahují jiný počet položek než hlavička', 'shp-obchodiste' );
+      break;
     }
 
     // Check the mandatory fields in row
