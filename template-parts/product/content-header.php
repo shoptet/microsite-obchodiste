@@ -23,17 +23,6 @@
     <p><?php echo strip_tags( $short_description ); ?></p>
     <?php endif; ?>
 
-
-    <div class="my-4 small text-right">
-      <a
-        class="text-muted"
-        href="mailto:info@obchodiste.cz?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
-        target="_blank"
-      >
-        <?php _e( 'Myslíte si, že tento produkt je v rozporu se zákonem?', 'shp-obchodiste' ); ?>
-      </a>
-    </div>
-
     <div class="product-price-block d-flex justify-content-between align-items-center">
       <div>
 
