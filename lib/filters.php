@@ -160,6 +160,9 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
   $header = fgetcsv( $fp, 0, ';' );
   $mandatory = [
     'name',
+    'shortDescription',
+    'description',
+    'image',
   ];
 
   // Check for mandatory fields
