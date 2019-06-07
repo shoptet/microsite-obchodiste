@@ -13,16 +13,6 @@
     </div>
     <?php endif; ?>
 
-    <div class="my-4 small text-right">
-      <a
-        class="text-muted"
-        href="mailto:info@obchodiste.cz?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
-        target="_blank"
-      >
-        <?php _e( 'Myslíte si, že tento produkt je v rozporu se zákonem?', 'shp-obchodiste' ); ?>
-      </a>
-    </div>
-
   </div>
   <div class="col-12 col-lg-5 col-xl-4">
 
@@ -46,4 +36,14 @@
     <?php get_template_part( 'src/template-parts/wholesaler/content', 'contact-form' ); ?>
 
   </div>
+</div>
+
+<div class="mt-4 pt-2 mb-2 text-right small">
+  <a
+    class="text-muted"
+    href="mailto:info@obchodiste.cz?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
+    target="_blank"
+  >
+    <?php _e( 'Myslíte si, že tento produkt je v rozporu se zákonem?', 'shp-obchodiste' ); ?>
+  </a>
 </div>
