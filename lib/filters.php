@@ -771,3 +771,13 @@ add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename, $mi
 
   return compact( 'ext', 'type', 'proper_filename' );
 }, 10, 4 );
+
+/**
+ * Make the first capital letter only if the entire product name is capitalized
+ */
+add_filter( 'product_title_import', function ( $product_title ) {
+  if ( mb_strtoupper( $product_title ) == $product_title ) {
+    $product_title = ucfirst( mb_strtolower( $product_title ) );
+  }
+  return $product_title;
+} );
