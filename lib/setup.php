@@ -1618,9 +1618,12 @@ add_action( 'acf/save_post', function() {
       'ean' => isset( $data_item['ean'] ) ? $data_item['ean'] : '',
     ];
 
+    $title = $data_item['name'];
+    $title = apply_filters( 'product_title_import', $title );
+
     $postarr = [
       'post_type' => 'product',
-      'post_title' => $data_item['name'],
+      'post_title' => $title,
       'post_author' => $wholesaler_author_id, // Set correct author id
       'post_status' => 'draft',
       'meta_input' => $meta_input,
@@ -1646,7 +1649,7 @@ add_action( 'acf/save_post', function() {
       if ( ! isset( $data_item[$image_key] ) || empty( $data_item[$image_key] ) ) continue;
       $postarr = [
         'post_type' => 'sync',
-        'post_title' => $data_item['name'] . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
+        'post_title' => $title . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
         'post_status' => 'waiting',
         'meta_input' => [
           'product' => $post_product_id,
