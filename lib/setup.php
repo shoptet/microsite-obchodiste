@@ -1666,7 +1666,7 @@ add_action( 'acf/save_post', function() {
       if ( ! isset( $data_item[$image_key] ) || empty( $data_item[$image_key] ) ) continue;
       $postarr = [
         'post_type' => 'sync',
-        'post_title' => $data_item['name'] . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
+        'post_title' => $title . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
         'post_status' => 'waiting',
         'meta_input' => [
           'product' => $post_product_id,
