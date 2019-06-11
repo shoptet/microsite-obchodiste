@@ -1618,9 +1618,12 @@ add_action( 'acf/save_post', function() {
       'ean' => isset( $data_item['ean'] ) ? $data_item['ean'] : '',
     ];
 
+    $title = $data_item['name'];
+    $title = apply_filters( 'product_title_import', $title );
+
     $postarr = [
       'post_type' => 'product',
-      'post_title' => $data_item['name'],
+      'post_title' => $title,
       'post_author' => $wholesaler_author_id, // Set correct author id
       'post_status' => 'draft',
       'meta_input' => $meta_input,
