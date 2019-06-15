@@ -136,30 +136,50 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
     'image',
   ];
 
-  // Check for mandatory fields
-  if ( count( array_intersect( $mandatory, $header ) ) !== count( $mandatory ) ) {
-    $valid =  __( 'Hlavička souboru neobsahuje všechny povinné položky', 'shp-obchodiste' );
+  // Check for mandatory fields in header
+  $header_mandatory = array_intersect( $mandatory, $header );
+  $mandatory_cols_missing = array_diff( $mandatory, $header_mandatory );
+  if ( ! empty( $mandatory_cols_missing ) ) {
+    $valid = sprintf(
+      __( 'Hlavička souboru neobsahuje tyto povinné položky: <strong>%s</strong>', 'shp-obchodiste' ),
+      implode( ', ', $mandatory_cols_missing )
+    );
     return $valid;
   }
 
   $col_num = count( $header );
-  $data = [];
   
+  $row_number = 1;
+  $valid_array = [];
   while ( $row = fgetcsv( $fp, 0, ';' ) ) {
+    $row_number++;
 
-    // Check the number of fields in a row to be equal to the header
+    // Check the number of fields in a row to be equal to the number of fields in the header
     if ( count( $row ) !== $col_num ) {
-      $valid =  __( 'Jeden nebo více řádků obsahují jiný počet položek než hlavička', 'shp-obchodiste' );
-      break;
+      $valid_array[] = sprintf (
+        __( '<strong>Chyba na řádku %d</strong>: Jiný počet položek v řádku <strong>(%d)</strong> než počet položek v hlavičce <strong>(%d)</strong>', 'shp-obchodiste' ),
+        $row_number,
+        count( $row ),
+        $col_num
+      );
+      continue;
     }
 
     // Check the mandatory fields in row
     $row = array_combine( $header, $row );
     foreach ( $mandatory as $m ) {
       if ( empty( $row[ $m ] ) ) {
-        $valid =  __( 'Jedna nebo více povinných položek nejsou vyplněny ve všech řádcích', 'shp-obchodiste' );
+        $valid_array[] = sprintf (
+          __( '<strong>Chyba na řádku %d</strong>: Chybí povinná položka: <strong>%s</strong>', 'shp-obchodiste' ),
+          $row_number,
+          $m
+        );
       }
     }
+  }
+
+  if ( ! empty( $valid_array ) ) {
+    $valid = implode( '<br>', $valid_array );
   }
 
   fclose( $fp );
