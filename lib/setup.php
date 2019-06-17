@@ -1836,6 +1836,28 @@ add_action( 'wp_footer', function () {
   }
 } );
 
+// add_action( 'wp_ajax_fix_product_titles', function () {
+//   $wp_query = new WP_Query( [
+//     'post_type' => 'product',
+//     'posts_per_page' => -1,
+//     'post_status' => 'any',
+//   ] );
+
+//   $products = $wp_query->posts;
+//   $updated = 0;
+//   foreach( $products as $product ) {
+//     if ( mb_strtoupper( $product->post_title ) != $product->post_title ) continue;
+//     $updated++;
+//     wp_update_post( [
+//       'ID' => $product->ID,
+//       'post_title' => ucfirst( mb_strtolower( $product->post_title ) ),
+//     ] );
+//   }
+//   wp_send_json([
+//     'updated' => $updated,
+//   ]);
+// } );
+
 /**
  * Enable custom part of header
  */
