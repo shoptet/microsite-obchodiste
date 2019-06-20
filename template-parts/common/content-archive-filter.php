@@ -108,9 +108,12 @@ $checked_regions = ( isset($_GET[ 'region' ]) && is_array($_GET[ 'region' ]) ) ?
                 for="filterRegion<?php echo $region[ 'id' ]; ?>"
               >
                 <?php echo $region[ 'name' ]; ?>
-                <span class="text-semilight">
-                  (<?php echo $region_count( $region ); ?>)
-                </span>
+                <!-- <span class="text-semilight">
+                  (<?php
+                  // TODO: Optimize region_count function
+                  //echo $region_count( $region );
+                  ?>)
+                </span> -->
               </label>
             </div>
           <?php endforeach; ?>

@@ -214,7 +214,12 @@ function get_used_regions_by_country( $post_type ): array
     $used_regions = [];
 
     foreach ( $regions_in_country as $region_id => $region_name ) {
-      if ( $is_region_used( $region_id ) ) $used_regions[] = [
+      // TODO: Optimize is_region_used function
+      // if ( $is_region_used( $region_id ) ) $used_regions[] = [
+      //   'id' => $region_id,
+      //   'name' => $region_name,
+      // ];
+      $used_regions[] = [
         'id' => $region_id,
         'name' => $region_name,
       ];
