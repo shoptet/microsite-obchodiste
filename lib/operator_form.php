@@ -81,7 +81,7 @@ add_action( 'wp' , function () {
 		);
 		return;
   }
-  $GLOBALS[ 'external_company_title' ] = get_external_company_value_by_field_name( $external_company, 'title' );
+  $GLOBALS[ 'external_company_title' ] = get_external_company_value_by_field_name( $external_company_token, 'title' );
   echo get_template_part( 'src/template-parts/operator/content', 'form' );
   unset( $GLOBALS[ 'external_company_title' ] );
   die();
