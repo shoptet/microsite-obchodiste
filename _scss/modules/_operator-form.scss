@@ -1,0 +1,51 @@
+.operator-form {
+
+  .acf-fields {
+
+    > .acf-field {
+      border-top-width: 0;
+    }
+
+    .description {
+      color: #888;
+      font-size: 80%;
+    }
+
+  }
+
+  .acf-fields.-left {
+
+    > .acf-field {
+      padding: 8px 0;
+
+      &:before {
+        background: transparent;
+        border-color: transparent;
+      }
+
+      > .acf-label {
+        width: 30%;
+        padding-left: 0;
+        
+        label {
+          font-weight: normal;
+        }
+      }
+      
+      > .acf-input {
+        width: 70%;
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+
+  }
+
+}
+
+.operator-form-label-heading {
+  label {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: $h4-font-size;
+  }
+}
