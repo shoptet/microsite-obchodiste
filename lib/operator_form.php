@@ -1,15 +1,15 @@
 <?php
 
-// TODO: update to token
-function is_external_company_exist( $token ) {
+// TODO: replace id to token
+function is_external_company_exist( $external_company_token ) {
   global $wpdb;
   $result = $wpdb->get_var('
-    SELECT 1 FROM external_companies WHERE id = "' . $token . '"
+    SELECT 1 FROM external_companies WHERE id = "' . $external_company_token . '"
   ');
   return ( $result === '1' );
 }
 
-function get_external_company_value_by_field_name( $auth_token, $field_name ) {
+function get_external_company_value_by_field_name( $external_company_token, $field_name ) {
   global $wpdb;
   $column_names_by_field_name = [
     'title' => 'title',
@@ -44,7 +44,7 @@ function get_external_company_value_by_field_name( $auth_token, $field_name ) {
   if ( ! array_key_exists( $field_name, $column_names_by_field_name ) ) return false;
   $column_name = $column_names_by_field_name[ $field_name ];
   $result = $wpdb->get_var('
-    SELECT ' . $column_name . ' FROM external_companies WHERE id = "' . $auth_token . '"
+    SELECT ' . $column_name . ' FROM external_companies WHERE id = "' . $external_company_token . '"
   ');
 
   switch ( $field_name ) {
@@ -61,12 +61,12 @@ function get_external_company_value_by_field_name( $auth_token, $field_name ) {
   return $result;
 }
 
-// Check for auth token and authenticate
+// Check for external company token and authenticate
 add_action( 'wp' , function () {
-	if ( ! isset( $_GET['auth_token'] ) || '' === $_GET['auth_token'] ) return;
-  $auth_token = $_GET['auth_token'];
+	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
+  $external_company_token = $_GET['external_company'];
 
-  if ( ! is_external_company_exist( $auth_token ) ) {
+  if ( ! is_external_company_exist( $external_company_token ) ) {
     wp_die( __( 'Neplatná URL', 'shp-partneri' ) );
 		return;
   }
@@ -81,19 +81,20 @@ add_action( 'wp' , function () {
 		);
 		return;
   }
-  $GLOBALS[ 'external_company_title' ] = get_external_company_value_by_field_name( $auth_token, 'title' );
+  $GLOBALS[ 'external_company_title' ] = get_external_company_value_by_field_name( $external_company, 'title' );
   echo get_template_part( 'src/template-parts/operator/content', 'form' );
   unset( $GLOBALS[ 'external_company_title' ] );
   die();
 } );
 
+// Set default values to operator form
 add_filter('acf/load_field', function ( $field ) {
-  if ( ! isset( $_GET['auth_token'] ) || '' === $_GET['auth_token'] ) return $field;
-  $auth_token = $_GET['auth_token'];
+  if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
+  $external_company_token = $_GET['external_company'];
 
-  if ( ! is_external_company_exist( $auth_token ) ) return $field;
+  if ( ! is_external_company_exist( $external_company_token ) ) return $field;
 
-  if ( $value = get_external_company_value_by_field_name( $auth_token, $field['name'] ) ) {
+  if ( $value = get_external_company_value_by_field_name( $external_company_token, $field['name'] ) ) {
     $field[ 'default_value' ] = $value;
   }
 
