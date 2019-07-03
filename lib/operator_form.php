@@ -63,7 +63,7 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
 
 // Check for external company token and authenticate
 add_action( 'wp' , function () {
-	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
+	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
   $external_company_token = $_GET['external_company'];
 
   if ( ! is_external_company_exist( $external_company_token ) ) {
