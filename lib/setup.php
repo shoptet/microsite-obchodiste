@@ -817,8 +817,9 @@ add_action( 'save_post', function( $post_id, $post, $update ) {
 
 /**
  * Update wholesaler categories
+ * TODO: check this filter priority
  */
-add_action( 'save_post', function( $post_id ) {
+add_action( 'acf/save_post', function( $post_id ) {
 	// Not the correct post type, bail out
   if ( 'custom' !== get_post_type( $post_id ) ) return;
   $post_categories = [];
@@ -1565,8 +1566,8 @@ add_action( 'acf/save_post', function() {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   $screen = get_current_screen();
-  
-  if ( 'product_page_product-import' !== $screen->base ) return;
+
+  if ( ! $screen || 'product_page_product-import' !== $screen->base ) return;
 
   // bail early if no ACF data
   if( empty( $_POST['acf'] ) ) return;
