@@ -11,6 +11,7 @@ function is_external_company_exist( $external_company_token ) {
 function get_external_company_value_by_field_name( $external_company_token, $field_name ) {
   global $wpdb;
   $column_names_by_field_name = [
+    'id' => 'id',
     'title' => 'title',
     'street' => 'street',
     'city' => 'city',
