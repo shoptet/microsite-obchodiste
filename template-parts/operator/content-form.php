@@ -5,6 +5,10 @@ $acf_form_settings_base = [
   'post_id' => 'new_post',
   'new_post' => [
     'post_type' => 'custom',
+    'post_status' => 'draft',
+    'meta_input' => [
+      'external_company_id' => $GLOBALS[ 'external_company']['id'],
+    ],
   ],
   'form' => false,
 ];
@@ -78,7 +82,7 @@ acf_form_head();
                     </div>
                     <div class="acf-input">
                       <div class="acf-input-wrap">
-                        <input class="font-weight-bold" type="text" id="acf-_post_title" name="acf[_post_title]" required="required" value="<?php echo $GLOBALS[ 'external_company_title' ]; ?>">
+                        <input class="font-weight-bold" type="text" id="acf-_post_title" name="acf[_post_title]" required="required" value="<?php echo $GLOBALS[ 'external_company' ][ 'title' ]; ?>">
                       </div>
                     </div>
                   </div>
