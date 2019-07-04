@@ -1,6 +1,5 @@
 <?php
 
-// TODO: replace id to token
 function is_external_company_exist( $external_company_token ) {
   global $wpdb;
   $result = $wpdb->get_var('
@@ -81,9 +80,12 @@ add_action( 'wp' , function () {
 		);
 		return;
   }
-  $GLOBALS[ 'external_company_title' ] = get_external_company_value_by_field_name( $external_company_token, 'title' );
+  $GLOBALS[ 'external_company' ] = [
+    'title' => get_external_company_value_by_field_name( $external_company_token, 'title' ),
+    'id' => get_external_company_value_by_field_name( $external_company_token, 'id' ),
+  ];
   echo get_template_part( 'src/template-parts/operator/content', 'form' );
-  unset( $GLOBALS[ 'external_company_title' ] );
+  unset( $GLOBALS[ 'external_company' ] );
   die();
 } );
 
