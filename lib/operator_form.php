@@ -4,7 +4,7 @@
 function is_external_company_exist( $external_company_token ) {
   global $wpdb;
   $result = $wpdb->get_var('
-    SELECT 1 FROM external_companies WHERE id = "' . $external_company_token . '"
+    SELECT 1 FROM external_companies WHERE registration_token = "' . $external_company_token . '"
   ');
   return ( $result === '1' );
 }
@@ -44,7 +44,7 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
   if ( ! array_key_exists( $field_name, $column_names_by_field_name ) ) return false;
   $column_name = $column_names_by_field_name[ $field_name ];
   $result = $wpdb->get_var('
-    SELECT ' . $column_name . ' FROM external_companies WHERE id = "' . $external_company_token . '"
+    SELECT ' . $column_name . ' FROM external_companies WHERE registration_token = "' . $external_company_token . '"
   ');
 
   switch ( $field_name ) {
