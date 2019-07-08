@@ -61,13 +61,31 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
   return $result;
 }
 
+function get_wholesaler_by_approving_token ( $approving_token ) {  
+  $query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => 1,
+    'post_status' => 'any',
+    'meta_query' => [
+      [
+        'key' => 'approving_token',
+        'value' => $approving_token,
+      ],
+    ],
+  ] );
+
+  if ( empty( $query->posts ) ) return null;
+
+  return $query->posts[0];
+}
+
 // Check for external company token and authenticate
 add_action( 'wp' , function () {
 	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
   $external_company_token = $_GET['external_company'];
 
   if ( ! is_external_company_exist( $external_company_token ) ) {
-    wp_die( __( 'Neplatná URL', 'shp-partneri' ) );
+    wp_die( __( 'Neplatná URL', 'shp-obchodiste' ) );
 		return;
   }
 
@@ -75,8 +93,8 @@ add_action( 'wp' , function () {
 
   if ( $updated ) {
     wp_die(
-			__( 'Velkoobchod byl úspěšně registrován!', 'shp-partneri' ),
-			__( 'Velkoobchod byl úspěšně registrován!', 'shp-partneri' ),
+			__( 'Velkoobchod byl úspěšně registrován!', 'shp-obchodiste' ),
+			__( 'Velkoobchod byl úspěšně registrován!', 'shp-obchodiste' ),
 			[ 'response' => 200 ]
 		);
 		return;
@@ -91,7 +109,7 @@ add_action( 'wp' , function () {
 } );
 
 // Set default values to operator form
-add_filter('acf/load_field', function ( $field ) {
+add_filter( 'acf/load_field', function ( $field ) {
   if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
   $external_company_token = $_GET['external_company'];
 
@@ -102,4 +120,105 @@ add_filter('acf/load_field', function ( $field ) {
   }
 
   return $field;
+} );
+
+add_action( 'acf/save_post', function ( $post_id ) {
+  if (
+    'custom' !== get_post_type ( $post_id ) ||
+    $_POST['_acf_post_id'] !== 'new_post' ||
+    empty( get_post_meta( $post_id, 'external_company_id', true ) )
+  ) return;
+
+  // Create a user from contact person data
+
+  $user_email = get_post_meta( $post_id, 'contact_email', true );
+  $user_name = get_post_meta( $post_id, 'contact_full_name', true );
+
+  // Check for contact person duplication
+  if ( username_exists( $user_email ) || email_exists( $user_email ) ) {
+    wp_delete_post( $post_id, true );
+    wp_die( __(
+      '<strong>Kontaktní osoba s tímto e-mailem je již zaregistrována.</strong> Velkoobchod nebyl vytvořen.',
+      'shp-obchodiste'
+    ) );
+		return;
+  }
+
+  $random_password = wp_generate_password();
+  $user_id = wp_create_user( $user_email, $random_password, $user_email );
+
+  // Set the user as post author
+  wp_update_post( [ 'ID' => $post_id, 'post_author' => $user_id ] );
+
+  $approving_token = get_post_meta( $post_id, 'approving_token', true );
+  $approving_url = get_site_url( null, '?approve_company=' . $approving_token );
+
+  // Send e-mail with approving link to user
+  $options = get_fields( 'options' );
+  $email_from = $options[ 'email_from' ];
+  $welcome_email_subject = $options[ 'operator_welcome_email_subject' ];
+  $welcome_email_body = $options[ 'operator_welcome_email_body' ];
+  $to_replace = [
+    '%username%' => $user_email,
+    '%approving_url%' => $approving_url,
+  ];
+  $welcome_email_body = strtr( $welcome_email_body, $to_replace );
+
+  wp_mail(
+    $user_email,
+    $welcome_email_subject,
+    $welcome_email_body,
+    [
+      'From: ' . $email_from,
+      'Content-Type: text/html; charset=UTF-8',
+    ]
+  );
+
+  wp_die(
+    __(
+      '<strong>Velkoobchod registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
+      'shp-obchodiste'
+    ),
+    __( 'Velkoobchod registrován', 'shp-obchodiste' ),
+    [ 'response' => 200 ]
+  );
+} );
+
+// Check for external company token and authenticate
+add_action( 'wp' , function () {
+	if (
+    ! isset( $_GET['approve_company'] ) ||
+    '' === $_GET['approve_company']
+  ) return;
+  $approving_token = $_GET['approve_company'];
+
+  $wholesaler = get_wholesaler_by_approving_token( $approving_token );
+
+  if ( ! $wholesaler ) {
+		wp_die( __( 'Zadali jste neplatný odkaz. Zkuste to prosím znovu.', 'shp-obchodiste' ) );
+		return;
+  }
+  
+  // Approve wholesaler and set to pending status
+  if ( empty ( get_post_meta( $wholesaler->ID, 'approved' ) ) ) {
+    update_post_meta( $wholesaler->ID, 'approved', time() );
+    wp_update_post( [
+      'ID' => $wholesaler->ID,
+      'post_status' => 'pending',
+    ] );
+  }
+
+  // Get wholesaler author
+  $user_id = $wholesaler->post_author;
+  $user_data = get_userdata( $user_id );
+  $user_login = $user_data->user_login;
+  $key = get_password_reset_key( $user_data );
+
+  // Generate reset password URL and redirect
+  $reset_password_url = network_site_url(
+    'wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode( $user_login ),
+    'login'
+  );
+  wp_redirect( $reset_password_url );
+  exit;
 } );

@@ -8,6 +8,7 @@ $acf_form_settings_base = [
     'post_status' => 'draft',
     'meta_input' => [
       'external_company_id' => $GLOBALS[ 'external_company']['id'],
+      'approving_token' => bin2hex( openssl_random_pseudo_bytes(16) ),
     ],
   ],
   'form' => false,
@@ -42,6 +43,19 @@ array_walk( $acf_form_settings, function ( &$value ) use( &$acf_form_settings_ba
   $value = array_merge( $acf_form_settings_base, $value );
 } );
 
+$query = new WP_Query( [
+  'post_type' => 'custom',
+  'post_status' => 'any',
+  'meta_query' => [
+    [
+      'key' => 'external_company_id',
+      'value' => $GLOBALS[ 'external_company']['id'],
+    ],
+  ],
+] );
+
+$is_wholesaler_exist = ! empty( $query->posts );
+
 acf_form_head();
 ?>
 
@@ -62,6 +76,12 @@ acf_form_head();
       </div>
     </div>
     <div class="container pt-4 pb-5 mb-2">
+
+      <?php if ( $is_wholesaler_exist ): ?>
+        <div class="alert alert-warning" role="alert">
+          <?php _e( '<strong>Upozornění:</strong>&nbsp;Firma s těmito údaji je již registrována', 'shp-obchodiste' ); ?>
+        </div>
+      <?php endif; ?>
 
       <form id="<?php echo $acf_form_settings_base['id']; ?>" class="acf-form" action="" method="post" autocomplete="off">
       
