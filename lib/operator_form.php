@@ -89,16 +89,6 @@ add_action( 'wp' , function () {
 		return;
   }
 
-  $updated = ( isset( $_GET['updated'] ) && 'true' === $_GET['updated'] );
-
-  if ( $updated ) {
-    wp_die(
-			__( 'Velkoobchod byl úspěšně registrován!', 'shp-obchodiste' ),
-			__( 'Velkoobchod byl úspěšně registrován!', 'shp-obchodiste' ),
-			[ 'response' => 200 ]
-		);
-		return;
-  }
   $GLOBALS[ 'external_company' ] = [
     'title' => get_external_company_value_by_field_name( $external_company_token, 'title' ),
     'id' => get_external_company_value_by_field_name( $external_company_token, 'id' ),
@@ -176,7 +166,7 @@ add_action( 'acf/save_post', function ( $post_id ) {
 
   wp_die(
     __(
-      '<strong>Velkoobchod registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
+      '<strong>Velkoobchod byl úspěšně registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
       'shp-obchodiste'
     ),
     __( 'Velkoobchod registrován', 'shp-obchodiste' ),
