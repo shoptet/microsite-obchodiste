@@ -138,7 +138,7 @@ add_action( 'acf/save_post', function ( $post_id ) {
   if ( username_exists( $user_email ) || email_exists( $user_email ) ) {
     wp_delete_post( $post_id, true );
     wp_die( __(
-      '<strong>Kontaktní osoba je již zaregistrována.</strong> Velkoobchod nebyl vytvořen.',
+      '<strong>Kontaktní osoba s tímto e-mailem je již zaregistrována.</strong> Velkoobchod nebyl vytvořen.',
       'shp-obchodiste'
     ) );
 		return;
@@ -153,12 +153,30 @@ add_action( 'acf/save_post', function ( $post_id ) {
   $approving_token = get_post_meta( $post_id, 'approving_token', true );
   $approving_url = get_site_url( null, '?approve_company=' . $approving_token );
 
-  // TODO: Render e-mail and send e-mail with approving link
-  wp_redirect( $approving_url ); exit; // TODO: remove
+  // Send e-mail with approving link to user
+  $options = get_fields( 'options' );
+  $email_from = $options[ 'email_from' ];
+  $welcome_email_subject = $options[ 'operator_welcome_email_subject' ];
+  $welcome_email_body = $options[ 'operator_welcome_email_body' ];
+  $to_replace = [
+    '%username%' => $user_email,
+    '%approving_url%' => $approving_url,
+  ];
+  $welcome_email_body = strtr( $welcome_email_body, $to_replace );
+
+  wp_mail(
+    $user_email,
+    $welcome_email_subject,
+    $welcome_email_body,
+    [
+      'From: ' . $email_from,
+      'Content-Type: text/html; charset=UTF-8',
+    ]
+  );
 
   wp_die(
     __(
-      '<strong>Velkoobchod registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovací odkazem.',
+      '<strong>Velkoobchod registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
       'shp-obchodiste'
     ),
     __( 'Velkoobchod registrován', 'shp-obchodiste' ),
