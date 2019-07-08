@@ -8,6 +8,7 @@ $acf_form_settings_base = [
     'post_status' => 'draft',
     'meta_input' => [
       'external_company_id' => $GLOBALS[ 'external_company']['id'],
+      'approving_token' => bin2hex( openssl_random_pseudo_bytes(16) ),
     ],
   ],
   'form' => false,
