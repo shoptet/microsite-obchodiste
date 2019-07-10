@@ -1,13 +1,18 @@
 <?php
+$external_company_id = $GLOBALS[ 'external_company']['id'];
+
+$wholesaler = get_wholesaler_by_external_company_id( $external_company_id );
+
+$title = ( $wholesaler ? $wholesaler->post_title : $GLOBALS[ 'external_company' ][ 'title' ] );
 
 $acf_form_settings_base = [
   'id' => 'acf-form',
-  'post_id' => 'new_post',
+  'post_id' => ( $wholesaler ? $wholesaler->ID : 'new_post' ),
   'new_post' => [
     'post_type' => 'custom',
     'post_status' => 'draft',
     'meta_input' => [
-      'external_company_id' => $GLOBALS[ 'external_company']['id'],
+      'external_company_id' => $external_company_id,
       'approving_token' => bin2hex( openssl_random_pseudo_bytes(16) ),
     ],
   ],
@@ -54,8 +59,6 @@ $query = new WP_Query( [
   ],
 ] );
 
-$is_wholesaler_exist = ! empty( $query->posts );
-
 acf_form_head();
 ?>
 
@@ -77,13 +80,13 @@ acf_form_head();
     </div>
     <div class="container pt-4 pb-5 mb-2">
 
-      <?php if ( $is_wholesaler_exist ): ?>
-        <div class="alert alert-warning" role="alert">
-          <?php _e( '<strong>Upozornění:</strong>&nbsp;Firma s těmito údaji je již registrována', 'shp-obchodiste' ); ?>
-        </div>
-      <?php endif; ?>
-
-      <form id="<?php echo $acf_form_settings_base['id']; ?>" class="acf-form" action="" method="post" autocomplete="off">
+      <form
+        id="<?php echo $acf_form_settings_base['id']; ?>"
+        class="acf-form"
+        action=""
+        method="post"
+        autocomplete="off"
+      >
       
         <div class="row mb-4">
           <div class="col-lg-6 mb-4 mb-lg-0">
@@ -102,7 +105,7 @@ acf_form_head();
                     </div>
                     <div class="acf-input">
                       <div class="acf-input-wrap">
-                        <input class="font-weight-bold" type="text" id="acf-_post_title" name="acf[_post_title]" required="required" value="<?php echo $GLOBALS[ 'external_company' ][ 'title' ]; ?>">
+                        <input class="font-weight-bold" type="text" id="acf-_post_title" name="acf[_post_title]" required="required" value="<?php echo $title; ?>">
                       </div>
                     </div>
                   </div>
@@ -138,10 +141,21 @@ acf_form_head();
           </div>
         </div>
 
-        <div class="text-center pt-4">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <?php _e( 'Dokončit registraci firmy', 'shp-obchodiste' ); ?>
-          </button>
+        <div class="text-right pt-4 clearfix">
+          <input
+            type="submit"
+            class="btn btn-primary btn-lg float-right"
+            name="operator_form_register_wholesaler"
+            value="<?php _e( 'Dokončit registraci firmy', 'shp-obchodiste' ); ?>"
+          >
+          <?php if ( ! $wholesaler ): ?>
+            <input
+              type="submit"
+              class="btn btn-link btn-lg"
+              name="operator_form_notify_contact_person"
+              value="<?php _e( 'Odeslat e-mail kontaktní osobě', 'shp-obchodiste' ); ?>"
+            >
+          <?php endif; ?>
         </div>
 
       </form>

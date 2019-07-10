@@ -61,6 +61,24 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
   return $result;
 }
 
+function get_wholesaler_by_external_company_id ( $external_company_id ) {
+  $query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => 1,
+    'post_status' => 'any',
+    'meta_query' => [
+      [
+        'key' => 'external_company_id',
+        'value' => $external_company_id,
+      ],
+    ],
+  ] );
+
+  if ( empty( $query->posts ) ) return null;
+
+  return $query->posts[0];
+}
+
 function get_wholesaler_by_approving_token ( $approving_token ) {  
   $query = new WP_Query( [
     'post_type' => 'custom',
@@ -79,46 +97,7 @@ function get_wholesaler_by_approving_token ( $approving_token ) {
   return $query->posts[0];
 }
 
-// Check for external company token and authenticate
-add_action( 'wp' , function () {
-	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
-  $external_company_token = $_GET['external_company'];
-
-  if ( ! is_external_company_exist( $external_company_token ) ) {
-    wp_die( __( 'Neplatná URL', 'shp-obchodiste' ) );
-		return;
-  }
-
-  $GLOBALS[ 'external_company' ] = [
-    'title' => get_external_company_value_by_field_name( $external_company_token, 'title' ),
-    'id' => get_external_company_value_by_field_name( $external_company_token, 'id' ),
-  ];
-  echo get_template_part( 'src/template-parts/operator/content', 'form' );
-  unset( $GLOBALS[ 'external_company' ] );
-  die();
-} );
-
-// Set default values to operator form
-add_filter( 'acf/load_field', function ( $field ) {
-  if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
-  $external_company_token = $_GET['external_company'];
-
-  if ( ! is_external_company_exist( $external_company_token ) ) return $field;
-
-  if ( $value = get_external_company_value_by_field_name( $external_company_token, $field['name'] ) ) {
-    $field[ 'default_value' ] = $value;
-  }
-
-  return $field;
-} );
-
-add_action( 'acf/save_post', function ( $post_id ) {
-  if (
-    'custom' !== get_post_type ( $post_id ) ||
-    $_POST['_acf_post_id'] !== 'new_post' ||
-    empty( get_post_meta( $post_id, 'external_company_id', true ) )
-  ) return;
-
+function register_wholesaler ( $post_id ) {
   // Create a user from contact person data
 
   $user_email = get_post_meta( $post_id, 'contact_email', true );
@@ -131,7 +110,7 @@ add_action( 'acf/save_post', function ( $post_id ) {
       '<strong>Kontaktní osoba s tímto e-mailem je již zaregistrována.</strong> Velkoobchod nebyl vytvořen.',
       'shp-obchodiste'
     ) );
-		return;
+    return;
   }
 
   $random_password = wp_generate_password();
@@ -172,6 +151,88 @@ add_action( 'acf/save_post', function ( $post_id ) {
     __( 'Velkoobchod registrován', 'shp-obchodiste' ),
     [ 'response' => 200 ]
   );
+}
+
+function notify_contact_person ( $post_id, $external_company_token ) {
+  $options = get_fields( 'options' );
+  $operator_registration_email_from = $options[ 'operator_registration_email_from' ];
+  $registration_email_subject = $options[ 'operator_registration_email_subject' ];
+  $registration_email_body = $options[ 'operator_registration_email_body' ];
+  $registration_url = get_site_url( null, '?external_company=' . $external_company_token );
+  $to_replace = [
+    '%registration_url%' => $registration_url,
+  ];
+  $registration_email_body = strtr( $registration_email_body, $to_replace );
+  $user_email = get_post_meta( $post_id, 'contact_email', true );
+
+  // Remove post author
+  wp_update_post( [ 'ID' => $post_id, 'post_author' => 0 ] );
+
+  wp_mail(
+    $user_email,
+    $registration_email_subject,
+    $registration_email_body,
+    [
+      'From: ' . $operator_registration_email_from,
+      'Content-Type: text/html; charset=UTF-8',
+    ]
+  );
+
+  wp_die(
+    __(
+      '<strong>E-mail by odeslán.</strong> Kontaktní osobě byl odeslán e-mail s odkazem na registrační formulář.',
+      'shp-obchodiste'
+    ),
+    __( 'E-mail odeslán', 'shp-obchodiste' ),
+    [ 'response' => 200 ]
+  );
+}
+
+// Check for external company token and authenticate
+add_action( 'wp' , function () {
+	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
+  $external_company_token = $_GET['external_company'];
+
+  if ( ! is_external_company_exist( $external_company_token ) ) {
+    wp_die( __( 'Neplatná URL', 'shp-obchodiste' ) );
+		return;
+  }
+
+  $GLOBALS[ 'external_company' ] = [
+    'title' => get_external_company_value_by_field_name( $external_company_token, 'title' ),
+    'id' => get_external_company_value_by_field_name( $external_company_token, 'id' ),
+  ];
+  echo get_template_part( 'src/template-parts/operator/content', 'form' );
+  unset( $GLOBALS[ 'external_company' ] );
+  die();
+} );
+
+// Set default values to operator form
+add_filter( 'acf/load_field', function ( $field ) {
+  if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
+  $external_company_token = $_GET['external_company'];
+
+  if ( ! is_external_company_exist( $external_company_token ) ) return $field;
+  
+  if ( $value = get_external_company_value_by_field_name( $external_company_token, $field['name'] ) ) {
+    $field[ 'default_value' ] = $value;
+  }
+
+  return $field;
+} );
+
+add_action( 'acf/save_post', function ( $post_id ) {
+  if ( 'custom' !== get_post_type ( $post_id ) ) return;
+  if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
+  $external_company_token = $_GET['external_company'];
+  if ( ! is_external_company_exist( $external_company_token ) ) return;
+
+  if ( isset($_POST['operator_form_notify_contact_person']) ) {
+    notify_contact_person( $post_id, $external_company_token );
+  } else if ( isset($_POST['operator_form_register_wholesaler']) ) {
+    register_wholesaler( $post_id );
+  }
+
 } );
 
 // Check for external company token and authenticate

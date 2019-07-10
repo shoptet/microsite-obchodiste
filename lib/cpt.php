@@ -225,7 +225,7 @@ function get_cpt_product_taxonomy_args(): array
     'label' => __( 'Kategorie', 'shp-obchodiste' ),
     'labels' => $labels,
     'public' => true,
-    'hierarchical' => false,
+    'hierarchical' => false, // TODO: rewrite after migratin google product categories
     'label' => 'Kategorie',
     'show_ui' => true,
     'show_in_menu' => true,
