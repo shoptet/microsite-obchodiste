@@ -23,7 +23,7 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
     'contact_full_name' => 'contact_name_surname',
     'contact_email' => 'email',
     'contact_tel' => 'phone',
-    'about_products' => 'description',
+    'short_about' => 'description',
   ];
   $regions_by_disctrict = [
     'Hlavní město Praha' => 0,
