@@ -21,26 +21,22 @@ $acf_form_settings_base = [
 
 $acf_form_settings = [
   'company' => [
-    'field_groups' => [ 2317 ],
     'fields' => [ 'street', 'city', 'zip', 'country', 'region', 'in', 'website' ],
     'label_placement' => 'left',
     'instruction_placement' => 'field',
   ],
   'contact_person' => [
-    'field_groups' => [ 2367 ],
     'fields' => [ 'contact_full_name', 'contact_email', 'contact_tel' ],
     'label_placement' => 'left',
     'instruction_placement' => 'field',
   ],
   'category' => [
-    'field_groups' => [ 2372 ],
     'fields' => [ 'category', 'minor_category_1', 'minor_category_2' ],
     'label_placement' => 'left',
     'instruction_placement' => 'field',
   ],
   'about' => [
-    'field_groups' => [ 2372 ],
-    'fields' => [ 'about_company' ],
+    'fields' => [ 'about_products' ],
   ],
 ];
 
