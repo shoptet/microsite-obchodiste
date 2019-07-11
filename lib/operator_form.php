@@ -142,15 +142,6 @@ function register_wholesaler ( $post_id ) {
       'Content-Type: text/html; charset=UTF-8',
     ]
   );
-
-  wp_die(
-    __(
-      '<strong>Velkoobchod byl úspěšně registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
-      'shp-obchodiste'
-    ),
-    __( 'Velkoobchod registrován', 'shp-obchodiste' ),
-    [ 'response' => 200 ]
-  );
 }
 
 function notify_contact_person ( $post_id, $external_company_token ) {
@@ -186,6 +177,17 @@ function notify_contact_person ( $post_id, $external_company_token ) {
     __( 'E-mail odeslán', 'shp-obchodiste' ),
     [ 'response' => 200 ]
   );
+}
+
+function set_wholesaler_logo ( $post_id, $external_company_token ) {
+  global $wpdb;
+  $logo_url = $wpdb->get_var('
+    SELECT logo_url FROM external_companies WHERE registration_token = "' . $external_company_token . '"
+  ');
+  if ( empty( $logo_url) ) return;
+  $image_id = insert_image_from_url( $logo_url, $post_id );
+  if ( ! $image_id ) return;
+  update_field( 'logo', $image_id, $post_id );
 }
 
 // Check for external company token and authenticate
@@ -231,6 +233,15 @@ add_action( 'acf/save_post', function ( $post_id ) {
     notify_contact_person( $post_id, $external_company_token );
   } else if ( isset($_POST['operator_form_register_wholesaler']) ) {
     register_wholesaler( $post_id );
+    set_wholesaler_logo( $post_id, $external_company_token );
+    wp_die(
+      __(
+        '<strong>Velkoobchod byl úspěšně registrován.</strong> Kontaktní osobě byl odeslán e-mail s potvrzovacím odkazem.',
+        'shp-obchodiste'
+      ),
+      __( 'Velkoobchod registrován', 'shp-obchodiste' ),
+      [ 'response' => 200 ]
+    );
   }
 
 } );
