@@ -36,7 +36,7 @@ $acf_form_settings = [
     'instruction_placement' => 'field',
   ],
   'about' => [
-    'fields' => [ 'about_products' ],
+    'fields' => [ 'short_about' ],
   ],
 ];
 
