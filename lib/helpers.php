@@ -116,7 +116,7 @@ function get_posts_by_region( $post_type, $region_id ): array
  */
 function get_terms_by_id( $taxonomy ): array
 {
-  $terms = get_terms( $taxonomy );
+  $terms = get_terms( [ 'taxonomy' => $taxonomy, 'parent' => 0 ] );
   $terms_by_id = array_reduce( $terms, function( $result, $term ) {
     $result[ $term->term_id ] = $term->slug;
     return $result;
