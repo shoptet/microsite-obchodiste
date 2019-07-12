@@ -3,13 +3,13 @@ $post_type = get_post_type_in_archive_or_taxonomy();
 
 switch ( $post_type ) {
   case 'custom':
-  $categories = get_terms( 'customtaxonomy' );
+  $categories = get_terms( [ 'taxonomy' => 'customtaxonomy', 'parent' => 0 ] );
   break;
   case 'special_offer':
   $categories = get_wholesaler_terms_related_to_post_type( $post_type );
   break;
   case 'product':
-  $categories = get_terms( 'producttaxonomy' );
+  $categories = get_terms( [ 'taxonomy' => 'producttaxonomy', 'parent' => 0 ] );
   break;
 }
 

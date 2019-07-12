@@ -2,6 +2,13 @@
 
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
+add_filter( 'get_terms_args', function( $args, $taxonomies ) {
+  // TODO: only for producttaxonomies
+  if ( in_array( 'producttaxonomies', $taxonomies ) ) return $args;
+  $args['hierarchical'] = false;
+  return $args;
+}, 10, 2 );
+
 /**
  * Add products and wholesaler categories dropdown to main menu
  */
@@ -37,7 +44,7 @@ add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
           </li>
     ';
 
-    foreach ( get_terms( $data['taxonomy'] ) as $term ) {
+    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'] ] ) as $term ) {
       $menu_items_html .= '
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
