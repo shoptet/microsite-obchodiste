@@ -111,7 +111,6 @@ function migrate_terms ( $taxonomy ) {
           AND
           mata_value = ' . $old->term_id . '
     ');
-    // Migrate descriptions
     var_dump( 'Migrated term: ' . $row[0] . ' > ' . $row[1] );
   }
   $result = $wpdb->get_results('
@@ -123,23 +122,53 @@ function migrate_terms ( $taxonomy ) {
   ');
 }
 
-add_action( 'admin_init', function () {
-  // if ( get_option( 'create_google_product_categories_01' ) != 'completed' ) {
-  //create_google_terms( 'customtaxonomy', 1 );
-  //create_google_terms( 'producttaxonomy' );
-  //   //update_option( 'create_google_product_categories_01', 'completed' );
-  //die();
-  // }
-  //if ( get_option( 'migrate_google_product_categories_01' ) != 'completed' ) {
-    //migrate_terms( 'customtaxonomy' );
-    //migrate_terms( 'producttaxonomy' );
-    //update_option( 'migrate_google_product_categories_01', 'completed' );
-    //die();
-  //}
-  //rename_terms('producttaxonomy');
-  //rename_terms('customtaxonomy');
-  //die();
-  //global $wp_object_cache;
+add_filter( 'register_taxonomy_args', function ( $args, $taxonomy ) {
+  if (
+    get_option( 'create_google_product_categories_producttaxonomy_01' ) != 'completed' &&
+    $taxonomy == 'producttaxonomy'
+  ) {
+    $args['hierarchical'] = false;
+  }
+  return $args;
+}, 10, 2 );
 
-  //$wp_object_cache->flush();
+add_action( 'admin_init', function () {
+
+  if ( get_option( 'rename_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
+    rename_terms('customtaxonomy');
+    update_option( 'rename_google_product_categories_customtaxonomy_01', 'completed' );
+    return;
+  }
+
+  if ( get_option( 'create_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
+    create_google_terms( 'customtaxonomy', 1 );
+    update_option( 'create_google_product_categories_customtaxonomy_01', 'completed' );
+    return;
+  }
+
+  if ( get_option( 'rename_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
+    rename_terms('producttaxonomy');
+    update_option( 'rename_google_product_categories_producttaxonomy_01', 'completed' );
+    return;
+  }
+
+  if ( get_option( 'create_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
+    create_google_terms( 'producttaxonomy' );
+    update_option( 'create_google_product_categories_producttaxonomy_01', 'completed' );
+    return;
+  }
+  if ( get_option( 'migrate_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
+    migrate_terms( 'customtaxonomy' );
+    global $wp_object_cache;
+    $wp_object_cache->flush();
+    update_option( 'migrate_google_product_categories_customtaxonomy_01', 'completed' );
+    return;
+  }
+  if ( get_option( 'migrate_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
+    migrate_terms( 'producttaxonomy' );
+    global $wp_object_cache;
+    $wp_object_cache->flush();
+    update_option( 'migrate_google_product_categories_producttaxonomy_01', 'completed' );
+    return;
+  }
 } );
