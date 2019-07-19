@@ -1,5 +1,22 @@
 <?php
 
+function stop_the_insanity () {
+	global $wpdb, $wp_object_cache;
+
+	$wpdb->queries = [];
+
+	if ( is_object( $wp_object_cache ) ) {
+		$wp_object_cache->group_ops      = [];
+		$wp_object_cache->stats          = [];
+		$wp_object_cache->memcache_debug = [];
+		$wp_object_cache->cache          = [];
+
+		if ( method_exists( $wp_object_cache, '__remoteset' ) ) {
+			$wp_object_cache->__remoteset();
+		}
+	}
+}
+
 function find_inserted_term_by_name ( $term_name, $inserted_terms ) {
   foreach( $inserted_terms as $inserted_term ) {
     if ( $term_name == $inserted_term->name ) return $inserted_term;
@@ -11,9 +28,10 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
   $file_path = __DIR__ . '/categories-v2.csv';
   $fp = fopen( $file_path, 'r' );
   if ( ! $fp ) {
-    wp_die( 'Can not open file: ' . $file_path );
+    echo 'Can not open file: ' . $file_path . PHP_EOL;
     return;
   }
+  wp_defer_term_counting( true );
   $i = 0;
   $inserted_terms = [];
   while ( $row = fgetcsv( $fp ) ) {
@@ -24,11 +42,12 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
       if ( $parent_term = find_inserted_term_by_name( $term['parent_name'], $inserted_terms ) ) {
         $term['parent_id'] = $parent_term->term_id;
       } else {
-        var_dump( 'Row ' . $i . ': Term "' . $term['parent_name'] . '" not found' ); die();
+        echo 'Row ' . $i . ': Term "' . $term['parent_name'] . '" not found' . PHP_EOL;
+        return;
       }
     }
     // if ( find_inserted_term_by_name( $term['name'], $inserted_terms ) ) {
-    //   var_dump( 'Row ' . $i . ': Duplication term "' . $term['name'] . '". Skipping...' );
+    //   echo 'Row ' . $i . ': Duplication term "' . $term['name'] . '". Skipping...' . PHP_EOL;
     //   continue;
     // }
     $inserted_term = wp_insert_term(
@@ -37,13 +56,16 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
       [ 'parent' => array_key_exists( 'parent_id', $term ) ? $term['parent_id'] : 0 ]
     );
     if ( is_wp_error( $inserted_term ) ) {
-      var_dump( $inserted_term );
+      echo $inserted_term . PHP_EOL;
       continue;
     }
     $inserted_terms[] = get_term( $inserted_term['term_id'], $taxonomy );
-    var_dump( 'Row ' . $i . ': Created term "' . $term['name'] . '" with parent "' . $term['parent_name'] . '" for ' . $taxonomy );
+    // echo 'Row ' . $i . ': Created term "' . $term['name'] . '" with parent "' . $term['parent_name'] . '" for ' . $taxonomy . PHP_EOL;
+    stop_the_insanity();
   }
+  echo 'Succsessfully created ' . $i . ' terms' . PHP_EOL;
   fclose( $fp );
+  wp_defer_term_counting( false );
 }
 
 function get_term_from_row ( $row ) {
@@ -59,14 +81,14 @@ function get_term_from_row ( $row ) {
   return $term;
 }
 
-function rename_terms ( $taxonomy ) {
+function rename_old_terms ( $taxonomy ) {
   $file_path = __DIR__ . '/term_migration.csv';
   $fp = fopen( $file_path, 'r' );
   if ( ! $fp ) {
-    wp_die( 'Can not open file: ' . $file_path );
+    echo 'Can not open file: ' . $file_path . PHP_EOL;
     return;
   }
-  $i = 1;
+  $i = 0;
   global $wpdb;
   while ( $row = fgetcsv( $fp ) ) {
     if ( $row[0] != ( $row[1] . ' legacy' ) ) continue;
@@ -76,26 +98,30 @@ function rename_terms ( $taxonomy ) {
       'name' => $term->name . ' legacy',
       'slug' => $term->slug . '-legacy',
     ]);
-    var_dump( 'Renamed term: ' . $term->name );
+    $i++;
   }
+  echo 'Renamed ' . $i . ' terms' . PHP_EOL;
 }
 
 function migrate_terms ( $taxonomy ) {
   $file_path = __DIR__ . '/term_migration.csv';
   $fp = fopen( $file_path, 'r' );
   if ( ! $fp ) {
-    wp_die( 'Can not open file: ' . $file_path );
+    echo 'Can not open file: ' . $file_path;
     return;
   }
-  $i = 1;
+  $terms = [];
+  $i = 0;
   global $wpdb;
   while ( $row = fgetcsv( $fp ) ) {
     $old = get_term_by( 'name', $row[0], $taxonomy );
     $new = get_term_by( 'name', $row[1], $taxonomy );
     if ( ! $old || ! $new ) {
-      var_dump( 'Term(s) not found: ' . $row[0] . ' or ' . $row[1] );
+      echo 'Term(s) not found: ' . $row[0] . ' or ' . $row[1] . PHP_EOL;
       continue;
     }
+    $terms[] = $new->term_id;
+    $terms[] = $old->term_id;
     // Update term
     $result = $wpdb->update( 
       'wp_term_relationships', // TABLE
@@ -109,66 +135,50 @@ function migrate_terms ( $taxonomy ) {
         WHERE
           meta_key IN ("category", "minor_category_1", "minor_category_2")
           AND
-          mata_value = ' . $old->term_id . '
+          meta_value = ' . $old->term_id . '
     ');
-    var_dump( 'Migrated term: ' . $row[0] . ' > ' . $row[1] );
+    $i++;
   }
-  $result = $wpdb->get_results('
-    UPDATE wp_term_taxonomy tt
-      SET count = (SELECT count(p.ID)
-      FROM wp_term_relationships tr
-      LEFT JOIN wp_posts p ON p.ID = tr.object_id
-      WHERE tr.term_taxonomy_id = tt.term_taxonomy_id)
-  ');
+  echo 'Migrated ' . $i . ' terms' . PHP_EOL;
+  wp_update_term_count_now( $terms, $taxonomy );
 }
 
-add_filter( 'register_taxonomy_args', function ( $args, $taxonomy ) {
-  if (
-    get_option( 'create_google_product_categories_producttaxonomy_01' ) != 'completed' &&
-    $taxonomy == 'producttaxonomy'
-  ) {
-    $args['hierarchical'] = false;
+function remove_old_terms ( $taxonomy ) {
+  $file_path = __DIR__ . '/term_migration.csv';
+  $fp = fopen( $file_path, 'r' );
+  if ( ! $fp ) {
+    echo 'Can not open file: ' . $file_path;
+    return;
   }
-  return $args;
-}, 10, 2 );
+  $i = 0;
+  while ( $row = fgetcsv( $fp ) ) {
+    $old = get_term_by( 'name', $row[0], $taxonomy );
+    if ( ! $old ) {
+      echo 'Term(s) not found: ' . $row[0] . PHP_EOL;
+      continue;
+    }
+    wp_delete_term( $old->term_id, $taxonomy );
+    $i++;
+  }
+  echo 'Removed ' . $i . ' terms' . PHP_EOL;
+}
 
-add_action( 'admin_init', function () {
-
-  if ( get_option( 'rename_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
-    rename_terms('customtaxonomy');
-    update_option( 'rename_google_product_categories_customtaxonomy_01', 'completed' );
-    return;
-  }
-
-  if ( get_option( 'create_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
-    create_google_terms( 'customtaxonomy', 1 );
-    update_option( 'create_google_product_categories_customtaxonomy_01', 'completed' );
-    return;
-  }
-
-  if ( get_option( 'rename_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
-    rename_terms('producttaxonomy');
-    update_option( 'rename_google_product_categories_producttaxonomy_01', 'completed' );
-    return;
-  }
-
-  if ( get_option( 'create_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
-    create_google_terms( 'producttaxonomy' );
-    update_option( 'create_google_product_categories_producttaxonomy_01', 'completed' );
-    return;
-  }
-  if ( get_option( 'migrate_google_product_categories_customtaxonomy_01' ) != 'completed' ) {
-    migrate_terms( 'customtaxonomy' );
-    global $wp_object_cache;
-    $wp_object_cache->flush();
-    update_option( 'migrate_google_product_categories_customtaxonomy_01', 'completed' );
-    return;
-  }
-  if ( get_option( 'migrate_google_product_categories_producttaxonomy_01' ) != 'completed' ) {
-    migrate_terms( 'producttaxonomy' );
-    global $wp_object_cache;
-    $wp_object_cache->flush();
-    update_option( 'migrate_google_product_categories_producttaxonomy_01', 'completed' );
-    return;
-  }
-} );
+function migrate_google_product_categories () {
+  echo 'Migrating customtaxonomy...' . PHP_EOL;
+  rename_old_terms( 'customtaxonomy' );
+  stop_the_insanity();
+  create_google_terms( 'customtaxonomy', 1 );
+  stop_the_insanity();
+  migrate_terms( 'customtaxonomy' );
+  stop_the_insanity();
+  remove_old_terms( 'customtaxonomy' );
+  stop_the_insanity();
+  echo 'Migrating product taxonomy...' . PHP_EOL;
+  rename_old_terms( 'producttaxonomy' );
+  stop_the_insanity();
+  create_google_terms( 'producttaxonomy' );
+  stop_the_insanity();
+  migrate_terms( 'producttaxonomy' );
+  stop_the_insanity();
+  remove_old_terms( 'producttaxonomy' );
+}
