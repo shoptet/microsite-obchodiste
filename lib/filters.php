@@ -3,8 +3,9 @@
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
 add_filter( 'get_terms_args', function( $args, $taxonomies ) {
-  if ( in_array( 'producttaxonomies', $taxonomies ) ) return $args;
-  $args['hierarchical'] = false;
+  if ( in_array( 'producttaxonomy', $taxonomies ) ) {
+    $args['hierarchical'] = false;
+  }
   return $args;
 }, 10, 2 );
 
