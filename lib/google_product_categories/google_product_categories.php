@@ -147,7 +147,7 @@ function migrate_terms ( $post_type, $taxonomy ) {
     if ( $old_cat ) {
       $new_cat = $migration[ $old_cat ];
     } else {
-      echo 'Skipped post ' . $post->ID . ' ( "' . $old_cat . '", "' . $old_mc1 . '", "' . $old_mc2 . '" ) ' . PHP_EOL;
+      echo 'Skipped post ' . $post->ID . PHP_EOL;
       continue;
     }
 
@@ -167,14 +167,14 @@ function migrate_terms ( $post_type, $taxonomy ) {
       $new_mc2 = NULL;
     }
 
-    update_post_meta( $post->ID, 'category', $new_cat );
+    update_field( 'category', $new_cat, $post->ID );
     $terms_to_replace[] = $new_cat;
     if ( $new_mc1 ) {
-      update_post_meta( $post->ID, 'minor_category_1', $new_mc1 );
+      update_field( 'minor_category_1', $new_mc1, $post->ID );
       $terms_to_replace[] = $new_mc1;
     }
     if ( $new_mc2 ) {
-      update_post_meta( $post->ID, 'minor_category_2', $new_mc2 );
+      update_field( 'minor_category_2', $new_mc2, $post->ID );
       $terms_to_replace[] = $new_mc2;
     }
 
