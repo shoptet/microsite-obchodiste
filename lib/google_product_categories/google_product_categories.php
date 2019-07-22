@@ -35,7 +35,6 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
   $i = 0;
   $inserted_terms = [];
   while ( $row = fgetcsv( $fp ) ) {
-    $i++;
     if ( $level >= 1 && ! empty( $row[$level] ) ) continue;
     $term = get_term_from_row( $row );
     if ( $term['parent_name'] ) {
@@ -62,6 +61,7 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
     $inserted_terms[] = get_term( $inserted_term['term_id'], $taxonomy );
     // echo 'Row ' . $i . ': Created term "' . $term['name'] . '" with parent "' . $term['parent_name'] . '" for ' . $taxonomy . PHP_EOL;
     stop_the_insanity();
+    $i++;
   }
   echo 'Succsessfully created ' . $i . ' terms' . PHP_EOL;
   fclose( $fp );
@@ -103,44 +103,81 @@ function rename_old_terms ( $taxonomy ) {
   echo 'Renamed ' . $i . ' terms' . PHP_EOL;
 }
 
-function migrate_terms ( $taxonomy ) {
+function migrate_terms ( $post_type, $taxonomy ) {
   $file_path = __DIR__ . '/term_migration.csv';
   $fp = fopen( $file_path, 'r' );
   if ( ! $fp ) {
     echo 'Can not open file: ' . $file_path;
     return;
   }
-  $terms = [];
-  $i = 0;
-  global $wpdb;
+
+  $terms_to_recount = [];
+  $migration = [];
   while ( $row = fgetcsv( $fp ) ) {
     $old = get_term_by( 'name', $row[0], $taxonomy );
     $new = get_term_by( 'name', $row[1], $taxonomy );
-    if ( ! $old || ! $new ) {
-      echo 'Term(s) not found: ' . $row[0] . ' or ' . $row[1] . PHP_EOL;
+    $migration[ $old->term_id ] = $new->term_id;
+    $terms_to_recount[] = $new->term_id;
+    $terms_to_recount[] = $old->term_id;
+  }
+
+  fclose( $fp );
+
+  $wp_query = new WP_Query( [
+    'posts_per_page' => -1,
+    'post_type' => $post_type,
+    'post_status' => 'any',
+  ] );
+  
+  $i = 0;
+  foreach( $wp_query->posts as $post ) {
+    $terms_to_replace = [];
+    $old_cat = get_post_meta( $post->ID, 'category', true );
+    $old_mc1 = get_post_meta( $post->ID, 'minor_category_1', true );
+    $old_mc2 = get_post_meta( $post->ID, 'minor_category_2', true );
+
+    // Set new main category
+    if ( $old_cat ) {
+      $new_cat = $migration[ $old_cat ];
+    } else {
+      echo 'Skipped post ' . $post->ID . ' ( "' . $old_cat . '", "' . $old_mc1 . '", "' . $old_mc2 . '" ) ' . PHP_EOL;
       continue;
     }
-    $terms[] = $new->term_id;
-    $terms[] = $old->term_id;
-    // Update term
-    $result = $wpdb->update( 
-      'wp_term_relationships', // TABLE
-      [ 'term_taxonomy_id' => $new->term_id ], // SET
-      [ 'term_taxonomy_id' => $old->term_id ] // WHERE
-    );
-    // Update post meta
-    $result = $wpdb->get_results('
-      UPDATE wp_postmeta
-        SET meta_value = ' . $new->term_id . '
-        WHERE
-          meta_key IN ("category", "minor_category_1", "minor_category_2")
-          AND
-          meta_value = ' . $old->term_id . '
-    ');
+
+    // Set new first minor category
+    if ( $old_mc1 && $migration[ $old_mc1 ] != $new_cat ) {
+      $new_mc1 = $migration[ $old_mc1 ];
+    } elseif ( $old_mc2 && $migration[ $old_mc2 ] != $new_cat ) {
+      $new_mc1 = $migration[ $old_mc2 ];
+    } else {
+      $new_mc1 = NULL;
+    }
+
+    // Set new second minor category
+    if ( $old_mc2 && $new_mc1 && $migration[ $old_mc2 ] != $new_mc1 ) {
+      $new_mc2 = $migration[ $old_mc2 ];
+    } else {
+      $new_mc2 = NULL;
+    }
+
+    update_post_meta( $post->ID, 'category', $new_cat );
+    $terms_to_replace[] = $new_cat;
+    if ( $new_mc1 ) {
+      update_post_meta( $post->ID, 'minor_category_1', $new_mc1 );
+      $terms_to_replace[] = $new_mc1;
+    }
+    if ( $new_mc2 ) {
+      update_post_meta( $post->ID, 'minor_category_2', $new_mc2 );
+      $terms_to_replace[] = $new_mc2;
+    }
+
+    wp_set_post_terms( $post->ID, $terms_to_replace, $taxonomy, false ); // Replace post terms
     $i++;
+    //echo 'Migrated post ' . $post->ID . ' ( "' . $old_cat . '", "' . $old_mc1 . '", "' . $old_mc2 . '" ) -> ( "' . $new_cat . '", "' . $new_mc1 . '", "' . $new_mc2 . '" ) ' . PHP_EOL;
   }
-  echo 'Migrated ' . $i . ' terms' . PHP_EOL;
-  wp_update_term_count_now( $terms, $taxonomy );
+
+  echo 'Successfully migrated '. $i . ' terms' . PHP_EOL;
+  wp_update_term_count_now( $terms_to_recount, $taxonomy );
 }
 
 function remove_old_terms ( $taxonomy ) {
@@ -169,7 +206,7 @@ function migrate_google_product_categories () {
   stop_the_insanity();
   create_google_terms( 'customtaxonomy', 1 );
   stop_the_insanity();
-  migrate_terms( 'customtaxonomy' );
+  migrate_terms( 'custom', 'customtaxonomy' );
   stop_the_insanity();
   remove_old_terms( 'customtaxonomy' );
   stop_the_insanity();
@@ -178,7 +215,7 @@ function migrate_google_product_categories () {
   stop_the_insanity();
   create_google_terms( 'producttaxonomy' );
   stop_the_insanity();
-  migrate_terms( 'producttaxonomy' );
+  migrate_terms( 'product', 'producttaxonomy' );
   stop_the_insanity();
   remove_old_terms( 'producttaxonomy' );
 }
