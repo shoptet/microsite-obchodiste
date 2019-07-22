@@ -1659,6 +1659,7 @@ add_action( 'acf/save_post', function() {
 
     if ( $product_category_id ) {
       wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
+      update_field( 'category', $product_category_id, $post_product_id );
     }
 
     $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];
