@@ -136,6 +136,13 @@ function migrate_terms ( $post_type, $taxonomy ) {
     $old_mc1 = get_post_meta( $post->ID, 'minor_category_1', true );
     $old_mc2 = get_post_meta( $post->ID, 'minor_category_2', true );
 
+    if ( $taxonomy == 'producttaxonomy' ) {
+      $terms = wp_get_post_terms( $post->ID, $taxonomy, ['fields' => 'ids'] );
+      if ( ! empty( $terms ) ) {
+        $old_cat = $terms[0];
+      }
+    }
+
     // Set new main category
     if ( $old_cat ) {
       $new_cat = $migration[ $old_cat ];
@@ -176,7 +183,7 @@ function migrate_terms ( $post_type, $taxonomy ) {
     //echo 'Migrated post ' . $post->ID . ' ( "' . $old_cat . '", "' . $old_mc1 . '", "' . $old_mc2 . '" ) -> ( "' . $new_cat . '", "' . $new_mc1 . '", "' . $new_mc2 . '" ) ' . PHP_EOL;
   }
 
-  echo 'Successfully migrated '. $i . ' terms' . PHP_EOL;
+  //echo 'Successfully migrated '. $i . ' posts' . PHP_EOL;
   wp_update_term_count_now( $terms_to_recount, $taxonomy );
 }
 
@@ -200,6 +207,29 @@ function remove_old_terms ( $taxonomy ) {
   echo 'Removed ' . $i . ' terms' . PHP_EOL;
 }
 
+function generate_redirect_csv ( $taxonomy ) {
+  $fp_in = fopen( __DIR__ . '/term_migration.csv', 'r' );
+  $fp_out = fopen( __DIR__ . '/redirects_' . $taxonomy . '.csv', 'w' );
+
+  fwrite( $fp_out, 'source,target,regex,type,code,match' . PHP_EOL );
+  
+  while ( $row = fgetcsv( $fp_in ) ) {
+    $old = get_term_by( 'name', $row[0], $taxonomy );
+    $new = get_term_by( 'name', $row[1], $taxonomy );
+    if ( $old->slug == $new->slug . '-legacy' ) {
+      continue;
+    }
+    $old_link = wp_make_link_relative( get_term_link( $old, $taxonomy ) );
+    $new_link = wp_make_link_relative( get_term_link( $new, $taxonomy ) );
+    fwrite( $fp_out, '"^' .$old_link . '","' . $new_link . '","1","url","301","url"' . PHP_EOL );
+  }
+
+  fclose( $fp_in );
+  fclose( $fp_out );
+
+  echo 'Generated redirects file' . PHP_EOL;
+}
+
 function migrate_google_product_categories () {
   echo 'Migrating customtaxonomy...' . PHP_EOL;
   rename_old_terms( 'customtaxonomy' );
@@ -208,12 +238,16 @@ function migrate_google_product_categories () {
   stop_the_insanity();
   migrate_terms( 'custom', 'customtaxonomy' );
   stop_the_insanity();
+  generate_redirect_csv( 'customtaxonomy' );
+  stop_the_insanity();
   remove_old_terms( 'customtaxonomy' );
   stop_the_insanity();
   echo 'Migrating product taxonomy...' . PHP_EOL;
   rename_old_terms( 'producttaxonomy' );
   stop_the_insanity();
   create_google_terms( 'producttaxonomy' );
+  stop_the_insanity();
+  generate_redirect_csv( 'producttaxonomy' );
   stop_the_insanity();
   migrate_terms( 'product', 'producttaxonomy' );
   stop_the_insanity();
