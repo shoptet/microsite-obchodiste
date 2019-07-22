@@ -449,6 +449,21 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
 } );
 
 /**
+ * Show parent terms in product taxonomy ACF field
+ */
+add_filter( 'acf/fields/taxonomy/result', function( $title, $term, $field, $post_id ) {
+  if ( 'producttaxonomy' !== $term->taxonomy ) return $title;
+  $args = [
+    'link' => false,
+    'separator' => ' > ',
+    'inclusive' => false,
+  ];
+  $parent_terms = get_term_parents_list( $term->term_id, 'producttaxonomy', $args );
+  $title = sprintf( '<span style="opacity:.5">%s</span><strong>%s</strong>', $parent_terms, $term->name );
+  return $title;
+}, 10, 4 );
+
+/**
  * Set related wholesaler to product
  */
 add_filter( 'acf/update_value/name=related_wholesaler', function( $value ) {
