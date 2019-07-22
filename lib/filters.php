@@ -451,7 +451,7 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
 /**
  * Show parent terms in product taxonomy ACF field
  */
-add_filter( 'acf/fields/taxonomy/result', function( $title, $term, $field, $post_id ) {
+add_filter( 'acf/fields/taxonomy/result/name=category', function( $title, $term, $field, $post_id ) {
   if ( 'producttaxonomy' !== $term->taxonomy ) return $title;
   $args = [
     'link' => false,
