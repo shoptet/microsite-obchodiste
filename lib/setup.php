@@ -1866,7 +1866,7 @@ add_action( 'admin_init', function () {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   $options = get_fields( 'options' );
   $disable_admin = $options[ 'disable_admin' ];
-  if ( $disable_admin && ! user_can( $current_user, 'administrator' ) ) {
+  if ( $disable_admin && ! user_can( $current_user, 'administrator' ) && ! wp_doing_ajax() ) {
     wp_die(
       __( 'Přístup do administrace je dočasně omezen vzhledem k probíhající aktualizaci webu. Zkuste to prosím zachvíli.', 'shp-obchodiste' ),
       __( 'Probíhá aktualizace webu', 'shp-obchodiste' ),
