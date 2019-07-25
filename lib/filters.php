@@ -44,7 +44,7 @@ add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
           </li>
     ';
 
-    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'] ] ) as $term ) {
+    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'], 'parent' => 0 ] ) as $term ) {
       $menu_items_html .= '
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
