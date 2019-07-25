@@ -214,7 +214,6 @@ function get_all_services(): array
 {
   return get_field_object( 'field_5b5ed686ddd58' )[ 'choices' ];
 }
-<<<<<<< HEAD
 
 /**
  * Get all terms related to wholesalers with a special offer
@@ -263,5 +262,3 @@ function is_special_offer_limit_exceeded(): bool
   
   return ( $wp_query->found_posts >= $special_offer_limit );
 }
-=======
->>>>>>> Remove unused function
