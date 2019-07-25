@@ -1534,9 +1534,7 @@ add_action( 'product_page_product-import', function () {
   $content = ob_get_clean();
   $options = get_fields( 'options' );
   
-  $product_taxonomy_terms = get_terms( 'producttaxonomy', [
-    'hide_empty' => false,
-  ] );
+  $product_taxonomy_terms = get_terms(  [ 'taxonomy' => 'producttaxonomy', 'parent' => 0, 'hide_empty' => false ] );
     
   $terms_by_id_html = '<h4>' . __( 'Kategorie produktů a jejich ID:', 'shp-obchodiste' ). '</h4>';
   $terms_by_id_html .= '<p>';
@@ -1660,6 +1658,7 @@ add_action( 'acf/save_post', function() {
 
     if ( $product_category_id ) {
       wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
+      update_field( 'category', $product_category_id, $post_product_id );
     }
 
     $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];

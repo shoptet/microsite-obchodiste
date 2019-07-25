@@ -2,6 +2,13 @@
 
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
+add_filter( 'get_terms_args', function( $args, $taxonomies ) {
+  if ( in_array( 'producttaxonomy', $taxonomies ) ) {
+    $args['hierarchical'] = false;
+  }
+  return $args;
+}, 10, 2 );
+
 /**
  * Add products and wholesaler categories dropdown to main menu
  */
@@ -37,7 +44,7 @@ add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
           </li>
     ';
 
-    foreach ( get_terms( $data['taxonomy'] ) as $term ) {
+    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'] ] ) as $term ) {
       $menu_items_html .= '
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
@@ -440,6 +447,21 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
     return $related_wholesaler->ID;
   return NULL;
 } );
+
+/**
+ * Show parent terms in product taxonomy ACF field
+ */
+add_filter( 'acf/fields/taxonomy/result/name=category', function( $title, $term, $field, $post_id ) {
+  if ( 'producttaxonomy' !== $term->taxonomy ) return $title;
+  $args = [
+    'link' => false,
+    'separator' => ' > ',
+    'inclusive' => false,
+  ];
+  $parent_terms = get_term_parents_list( $term->term_id, 'producttaxonomy', $args );
+  $title = sprintf( '<span style="opacity:.5">%s</span><strong>%s</strong>', $parent_terms, $term->name );
+  return $title;
+}, 10, 4 );
 
 /**
  * Set related wholesaler to product

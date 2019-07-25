@@ -116,7 +116,7 @@ function get_posts_by_region( $post_type, $region_id ): array
  */
 function get_terms_by_id( $taxonomy ): array
 {
-  $terms = get_terms( $taxonomy );
+  $terms = get_terms( [ 'taxonomy' => $taxonomy, 'parent' => 0 ] );
   $terms_by_id = array_reduce( $terms, function( $result, $term ) {
     $result[ $term->term_id ] = $term->slug;
     return $result;
@@ -374,4 +374,58 @@ function has_query_terms( $terms, $taxonomy ): bool
   }
   wp_reset_query();
   return $result;
+}
+
+/**
+ * Export wholesaler and number of its products to csv file
+ */
+function export_wholesalers(): void
+{
+  $fp = fopen( __DIR__ . '/../export_wholesalers.csv', 'w' );
+  $header = [
+    'company name',
+    'status',
+    'products',
+    'contact person name',
+    'contact person e-mail',
+  ];
+  fputcsv( $fp, $header );
+
+  $wp_query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => -1,
+    'post_status' => 'any',
+    'no_found_rows' => true,
+    'update_post_term_cache' => false,
+  ] );
+  foreach( $wp_query->posts as $post ) {
+    $row = [];
+    $contact_person_name = get_post_meta( $post->ID, 'contact_full_name', true );
+    $contact_person_email = get_post_meta( $post->ID, 'contact_email', true );
+
+    $wp_query_all_products = new WP_Query( [
+      'post_type' => 'product',
+      'posts_per_page' => -1,
+      'post_status' => 'any',
+      'fields' => 'ids',
+      'update_post_meta_cache' => false,
+      'update_post_term_cache' => false,
+      'meta_query' => [
+        [
+          'key' => 'related_wholesaler',
+          'value' => $post->ID,
+        ],
+      ],
+    ] );
+
+    $row[] = $post->post_title;
+    $row[] = $post->post_status;
+    $row[] = $wp_query_all_products->found_posts;
+    $row[] = $contact_person_name;
+    $row[] = $contact_person_email;
+
+    fputcsv( $fp, $row );
+  }
+
+  fclose( $fp );
 }
