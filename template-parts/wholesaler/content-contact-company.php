@@ -29,6 +29,9 @@
           <?php echo esc_html( get_the_title() ); ?>
         </a>
       <?php endif; ?>
+      <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
+        <span class="text-muted">(<?php echo esc_html( $project_title ); ?>)</span>
+      <?php endif;  ?>
     <?php else: ?>
       <span><?php echo esc_html( get_the_title() ); ?></span>
     <?php endif; ?>

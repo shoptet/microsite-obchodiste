@@ -2,6 +2,9 @@
 
   <h1 class="mt-1 mb-1" itemprop="name">
     <?php echo esc_html( get_the_title() ); ?>
+    <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
+      <span class="text-muted">(<?php echo esc_html( $project_title ); ?>)</span>
+    <?php endif;  ?>
   </h1>
 
   <div class="ml-md-3 mb-2 mb-md-0">
