@@ -51,16 +51,4 @@
     <?php endforeach; ?>
     </div>
   </div>
-<<<<<<< HEAD
-  <div class="flex-shrink-1 text-muted mt-3 mt-lg-0 ml-lg-auto text-lg-right">
-    <?php
-    printf(
-      __( 'Celkem %d&nbsp;z&nbsp;%d velkoobchodů', 'shp-obchodiste' ),
-      $wp_query->post_count,
-      $wp_query->found_posts
-    );
-    ?>
-  </div>
-=======
->>>>>>> Remove items info in archives
 </div>

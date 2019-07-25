@@ -10,35 +10,6 @@ add_filter( 'get_terms_args', function( $args, $taxonomies ) {
 }, 10, 2 );
 
 /**
-<<<<<<< HEAD
- * Edit robots.txt file
- */
-add_filter('robots_txt', function( $robots_text ) {
-  // via https://moz.com/community/q/default-robots-txt-in-wordpress-should-i-change-it#reply_329849
-  $robots_text .= '
-Disallow: /wp-includes/
-Disallow: /wp-login.php
-Disallow: /wp-register.php
-';
-  // Do not index filtering, ordering and searching
-  $robots_text .= '
-Disallow: /*category[]=*
-Disallow: /*category%5B%5D=*
-Disallow: /*region[]=*
-Disallow: /*region%5B%5D=*
-Disallow: /*services[]=*
-Disallow: /*services%5B%5D=*
-Disallow: /*orderby=*
-Disallow: /*services=*
-Disallow: /*p=*
-Disallow: /*s=*
-';
-  return $robots_text;
-});
-
-/**
-=======
->>>>>>> Remove robots.txt filter
  * Add products and wholesaler categories dropdown to main menu
  */
 add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
