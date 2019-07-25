@@ -1859,6 +1859,41 @@ add_action( 'wp_footer', function () {
 // } );
 
 /**
+ * Disable admin for users when read only mode is enabled
+ */
+add_action( 'admin_init', function () {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  $options = get_fields( 'options' );
+  $disable_admin = $options[ 'disable_admin' ];
+  if ( $disable_admin && ! user_can( $current_user, 'administrator' ) ) {
+    wp_die(
+      __( 'Přístup do administrace je dočasně omezen vzhledem k probíhající aktualizaci webu. Zkuste to prosím zachvíli.', 'shp-obchodiste' ),
+      __( 'Probíhá aktualizace webu', 'shp-obchodiste' ),
+      [
+        'link_text' => __( 'Přejít na Obchodiště.cz', 'shp-obchodiste' ),
+        'link_url' => get_site_url(),
+      ]
+    );
+  }
+} );
+
+/**
+ * Show admin notice about enabled read only mode to administrators
+ */
+add_action( 'admin_notices', function() {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  $options = get_fields( 'options' );
+  $disable_admin = $options[ 'disable_admin' ];
+  if ( $disable_admin ) : ?>
+    <div class="notice notice-error">
+      <p><?php _e( '<strong>Probíhá aktualizace webu</strong>. Všechny změny, které provedete mohou být přepsány.', 'shp-obchodiste' ); ?></p>
+    </div>
+  <?php endif;
+} );
+
+/**
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
