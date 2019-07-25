@@ -309,3 +309,15 @@ add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $a
   $args[ 'post_status' ] = 'publish';
   return $args;
 } );
+
+/**
+ * Append project title to wholesaler meta title
+ */
+add_filter( 'wpseo_title', function ( $title ) {
+  if ( is_singular( 'custom' ) && $project_title = get_field( 'project_title' ) ) {
+    $post_title = get_the_title();
+    $site_name = get_bloginfo( 'name' );
+    $title = sprintf( '%s (%s) &ndash; %s', $post_title, $project_title, $site_name );
+  }
+  return $title;
+} );
