@@ -796,3 +796,15 @@ add_filter( 'product_title_import', function ( $product_title ) {
   }
   return $product_title;
 } );
+
+/*
+ * Append project title to wholesaler meta title
+ */
+add_filter( 'wpseo_title', function ( $title ) {
+  if ( is_singular( 'custom' ) && $project_title = get_field( 'project_title' ) ) {
+    $post_title = get_the_title();
+    $site_name = get_bloginfo( 'name' );
+    $title = sprintf( '%s (%s) &ndash; %s', $post_title, $project_title, $site_name );
+  }
+  return $title;
+} );
