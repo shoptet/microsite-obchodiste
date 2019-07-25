@@ -21,14 +21,13 @@
       </a>
     <?php elseif ( get_field( "in" ) ): ?>
       <?php if ( get_field( "country" ) && get_field( "country" )[ 'value' ] == "sk" ): ?>
-        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank">
-          <?php the_title(); ?>
-        </a>
+        <a href="https://finstat.sk/<?php the_field( "in" ); ?>" target="_blank"><?php the_title(); ?></a>
       <?php else: ?>
-        <a href="https://or.justice.cz/ias/ui/rejstrik-$firma?ico=<?php the_field( "in" ); ?>" target="_blank">
-          <?php the_title(); ?>
-        </a>
+        <a href="https://or.justice.cz/ias/ui/rejstrik-$firma?ico=<?php the_field( "in" ); ?>" target="_blank"><?php the_title(); ?></a>
       <?php endif; ?>
+      <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
+        <span class="text-muted">(<?php echo $project_title; ?>)</span>
+      <?php endif;  ?>
     <?php else: ?>
       <span><?php the_title(); ?></span>
     <?php endif; ?>
