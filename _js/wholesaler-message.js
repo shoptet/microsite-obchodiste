@@ -1,6 +1,7 @@
 $(function() {
 
-  var $contactForm = $('#wholesalerContactForm, #productContactForm');
+  var $contactForm = $('#wholesalerContactForm');
+  var $contactFormFields = $('#wholesalerContactFormFields');
   var $contactFormError = $('#wholesalerContactFormError');
   var $contactFormSuccess = $('#wholesalerContactFormSuccess');
 
@@ -47,7 +48,7 @@ $(function() {
   var onSuccess = function() {
     $contactForm.find('button[type=submit]').remove();
     formError('');
-    formSuccess('Odesláno!');
+    formSuccess('Vaši zprávu jsme odeslali!');
   };
 
   var onError = function(xhr) {
@@ -81,6 +82,7 @@ $(function() {
       error: onError,
       complete: function() {
         $contactForm.removeClass('is-loading');
+        $contactFormFields.remove();
       },
     });
   };
