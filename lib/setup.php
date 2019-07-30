@@ -1647,7 +1647,7 @@ add_action( 'acf/save_post', function() {
     ];
     $post_product_id = wp_insert_post( $postarr );
 
-    update_field( 'related_wholesaler', $related_wholesaler_id, $post_product_id ); // Update acf relationship field
+    update_field( 'field_5c7d1fbf2e01c', $related_wholesaler_id, $post_product_id ); // update product related wholesaler field
 
     // Set product taxonomy
     if ( isset( $data_item['category'] ) && ! empty( $data_item['category'] ) ) {
@@ -1659,7 +1659,7 @@ add_action( 'acf/save_post', function() {
 
     if ( $product_category_id ) {
       wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
-      update_field( 'category', $product_category_id, $post_product_id );
+      update_field( 'field_5cc6fbe565ff6', $product_category_id, $post_product_id ); // update product category field
     }
 
     $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];
