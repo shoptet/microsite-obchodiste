@@ -1434,15 +1434,29 @@ add_action( 'pre_get_posts', function( $wp_query ) {
 		$meta_query = [];
   }
 
-  $meta_query_key = $_REQUEST[$request_attr];
-  if ( $meta_query_key == 'custom' )
+  $related_post_type = $_REQUEST[$request_attr];
+  if ( $related_post_type == 'custom' )
     $meta_query_key = 'wholesaler';
+  else
+    $meta_query_key = $related_post_type;
   
   $meta_query = [ [
     'key' => $meta_query_key,
   ] ];
 
-	$wp_query->set( 'meta_query', $meta_query );
+  $wp_query->set( 'meta_query', $meta_query );
+  
+  add_action( 'admin_footer', function() use( &$related_post_type ) {
+    ?>
+    <script>
+    var relatedPostTypeInput = document.createElement('input');
+    relatedPostTypeInput.setAttribute('type', 'hidden');
+    relatedPostTypeInput.setAttribute('name', 'related_post_type');
+    relatedPostTypeInput.setAttribute('value', <?php echo wp_json_encode( $related_post_type ); ?>);
+    document.getElementById('posts-filter').prepend(relatedPostTypeInput);
+    </script>
+    <?php
+  } );
 } );
 
 /**
