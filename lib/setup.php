@@ -1464,7 +1464,7 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
     case 'related_wholesaler':
     if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
       echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
-      echo get_the_title( $related_wholesaler );
+      echo esc_html( get_the_title( $related_wholesaler ) );
       echo '</a>';
     } else
       echo '<em>' . __( 'Bez velkoobchodu', 'shp-obchodiste' ) . '</em>';

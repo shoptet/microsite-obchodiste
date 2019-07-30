@@ -31,7 +31,7 @@
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-8' : 'col-lg-6' ) ; ?>">
 
         <h3 class="product-tease-title h6 mb-0" itemprop="name">
-          <?php the_title(); ?>
+          <?php echo esc_html( get_the_title() ); ?>
         </h3>
 
         <?php if ( $short_description = get_field( "short_description" ) ): ?>
