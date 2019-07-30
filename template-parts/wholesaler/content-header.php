@@ -1,7 +1,7 @@
 <div class="d-md-flex justify-content-between">
 
   <h1 class="mt-1 mb-1" itemprop="name">
-    <?php the_title(); ?>
+    <?php echo esc_html( get_the_title() ); ?>
   </h1>
 
   <div class="ml-md-3 mb-2 mb-md-0">
