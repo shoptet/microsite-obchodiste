@@ -4,7 +4,7 @@
     <?php _e( 'Krátce o naší nabídce', 'shp-obchodiste' ); ?>
   </h2>
   <div itemprop="description">
-    <?php the_field( "short_about" ); ?>
+    <?php echo wp_kses_post( get_field( "short_about" ) ); ?>
   </div>
 </div>
 <?php endif; ?>
@@ -40,7 +40,7 @@ if ( ! empty( $services ) ):
   <h2 class="h-heavy mb-1">
     <?php _e( 'O naší firmě', 'shp-obchodiste' ); ?>
   </h2>
-  <?php the_field( "about_company" ); ?>
+  <?php echo wp_kses_post( get_field( "about_company" ) ); ?>
 </div>
 <?php endif; ?>
 
@@ -50,7 +50,7 @@ if ( ! empty( $services ) ):
   <h2 class="h-heavy mb-1">
     <?php _e( 'O našich produktech', 'shp-obchodiste' ); ?>
   </h2>
-  <?php the_field( "about_products" ); ?>
+  <?php echo wp_kses_post( get_field( "about_products" ) ); ?>
   <?php endif; ?>
 
   <?php get_template_part( 'src/template-parts/wholesaler/content', 'gallery' ); ?>

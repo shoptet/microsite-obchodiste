@@ -4,7 +4,7 @@
     <meta itemprop="url" content="<?php the_permalink(); ?>">
 
     <h1 class="h2 mb-1" itemprop="name">
-      <?php the_title(); ?>
+      <?php echo esc_html( get_the_title() ); ?>
     </h1>
 
     <?php if ( get_field( "category" ) ): ?>

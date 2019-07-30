@@ -1,9 +1,9 @@
 <div class="d-md-flex justify-content-between">
 
   <h1 class="mt-1 mb-1" itemprop="name">
-    <?php the_title(); ?>
+    <?php echo esc_html( get_the_title() ); ?>
     <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
-      <span class="text-muted">(<?php echo $project_title; ?>)</span>
+      <span class="text-muted">(<?php echo esc_html(  $project_title ); ?>)</span>
     <?php endif;  ?>
   </h1>
 
