@@ -696,9 +696,20 @@ function handle_wholesaler_message() {
   $post_type = sanitize_text_field( $_POST[ 'post_type' ] );
   $post_id = intval( $_POST[ 'post_id' ] );
 
+  // WordPress comments blacklist check
+  $user_url = '';
+  $user_ip = $_SERVER['REMOTE_ADDR'];
+  $user_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $user_ip );
+  $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+  $user_agent = substr( $user_agent, 0, 254 );
+  $is_blacklisted = wp_blacklist_check( $name, $email, $user_url, $message, $user_ip, $user_agent );
+
   $meta_input = [
     'email' => $email,
     'message' => $message,
+    'agent' => $user_agent,
+    'ip' => $user_ip,
+    'spam' => $is_blacklisted,
   ];
 
   $options = get_fields( 'options' );
@@ -721,18 +732,6 @@ function handle_wholesaler_message() {
   // Get wholesaler post fields
   $wholesaler_title = get_the_title( $wholesaler_id );
   $wholesaler_contact_email = get_field( 'contact_email', $wholesaler_id, false );
-
-  // WordPress comments blacklist check
-  $user_url = '';
-  $user_ip = $_SERVER['REMOTE_ADDR'];
-  $user_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $user_ip );
-  $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
-  $user_agent = substr( $user_agent, 0, 254 );
-  $is_blacklisted = wp_blacklist_check( $name, $email, $user_url, $message, $user_ip, $user_agent );
-
-  $meta_input['agent'] = $user_agent;
-  $meta_input['ip'] = $user_ip;
-  $meta_input['spam'] = $is_blacklisted;
 
   // Insert wholesaler message post
   $postarr = [
