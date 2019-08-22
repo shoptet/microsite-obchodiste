@@ -27,14 +27,6 @@
 
 </div>
 
-<?php if ( get_field( "website" ) ): ?>
-<p class="mb-2">
-  <a href="<?php the_field( "website" ); ?>" target="_blank" itemprop="url">
-    <?php echo display_url( get_field( "website" ) ); ?>
-  </a>
-</p>
-<?php endif; ?>
-
 <dl class="dl-inline">
   <dt class="text-muted mr-1">
     <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
