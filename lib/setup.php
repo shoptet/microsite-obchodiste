@@ -275,7 +275,7 @@ add_action('pre_get_posts', function( $wp_query ) {
   // Set service meta query
   // checkbox fields are stored as serialized arrays
   if( isset( $_GET[ 'services' ] ) && is_array( $_GET[ 'services' ] ) ) {
-    $result = [ 'relation' => 'OR' ];
+    $result = [ 'relation' => 'AND' ];
     foreach( $_GET[ 'services' ] as $service ) {
       $result[] = [
         'key' => 'services',
