@@ -429,3 +429,22 @@ function export_wholesalers(): void
 
   fclose( $fp );
 }
+
+function count_posts_by_term ( $post_type, $term, $taxonomy ): int
+{
+  $query = new WP_Query( [
+    'post_type' => $post_type,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+    'tax_query' => [
+      [
+        'taxonomy' => $taxonomy,
+        'terms' => $term->term_id,
+        'include_children' => true,
+      ],
+    ],
+  ] );
+  return $query->found_posts;
+}
