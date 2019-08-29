@@ -20,7 +20,11 @@ $render_tree = function ( $parent_term = null ) use ( &$render_tree, &$taxonomy,
       $posts_in_term = count_posts_by_term( $post_type, $term, $taxonomy );
       ?>
       <li>
-        <a href="<?php echo get_term_link( $term, $taxonomy ); ?>">
+        <a
+          href="<?php echo get_term_link( $term, $taxonomy ); ?>"
+          data-id="<?php echo $term->term_id; ?>"
+          data-slug="<?php echo $term->slug; ?>"
+        >
           <span class="<?php echo ( $is_current ? 'font-weight-bold' : '' ); ?>"><?php echo $term->name; ?></span>&nbsp;<span class="text-semilight">(<?php echo $posts_in_term; ?>)</span>
         </a>
         <?php
@@ -39,7 +43,8 @@ $render_tree = function ( $parent_term = null ) use ( &$render_tree, &$taxonomy,
   <?php _e( 'Kategorie', 'shp-obchodiste' ); ?>
 </p>
 
-<div class="filters-list">
+<div class="filters-list" id="archiveFormCategoryLinks">
+  <input type="hidden" name="category[]" value="<?php echo $current_term ? $current_term->term_id : ''; ?>">
   <?php $render_tree(); ?>
 </div>
 

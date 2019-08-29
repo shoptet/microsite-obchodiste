@@ -25,6 +25,7 @@ if ( is_tax() ) {
       id="filterCategory<?php echo $term->term_id; ?>"
       name="category[]"
       data-slug="<?php echo $term->slug; ?>"
+      data-id="<?php echo $term->term_id; ?>"
       <?php if ( in_array( $term->term_id, $checked_categories ) ) echo "checked"; ?>
     >
     <label

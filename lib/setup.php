@@ -137,11 +137,6 @@ add_action( 'wp_footer', function() {
   echo '<script>';
   // wordpress ajax url
   printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
-  
-  // wholesaler and product terms by id
-  echo 'window.terms = [];';
-  printf( 'window.terms.custom = %s;', json_encode( get_terms_by_id( 'customtaxonomy' ) ) );
-  printf( 'window.terms.product = %s;', json_encode( get_terms_by_id( 'producttaxonomy' ) ) );
 
   // search form data by selected custom post type
   $search_form_data = [
