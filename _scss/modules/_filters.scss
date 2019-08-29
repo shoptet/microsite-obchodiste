@@ -10,3 +10,24 @@
   height: 1px;
   background-color: lighten($shoptet-blue, 35%);
 }
+
+.filters-list {
+  a {
+    color: $body-color;
+
+    @include hover-focus {
+      text-decoration: none;
+      color: $black;
+    }
+  }
+
+  > ul > li > ul {
+    font-size: 85%;
+    padding-bottom: .5rem;
+  }
+
+  > ul ul {
+    padding-top: 0rem;
+  }
+
+}
