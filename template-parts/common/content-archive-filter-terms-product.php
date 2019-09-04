@@ -9,6 +9,7 @@ $render_tree = function ( $parent_term = null ) use ( &$render_tree, &$taxonomy,
     'taxonomy' => $taxonomy,
     'parent' => $parent_term ? $parent_term->term_id : 0,
     'hide_empty' => true,
+    'hierarchical_force' => true,
   ] );
   if ( empty( $terms ) ) return;
   ?>

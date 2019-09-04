@@ -6,6 +6,10 @@ add_filter( 'get_terms_args', function( $args, $taxonomies ) {
   if ( in_array( 'producttaxonomy', $taxonomies ) ) {
     $args['hierarchical'] = false;
   }
+  // Force rewrite default filter
+  if ( array_key_exists( 'hierarchical_force', $args ) ) {
+    $args['hierarchical'] = $args['hierarchical_force'];
+  }
   return $args;
 }, 10, 2 );
 
