@@ -1872,6 +1872,34 @@ add_action( 'wp_footer', function () {
 //   ]);
 // } );
 
+add_action( 'admin_menu', function () {
+  add_submenu_page(
+    'edit.php?post_type=custom',
+    __( 'Export velkoobchodů', 'shp-obchodiste' ),
+    __( 'Export', 'shp-obchodiste' ),
+    'manage_options',
+    'export',
+    'wholesaler_export_page'
+  );
+} );
+
+function wholesaler_export_page () {
+  ?>
+  <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+    <input type="hidden" name="action" value="export_wholesalers">
+    <?php submit_button(  __( 'Exportovat velkoobchody', 'shp-obchodiste' ) ); ?>
+  </form>
+  <?php
+}
+
+add_action( 'admin_post_export_wholesalers', function () {
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
+  if ( user_can( $current_user, 'administrator' ) ) {
+    export_wholesalers();
+  }
+} );
+
 /**
  * Disable admin for users when read only mode is enabled
  */
