@@ -381,7 +381,8 @@ function has_query_terms( $terms, $taxonomy ): bool
  */
 function export_wholesalers(): void
 {
-  $fp = fopen( __DIR__ . '/../export_wholesalers.csv', 'w' );
+  $file_path = get_temp_dir() . 'export_wholesalers.csv';
+  $fp = fopen( $file_path, 'w' );
   $header = [
     'company name',
     'status',
@@ -428,4 +429,19 @@ function export_wholesalers(): void
   }
 
   fclose( $fp );
+
+  // Http headers for downloads
+  header( 'Pragma: public' );
+  header( 'Expires: 0' );
+  header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' ); 
+  header( 'Content-Type: application/octet-stream' );
+  header( 'Content-Disposition: attachment; filename=export.csv' );
+  header( 'Content-Transfer-Encoding: binary' );
+  header( 'Content-Length: ' . filesize( $file_path ) );
+  while ( ob_get_level() ) {
+    ob_end_clean();
+    @readfile( $file_path );
+  }
+
+  unlink( $file_path );
 }
