@@ -1872,6 +1872,9 @@ add_action( 'wp_footer', function () {
 //   ]);
 // } );
 
+/**
+ * Add wholesaler export to admin menu
+ */
 add_action( 'admin_menu', function () {
   add_submenu_page(
     'edit.php?post_type=custom',
@@ -1883,6 +1886,9 @@ add_action( 'admin_menu', function () {
   );
 } );
 
+/**
+ * Add form to wholesaler export page
+ */
 function wholesaler_export_page () {
   ?>
   <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
@@ -1892,6 +1898,9 @@ function wholesaler_export_page () {
   <?php
 }
 
+/**
+ * Handle wholesaler export form
+ */
 add_action( 'admin_post_export_wholesalers', function () {
   global $current_user;
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
