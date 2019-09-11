@@ -1,6 +1,6 @@
 <?php
 
-function is_external_company_exist( $external_company_token ) {
+function check_if_external_company_exists( $external_company_token ) {
   global $wpdb;
   $result = $wpdb->get_var('
     SELECT 1 FROM external_companies WHERE registration_token = "' . $external_company_token . '"
@@ -195,7 +195,7 @@ add_action( 'wp' , function () {
 	if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
   $external_company_token = $_GET['external_company'];
 
-  if ( ! is_external_company_exist( $external_company_token ) ) {
+  if ( ! check_if_external_company_exists( $external_company_token ) ) {
     wp_die( __( 'Neplatná URL', 'shp-obchodiste' ) );
 		return;
   }
@@ -214,7 +214,7 @@ add_filter( 'acf/load_field', function ( $field ) {
   if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return $field;
   $external_company_token = $_GET['external_company'];
 
-  if ( ! is_external_company_exist( $external_company_token ) ) return $field;
+  if ( ! check_if_external_company_exists( $external_company_token ) ) return $field;
   
   if ( $value = get_external_company_value_by_field_name( $external_company_token, $field['name'] ) ) {
     $field[ 'default_value' ] = $value;
@@ -227,7 +227,7 @@ add_action( 'acf/save_post', function ( $post_id ) {
   if ( 'custom' !== get_post_type ( $post_id ) ) return;
   if ( ! isset( $_GET['external_company'] ) || '' === $_GET['external_company'] ) return;
   $external_company_token = $_GET['external_company'];
-  if ( ! is_external_company_exist( $external_company_token ) ) return;
+  if ( ! check_if_external_company_exists( $external_company_token ) ) return;
 
   if ( isset($_POST['operator_form_notify_contact_person']) ) {
     notify_contact_person( $post_id, $external_company_token );

@@ -6,10 +6,10 @@
 
   > [class*="col-"] {
 
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $border-color;
 
     &:nth-of-type(-n+1) {
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid $border-color;
     }
 
   }
@@ -20,11 +20,11 @@
 
     @include media-breakpoint-up(lg) {
       &:nth-of-type(-n+2) {
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid $border-color;
       }
 
       &:not(:nth-child(2n)) {
-        border-right: 1px solid #e5e5e5;
+        border-right: 1px solid $border-color;
       }
     }
 
@@ -36,17 +36,17 @@
 
     @include media-breakpoint-up(md) {
       &:nth-of-type(-n+2) {
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid $border-color;
       }
 
       &:not(:nth-child(2n)) {
-        border-right: 1px solid #e5e5e5;
+        border-right: 1px solid $border-color;
       }
     }
 
     @include media-breakpoint-up(xl) {
       &:nth-of-type(-n+3) {
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid $border-color;
       }
 
       &:not(:nth-child(2n)) {
@@ -54,7 +54,7 @@
       }
 
       &:not(:nth-child(3n)) {
-        border-right: 1px solid #e5e5e5;
+        border-right: 1px solid $border-color;
       }
     }
 
