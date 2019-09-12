@@ -1,5 +1,41 @@
 <?php
 
+add_action( 'init', function() {
+
+  $image_width = 500;
+  $image_height = 500;
+
+  $im = imagecreate($image_width, $image_height);
+
+  // White background and blue text
+  $bg = imagecolorallocate($im, 0, 0, 0);
+  $textcolor = imagecolorallocate($im, 255, 255, 255);
+  $font_size = 150;
+  $text = 'JK';
+  $font = __DIR__ . '/Lato-Bold.ttf';
+
+  // Get Bounding Box Size
+  $text_box = imagettfbbox( $font_size, 0, $font, $text);
+
+  // Get your Text Width and Height
+  $text_width = $text_box[2] - $text_box[0];
+  $text_height = $text_box[7] - $text_box[1];
+
+  // Calculate coordinates of the text
+  $x = ($image_width/2) - ($text_width/2);
+  $y = ($image_height/2) - ($text_height/2);
+
+  imagefill($im, 0, 0, $bg);
+  imagettftext($im, $font_size, 0, $x, $y, $textcolor, $font, $text);
+
+  // Output the image
+  header('Content-type: image/png');
+
+  imagepng($im);
+  imagedestroy($im);
+  die();
+} );
+
 /**
  * Register custom post types and taxonomies
  */
