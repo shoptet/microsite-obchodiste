@@ -4,6 +4,12 @@ $(function() {
 
   var termsCache = {};
 
+  var initTermsCache = function () {
+    if ( currentTerm = window.currentTerm ) {
+      termsCache[ currentTerm['id'] ] = currentTerm['slug'];
+    }
+  };
+
   var updateTermsCache = function (el) {
     var $el = $(el);
     var termSlug = $el.data('slug');
@@ -106,6 +112,8 @@ $(function() {
   window.onpopstate = function () {
     window.location.href = document.location;
   };
+
+  initTermsCache();
 
   initCategoryLinkClick();
 

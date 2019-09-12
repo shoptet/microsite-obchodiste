@@ -137,6 +137,17 @@ add_action( 'wp_footer', function() {
   echo '<script>';
   // wordpress ajax url
   printf( 'window.ajaxurl = \'%s\';', admin_url( 'admin-ajax.php' ) );
+  
+  // Pass current term on taxonomy archive page to javascript
+  if ( is_tax() ) {
+    $term_id = get_queried_object()->term_id;
+    $term = get_term( $term_id );
+    $current_term = [
+      'id' => $term_id,
+      'slug' => $term->slug,
+    ];
+    printf( 'window.currentTerm = %s;', json_encode( $current_term ) );
+  }
 
   // search form data by selected custom post type
   $search_form_data = [
