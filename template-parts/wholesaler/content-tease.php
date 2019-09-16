@@ -1,3 +1,7 @@
+<?php
+$logo_url = get_wholesaler_logo_url();
+?>
+
 <a
   class="wholesaler-tease"
   href="<?php the_permalink(); ?>"
@@ -11,11 +15,11 @@
   <?php endif; ?>
   <div class="d-flex">
 
-    <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! get_field( "logo" ) ) echo "wholesaler-tease-logo-empty" ?>">
-      <?php if ( get_field( "logo" ) ): ?>
+    <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! $logo_url ) echo "wholesaler-tease-logo-empty" ?>">
+      <?php if ( $logo_url ): ?>
       <img
-        src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
-        alt="<?php echo the_title(); ?>"
+        src="<?php echo $logo_url; ?>"
+        alt="<?php the_title(); ?>"
       >
       <?php endif; ?>
     </div>

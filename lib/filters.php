@@ -90,6 +90,8 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
   if ( $value != ''  ) {
     // Add the value which is the image ID to the _thumbnail_id meta data for the current post
     add_post_meta( $post_id, '_thumbnail_id', $value );
+  } else {
+    generate_placeholder_logo( $post_id );
   }
   return $value;
 }, 10, 3 );
