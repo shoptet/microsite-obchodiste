@@ -558,6 +558,15 @@ function generate_placeholder_logo( $post_id ): void
   imagedestroy( $im );
 }
 
+function remove_placeholder_logo( $post_id ): void
+{
+  $placeholder_logo_dir = get_placeholder_logo_dir();
+  $placeholder_logo_path = sprintf( '%s/%s.png', $placeholder_logo_dir, $post_id );
+  if ( file_exists( $placeholder_logo_path ) ) {
+    unlink( $placeholder_logo_path );
+  }
+}
+
 function generate_all_placeholder_logos(): int
 {
   // Remove all placeholder logos
