@@ -464,3 +464,137 @@ function count_posts_by_term ( $post_type, $term, $taxonomy ): int
   ] );
   return $query->found_posts;
 }
+
+function hex2RGB( $hex ): array {
+  list( $r, $g, $b ) = sscanf( $hex, '#%02x%02x%02x' );
+  return [ 'r' => $r, 'g' => $g, 'b' => $b ];
+}
+
+function get_placeholder_logo_dir( $indice = 'basedir' ): string
+{
+  $upload_dir = wp_upload_dir();
+  return $upload_dir[ $indice ] . '/wholesaler-logos';
+}
+
+function generate_placeholder_logo( $post_id ): void
+{
+  $image_width = 500;
+  $image_height = $image_width;
+  $color_variants = [
+    [ '#ad0003', '#ff613d' ],
+    [ '#38a85e', '#95d685' ],
+    [ '#130806', '#f6efe4' ],
+    [ '#b35900', '#ffc466' ],
+    [ '#8ccdd9', '#539dc6' ],
+    [ '#97b7c3', '#7c8af3' ],
+    [ '#a6a6a6', '#474747' ],
+    [ '#c6adff', '#9233ff' ],
+  ];
+
+  // Generate color variant form post id
+  $length = count( $color_variants ); // 8
+  $base_modulo = $post_id % ( $length * 2); // 0 - 15
+
+  $color_variant = $color_variants[ $base_modulo % $length ]; // 0 - 7
+  $color_variant_direction = intdiv( $base_modulo, $length ); // 0 - 1
+
+  if ( $color_variant_direction == 1 ) {
+    // switch bg a text colors
+    array_push( $color_variant, array_shift( $color_variant ) );
+  }
+
+  // Generate initials
+  $title = get_the_title( $post_id );
+  $title = trim( $title );
+  $title_words = explode( ' ', $title );
+  $initials = '';
+  $i = 0;
+  $counter = 0;
+  $excluded_words = [ 's.r.o.', 's. r. o.', 'a.s.', 'a. s.', 'spol.', 'a', 'mgr.', 'ing.', 'bc.' ];
+  while( $i < count( $title_words ) && $counter < 2 ) {
+    $word = strtolower( $title_words[$i++] );
+    $first_letter = mb_substr($word, 0, 1);
+    if (
+      in_array( $word, $excluded_words ) || // Skip excluded words
+      '&' == $first_letter // Skip html entities
+    ) continue; 
+    $initials .= $first_letter;
+    $counter++;
+  }
+  $initials = strtoupper( $initials );
+
+  $bg_rgb = hex2RGB( $color_variant[0] );
+  $text_rgb = hex2RGB( $color_variant[1] );
+
+  $im = imagecreate($image_width, $image_height);
+
+  // White background and blue text
+  $bg_color = imagecolorallocate($im, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+  $text_color = imagecolorallocate($im, $text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
+  $font_size = 150;
+  $font = __DIR__ . '/misc/Lato-Black.ttf';
+  $save_dir = get_placeholder_logo_dir();
+  if ( ! file_exists($save_dir) ) {
+    mkdir( $save_dir, 0755, true );
+  }
+  $save_file_path = sprintf( '%s/%s.png', $save_dir, $post_id );
+
+  // Get Bounding Box Size
+  $text_box = imagettfbbox( $font_size, 0, $font, $initials );
+
+  // Get your Text Width and Height
+  $text_width = $text_box[2] - $text_box[0];
+  $text_height = $text_box[7] - $text_box[1];
+
+  // Calculate coordinates of the text
+  $x = ($image_width/2) - ($text_width/2);
+  $y = ($image_height/2) - ($text_height/2);
+
+  imagefill( $im, 0, 0, $bg_color );
+  imagettftext( $im, $font_size, 0, $x, $y, $text_color, $font, $initials );
+
+  imagepng( $im, $save_file_path );
+
+  imagedestroy( $im );
+}
+
+function generate_all_placeholder_logos(): int
+{
+  // Remove all placeholder logos
+  $placeholder_logo_dir = get_placeholder_logo_dir();
+  array_map( 'unlink', glob( $placeholder_logo_dir . '/*' ) );
+
+  $query = new WP_Query( [
+    'post_type' => 'custom',
+    'posts_per_page' => -1,
+    'post_status' => 'any',
+    'fields' => 'ids',
+  ] );
+
+  $counter = 0;
+  foreach( $query->posts as $post_id ) {
+    if ( ! get_field( 'logo', $post_id ) ) {
+      generate_placeholder_logo( $post_id );
+      $counter++;
+    }
+  }
+  return $counter;
+}
+
+function get_wholesaler_logo_url( $post_id = NULL ) {
+  
+  if ( ! $post_id ) {
+    global $post;
+    $post_id = $post->ID;
+  }
+
+  $logo_url = '';
+  if ( $logo = get_field( "logo", $post_id ) ) {
+    $logo_url = $logo[ "sizes" ][ "medium" ];
+  } else {
+    $placeholder_logo_dir = get_placeholder_logo_dir( 'baseurl' );
+    $logo_url = sprintf( '%s/%s.png', $placeholder_logo_dir, $post_id );
+  }
+
+  return $logo_url;
+}

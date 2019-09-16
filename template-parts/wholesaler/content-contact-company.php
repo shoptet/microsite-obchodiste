@@ -4,10 +4,10 @@
 
 <div class="mb-4 clearfix">
 
-  <?php if ( get_field( "logo" ) ): ?>
+  <?php if ( $logo_url = get_wholesaler_logo_url() ): ?>
   <div class="wholesaler-logo">
     <img
-      src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
+      src="<?php echo $logo_url; ?>"
       alt="<?php echo esc_html( get_the_title() ); ?>"
       <?php if ( is_singular('custom') ): ?>itemprop="logo"<?php endif; ?>
     >
