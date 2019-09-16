@@ -24,17 +24,19 @@
     "../scaffolding/vendor/bs/js/util.js",
     "../scaffolding/vendor/bs/js/dropdown.js",
     "../scaffolding/vendor/bs/js/toggle.js",
+    "../scaffolding/vendor/bs/js/modal.js",
     "../scaffolding/vendor/bs/js/collapse.js",
     "../scaffolding/vendor/jquery.colorbox-min.js",
     "../scaffolding/shoptet/js/shoptet.js",
-    "node_modules/owl.carousel/dist/owl.carousel.min.js",
+    "_js/age-test.js",
     "_js/wholesaler-location.js",
     "_js/wholesaler-message.js",
-    "_js/wholesaler-special-offer-contact.js",
+    "_js/wholesaler-contact.js",
     "_js/filters.js",
+    "_js/search-form.js",
+    "_js/block-ellipsis.js",
     "_js/main.js"
   ],
   "dependencies": {
-    "owl.carousel": "^2.3.4"
   }
 }

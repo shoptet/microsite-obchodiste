@@ -9,18 +9,18 @@ function get_cpt_wholesaler_args(): array
     'name' => __( 'Velkoobchody', 'shp-obchodiste' ),
     'singular_name' => __( 'Velkoobchod', 'shp-obchodiste' ),
     'menu_name' => __( 'Velkoobchody', 'shp-obchodiste' ),
-    'all_items' => __( 'Všechny velkoobchody', 'shp-obchodiste' ),
+    'all_items' => __( 'Všechny medailonky', 'shp-obchodiste' ),
     'add_new' => __( 'Přidat nový', 'shp-obchodiste' ),
-    'add_new_item' => __( 'Přidat nový velkoobchod', 'shp-obchodiste' ),
-    'edit_item' => __( 'Upravit velkoobchod', 'shp-obchodiste' ),
-    'new_item' => __( 'Nový velkoobchod', 'shp-obchodiste' ),
-    'view_item' => __( 'Zobrazit velkoobchod', 'shp-obchodiste' ),
-    'view_items' => __( 'Zobrazit velkoobchody', 'shp-obchodiste' ),
-    'search_items' => __( 'Vyhledat velkoobchod', 'shp-obchodiste' ),
-    'not_found' => __( 'Nebyl nalezen žádný velkoobchod', 'shp-obchodiste' ),
-    'not_found_in_trash' => __( 'V koši nebyl nalezen žádný velkoobchod', 'shp-obchodiste' ),
+    'add_new_item' => __( 'Přidat nový medailonek', 'shp-obchodiste' ),
+    'edit_item' => __( 'Upravit medailonek', 'shp-obchodiste' ),
+    'new_item' => __( 'Nový medailonek', 'shp-obchodiste' ),
+    'view_item' => __( 'Zobrazit medailonek', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit medailonky', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat medailonek', 'shp-obchodiste' ),
+    'not_found' => __( 'Nebyl nalezen žádný medailonek', 'shp-obchodiste' ),
+    'not_found_in_trash' => __( 'V koši nebyl nalezen žádný medailonek', 'shp-obchodiste' ),
     'archives' => __( 'Archiv velkoobchodů', 'shp-obchodiste' ),
-    'items_list' => __( 'Výpis velkoobchodů', 'shp-obchodiste' ),
+    'items_list' => __( 'Výpis medailonků', 'shp-obchodiste' ),
   ];
   $args = [
     'label' => __( 'Velkoobchody', 'shp-obchodiste' ),
@@ -40,7 +40,7 @@ function get_cpt_wholesaler_args(): array
     'rewrite' => [ 'slug' => 'velkoobchod', 'with_front' => true ],
     'query_var' => true,
     'menu_icon' => 'dashicons-store',
-    'supports' => [ 'title', 'thumbnail' ],
+    'supports' => [ 'title', 'thumbnail', 'author' ],
   ];
   return $args;
 }
@@ -162,6 +162,127 @@ function get_cpt_special_offer_args(): array
     'query_var' => true,
     'rewrite' => [ 'slug' => 'akcni-nabidka', 'with_front' => true ],
     'menu_icon' => 'dashicons-megaphone',
+    'supports' => [ 'title', 'author' ],
+  ];
+  return $args;
+}
+
+/**
+ * Returns product custom post type arguments
+ */
+function get_cpt_product_args(): array
+{
+  $labels = [
+    'name' => __( 'Produkty', 'shp-obchodiste' ),
+    'singular_name' => __( 'Produkt', 'shp-obchodiste' ),
+    'menu_name' => __( 'Produkty', 'shp-obchodiste' ),
+    'all_items' => __( 'Všechny produkty', 'shp-obchodiste' ),
+    'add_new' => __( 'Přidat nový', 'shp-obchodiste' ),
+    'add_new_item' => __( 'Přidat nový produkt', 'shp-obchodiste' ),
+    'edit_item' => __( 'Upravit produkt', 'shp-obchodiste' ),
+    'new_item' => __( 'Nový produkt', 'shp-obchodiste' ),
+    'view_item' => __( 'Zobrazit produkt', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit produkty', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat produkty', 'shp-obchodiste' ),
+    'not_found' => __( 'Nebyl nalezen žádný produkt', 'shp-obchodiste' ),
+    'not_found_in_trash' => __( 'V koši nebyl nalezen žádný produkt', 'shp-obchodiste' ),
+    'archives' => __( 'Archiv produktů', 'shp-obchodiste' ),
+    'items_list' => __( 'Výpis produktů', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Produkty', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'description' => '',
+    'public' => true,
+    'publicly_queryable' => true,
+    'show_ui' => true,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'has_archive' => 'produkty',
+    'show_in_menu' => true,
+    'exclude_from_search' => false,
+    'capability_type' => 'product',
+    'map_meta_cap' => true,
+    'hierarchical' => false,
+    'query_var' => true,
+    'rewrite' => [ 'slug' => 'produkt', 'with_front' => true ],
+    'menu_icon' => 'dashicons-cart',
+    'supports' => [ 'title', 'thumbnail', 'author' ],
+  ];
+  return $args;
+}
+
+/**
+ * Returns product custom post type taxonomy arguments
+ */
+function get_cpt_product_taxonomy_args(): array
+{
+  $labels = [
+    'name' => __( 'Kategorie', 'shp-obchodiste' ),
+    'singular_name' => __( 'Kategorie', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Kategorie', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'public' => true,
+    'hierarchical' => true,
+    'label' => 'Kategorie',
+    'show_ui' => true,
+    'show_in_menu' => true,
+    'show_in_nav_menus' => true,
+    'query_var' => true,
+    'rewrite' => [ 'slug' => 'produkty', 'with_front' => true ],
+    'show_admin_column' => false,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'show_in_quick_edit' => false,
+  ];
+  return $args;
+}
+
+/**
+ * Returns wholesaler message custom post type arguments
+ */
+function get_cpt_sync_args(): array
+{
+  $labels = [
+    'name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'singular_name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'menu_name' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'all_items' => __( 'Všechny položky', 'shp-obchodiste' ),
+    'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
+    'add_new_item' => __( 'Přidat novou položku', 'shp-obchodiste' ),
+    'edit_item' => __( 'Upravit položku', 'shp-obchodiste' ),
+    'new_item' => __( 'Nová položka', 'shp-obchodiste' ),
+    'view_item' => __( 'Zobrazit položku', 'shp-obchodiste' ),
+    'view_items' => __( 'Zobrazit položky', 'shp-obchodiste' ),
+    'search_items' => __( 'Vyhledat položku', 'shp-obchodiste' ),
+    'not_found' => __( 'Nebyla nalezena žádná položka', 'shp-obchodiste' ),
+    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná položka', 'shp-obchodiste' ),
+    'archives' => __( 'Archiv položek', 'shp-obchodiste' ),
+    'items_list' => __( 'Výpis položek', 'shp-obchodiste' ),
+  ];
+  $args = [
+    'label' => __( 'Synchronizace', 'shp-obchodiste' ),
+    'labels' => $labels,
+    'description' => '',
+    'public' => false,
+    'publicly_queryable' => false,
+    'show_ui' => true,
+    'show_in_rest' => false,
+    'rest_base' => '',
+    'has_archive' => false,
+    'show_in_menu' => true,
+    'exclude_from_search' => true,
+    'capability_type' => 'sync',
+    'capabilities' => [
+      'create_posts' => 'do_not_allow',
+    ],
+    'map_meta_cap' => true,
+    'hierarchical' => false,
+    'rewrite' => false,
+    'query_var' => true,
+    'menu_icon' => 'dashicons-update',
     'supports' => [ 'title' ],
   ];
   return $args;

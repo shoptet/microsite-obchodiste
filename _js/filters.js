@@ -1,6 +1,5 @@
 $(function() {
 
-  var $heroForm = $('#heroForm');
   var $archiveForm = $('#archiveForm');
 
   var initOrderSelect = function () {
@@ -15,10 +14,18 @@ $(function() {
     $.ajax({
       url: url,
       success: function (response) {
-        $('#archiveList').html($(response).find('#archiveList'));
+        var $response = $(response);
+
+        $('#archiveList').html($response.find('#archiveList'));
         $archiveForm.removeClass('is-loading');
         initOrderSelect(); // initialize order select change event
         if (moveToTop) $('html, body').animate({scrollTop: $archiveForm.offset().top});
+
+        var $ageTest = $response.find('#ageTest');
+        if ($ageTest.length && $('#ageTest').length == 0) {
+          $('body').append($ageTest);
+          initAgeTest();
+        }
       },
     });
   };
@@ -29,6 +36,7 @@ $(function() {
     var queryString = '';
     var skipSingleCategory = false;
     var skipDefaultOrderBy = false;
+    var postTypesWithSingleCategory = ['custom', 'product'];
     // Count categories
     data.forEach(function (item) {
       if (item.name !== 'category[]' || !item.value) return;
@@ -37,7 +45,7 @@ $(function() {
     });
     // Remove single category and default ordering
     data = data.filter(function (item) {
-      skipSingleCategory = (postType === 'custom' && categoryCount === 1 && item.name === 'category[]');
+      skipSingleCategory = (postTypesWithSingleCategory.includes(postType) && categoryCount === 1 && item.name === 'category[]');
       skipDefaultOrderBy = (item.name === 'orderby' && item.value === 'date_desc');
       skipEmptyValue = ( item.value ? false : true );
       return !skipSingleCategory && !skipDefaultOrderBy && !skipEmptyValue;
@@ -47,7 +55,7 @@ $(function() {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.archiveUrl[ postType ];
-    url += ( (postType === 'custom' && categoryCount === 1) ? window.wholesalerTerms[ lastCategoryId ] + '/' : '' ); // Add category slug
+    url += ( (postTypesWithSingleCategory.includes(postType) && categoryCount === 1) ? window.terms[ postType ][ lastCategoryId ] + '/' : '' ); // Add category slug
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };
@@ -69,12 +77,6 @@ $(function() {
 
   $('#archiveForm input[type=checkbox]').on('change', function () {
     $archiveForm.submit();
-  });
-
-  $heroForm.on('submit', function (e) {
-    e.preventDefault();
-    url = createUrl($heroForm.serializeArray(), 'custom');
-    window.location.href = url;
   });
 
   // Refresh browser after state popped

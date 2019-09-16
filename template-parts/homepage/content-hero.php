@@ -1,64 +1,47 @@
 <div class="hero">
   <div class="container">
     <h1 class="hero-title mb-5">
-      <?php _e( 'Velkoobchodní dodavatelé pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
+      <?php _e( 'Produkty od velkoobchodů pro <span class="ws-nowrap">e-shopové</span> prodejce', 'shp-obchodiste' ); ?>
     </h1>
 
-    <form action="<?php echo get_post_type_archive_link( 'custom' ); ?>" id="heroForm">
+    <form action="<?php echo get_post_type_archive_link( 'product' ); ?>" id="searchForm" role="search">
+
       <div class="hero-form">
-        <div class="row">
-          <div class="col-md-6 mb-4 mb-md-0">
 
-            <div class="d-lg-flex align-items-center">
-              <label class="mr-3 mb-lg-0" for="filterCategory">
-                <?php _e( 'Kategorie:', 'shp-obchodiste' ); ?>
-              </label>
-              <div class="w-100">
-                <select class="custom-select" name="category[]">
-                  <option value="" selected>
-                    <?php _e( 'Všechny', 'shp-obchodiste' ); ?>
-                  </option>
-                  <?php foreach ( get_terms( 'customtaxonomy' ) as $term ): ?>
-                  <option value="<?php echo $term->term_id; ?>">
-                    <?php echo $term->name; ?>
-                  </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <select class="custom-select" name="searchFormPostTypeSelect" id="searchFormPostTypeSelect">
+              <option id="searchFormPostTypeSelectProduct" value="product" selected>
+                <?php _e( 'Produkty', 'shp-obchodiste' ); ?>
+              </option>
+              <option id="searchFormPostTypeSelectCustom" value="custom">
+                <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
+              </option>
+            </select>
           </div>
-          <div class="col-md-6">
+          <input type="text" class="form-control" name="s" placeholder="<?php _e( 'Jaký produkt byste chtěli prodávat?', 'shp-obchodiste' ); ?>">
+        </div>
 
-            <div class="d-lg-flex align-items-center">
-              <label class="mr-3 mb-lg-0" for="filterCategory">
-                <?php _e( 'Lokalita:', 'shp-obchodiste' ); ?>
-              </label>
-              <div class="w-100">
-                <select class="custom-select" name="region[]">
-                  <option value="" selected>
-                    <?php _e( 'Všechny', 'shp-obchodiste' ); ?>
-                  </option>
-                  <?php foreach ( get_used_regions_by_country() as $country_code => $country ): ?>
-                    <optgroup label="<?php echo $country[ 'name' ]; ?>">
-                      <?php foreach ( $country[ 'used_regions' ] as $region ): ?>
-                        <option value="<?php echo $region[ 'id' ]; ?>">
-                          <?php echo $region[ 'name' ]; ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </optgroup>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-
+        <div class="mt-2 d-sm-none">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioProduct" value="product" checked>
+            <label class="form-check-label" for="searchFormPostTypeRadioProduct">
+              <?php _e( 'Produkty', 'shp-obchodiste' ); ?>
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="searchFormPostTypeRadio" id="searchFormPostTypeRadioCustom" value="custom">
+            <label class="form-check-label" for="searchFormPostTypeRadioCustom">
+              <?php _e( 'Velkoobchody', 'shp-obchodiste' ); ?>
+            </label>
           </div>
         </div>
+
       </div>
 
       <div class="hero-form-action">
         <button type="submit" class="btn btn-primary btn-lg ws-normal">
-          <?php _e( 'Hledejte velkoobchodní prodejce', 'shp-obchodiste' ); ?>
+          <?php _e( 'Hledat produkt', 'shp-obchodiste' ); ?>
         </button>
       </div>
 

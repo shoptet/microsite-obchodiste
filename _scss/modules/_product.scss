@@ -1,0 +1,89 @@
+.product {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    margin-top: 0;
+  }
+}
+
+.product-detail {
+  margin-top: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid $gray-300;
+}
+
+.product-image {
+  display: block;
+  width: auto;
+  max-height: 23rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.product-price-block {
+  padding: 1.5rem 1rem;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius;
+  background-color: lighten($shoptet-blue, 47%);
+}
+
+.product-tease {
+  display: block;
+  position: relative;
+  height: 100%;
+  padding: 1rem;
+  background-color: $white;
+  color: $body-color;
+
+  @include hover-focus {
+    color: $body-color;
+    text-decoration: none;
+    background-color: $primary-light;
+  }
+}
+
+.product-tease-secondary {
+  @include hover-focus {
+    background-color: $secondary-lighter;
+  }
+}
+
+.product-tease-image {
+  position: relative;
+  width: 4.75rem;
+  height: 4.75rem;
+  background-color: $white;
+  border: 1px solid $gray-300;
+  margin-right: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    width: 6.1rem;
+    height: 6.1rem;
+  }
+
+  img {
+    @include object-fit-containt(97.5%);
+  }
+}
+
+.product-tease-image-placeholder {
+  width: 4.75rem;
+
+  @include media-breakpoint-up(xl) {
+    width: 6.1rem;
+  }
+}
+
+.product-image-empty {
+  background-color: $gray-200;
+  border-color: $gray-200;
+}
+
+.product-tease-title {
+  font-weight: $font-weight-normal;
+  color: $primary;
+}
+
+.product-tease-description {
+  font-weight: 300;
+  color: $body-color;
+}

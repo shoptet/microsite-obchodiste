@@ -1,8 +1,14 @@
 <div class="login header-login">
-    <a href="<?php echo admin_url( 'post-new.php?post_type=custom' ); ?>" class="btn btn-orange btn-add mx-3">
-      <i class="fas fa-plus-circle"></i>
-      <?php _e( 'Přidat velkoobchod', 'shp-obchodiste' ); ?>
-    </a>
+    <?php
+    if ( is_front_page() && ! is_user_logged_in() ):
+      $admin_wholesaler_url = admin_url( 'post-new.php?post_type=custom' );
+      $add_wholesaler_url = is_user_logged_in() ? $admin_wholesaler_url : wp_login_url( $admin_wholesaler_url );
+    ?>
+      <a href="<?php echo $add_wholesaler_url; ?>" class="btn btn-orange btn-add">
+        <i class="fas fa-plus-circle"></i>
+        <?php _e( 'Přidat velkoobchod', 'shp-obchodiste' ); ?>
+      </a>
+    <?php endif; ?>
     <?php if ( is_user_logged_in() ): ?>
       <span class="dropdown">
         <a
@@ -19,10 +25,10 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
           <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=custom' ); ?>">
-            <?php _e( 'Moje velkoobchody', 'shp-obchodiste' ); ?>
+            <?php _e( 'Můj velkoobchod', 'shp-obchodiste' ); ?>
           </a>
-          <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=special_offer' ); ?>">
-            <?php _e( 'Moje nabídky', 'shp-obchodiste' ); ?>
+          <a class="dropdown-item" href="<?php echo admin_url( 'edit.php?post_type=product' ); ?>">
+            <?php _e( 'Moje produkty', 'shp-obchodiste' ); ?>
           </a>
           <a class="dropdown-item" href="<?php echo admin_url( 'profile.php' ); ?>">
             <?php _e( 'Můj profil', 'shp-obchodiste' ); ?>

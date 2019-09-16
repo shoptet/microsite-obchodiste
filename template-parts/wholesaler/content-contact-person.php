@@ -11,7 +11,7 @@
     class="float-left rounded-top-left rounded-bottom-left mr-3"
     src="<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>"
     <?php if ( get_field( "contact_full_name" ) ): ?>
-      alt="<?php the_field( "contact_full_name" ); ?>"
+      alt="<?php echo esc_html( get_field( "contact_full_name" ) ); ?>"
     <?php endif; ?>
     height="105"
     width="105"
@@ -22,25 +22,25 @@
 
     <?php if ( get_field( "contact_full_name" ) ): ?>
     <p class="font-weight-bold text-truncate mb-0">
-      <?php the_field( "contact_full_name" ); ?> 
+      <?php echo esc_html( get_field( "contact_full_name" ) ); ?> 
     </p>
     <?php endif; ?>
 
     <ul class="list-unstyled mb-0">
       <?php if ( get_field( "contact_email" ) ): ?>
       <li class="text-truncate">
-        <a href="mailto:<?php the_field( "contact_email" ); ?>">
-          <?php the_field( "contact_email" ); ?> 
+        <a href="mailto:<?php echo sanitize_email( get_field( "contact_email" ) ); ?>">
+          <?php echo sanitize_email( get_field( "contact_email" ) ); ?> 
         </a>
-        <meta itemprop="email" content="<?php the_field( "contact_email" ); ?>">
+        <?php if ( is_singular('custom') ): ?><meta itemprop="email" content="<?php echo sanitize_email( get_field( "contact_email" ) ); ?>"><?php endif; ?>
       </li>
       <?php endif; ?>
       <?php if ( get_field( "contact_tel" ) ): ?>
       <li class="text-truncate">
-        <a href="tel:<?php the_field( "contact_tel" ); ?>" itemprop="telephone">
-          <?php the_field( "contact_tel" ); ?>
+        <a href="tel:<?php echo esc_html( get_field( "contact_tel" ) ); ?>">
+          <?php echo esc_html( get_field( "contact_tel" ) ); ?>
         </a>
-        <meta itemprop="telephone" content="<?php the_field( "contact_tel" ); ?>">
+        <?php if ( is_singular('custom') ): ?><meta itemprop="telephone" content="<?php echo esc_html( get_field( "contact_tel" ) ); ?>"><?php endif; ?>
       </li>
       <?php endif; ?>
     </ul>

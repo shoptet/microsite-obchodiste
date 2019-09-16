@@ -12,6 +12,7 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "../../scaffolding/vendor/bs/scss/custom-forms";
 @import "../../scaffolding/vendor/bs/scss/dropdown";
 @import "../../scaffolding/vendor/bs/scss/buttons";
+@import "../../scaffolding/vendor/bs/scss/modal";
 
 @import '../../scaffolding/vendor/fa/scss/variables';
 @import '../../scaffolding/vendor/fa/scss/core';
@@ -24,6 +25,7 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "mixins";
 
 @import "modules/wholesaler";
+@import "modules/product";
 @import "modules/badge";
 @import "modules/list";
 @import "modules/fontawesome";
@@ -47,5 +49,8 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/post-banner";
 @import "modules/button";
 @import "modules/special-offer";
-@import "modules/owl-carousel";
 @import "modules/background";
+@import "modules/input-group";
+@import "modules/header";
+@import "modules/block-ellipsis";
+@import "modules/operator-form";

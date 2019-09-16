@@ -6,44 +6,57 @@
 
   > [class*="col-"] {
 
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $border-color;
 
     &:nth-of-type(-n+1) {
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid $border-color;
     }
+
+  }
+}
+
+.row-bordered-2-columns {
+  > [class*="col-"] {
 
     @include media-breakpoint-up(lg) {
       &:nth-of-type(-n+2) {
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid $border-color;
       }
-    }
 
-    &:not(:nth-child(2n)) {
-      @include media-breakpoint-up(lg) {
-        border-right: 1px solid #e5e5e5;
+      &:not(:nth-child(2n)) {
+        border-right: 1px solid $border-color;
       }
     }
 
   }
 }
 
-.row-bordered-one-row {
-
+.row-bordered-3-columns {
   > [class*="col-"] {
-    border-bottom: 1px solid #e5e5e5;
 
-    @include media-breakpoint-up(lg) {
-      border-top: 1px solid #e5e5e5;
-      border-left: 1px solid #e5e5e5;
+    @include media-breakpoint-up(md) {
+      &:nth-of-type(-n+2) {
+        border-top: 1px solid $border-color;
+      }
+
+      &:not(:nth-child(2n)) {
+        border-right: 1px solid $border-color;
+      }
     }
-  }
 
-  > [class*="col-"]:first-child {
-    border-top: 1px solid #e5e5e5;
+    @include media-breakpoint-up(xl) {
+      &:nth-of-type(-n+3) {
+        border-top: 1px solid $border-color;
+      }
 
-    @include media-breakpoint-up(lg) {
-      border-left: 0;
+      &:not(:nth-child(2n)) {
+        border-right: none;
+      }
+
+      &:not(:nth-child(3n)) {
+        border-right: 1px solid $border-color;
+      }
     }
+
   }
-  
 }

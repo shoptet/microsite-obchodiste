@@ -8,6 +8,8 @@ $includes = [
 	'src/lib/acf.php',
 	'src/lib/filters.php',
   'src/lib/helpers.php',
+  'src/lib/operator_form.php',
+  'src/lib/google_product_categories/google_product_categories.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {

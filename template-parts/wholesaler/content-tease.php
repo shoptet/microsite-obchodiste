@@ -23,7 +23,7 @@
     <div class="mt-1">
 
       <h3 class="wholesaler-tease-title h5 mb-2">
-        <?php the_title(); ?>
+        <?php echo esc_html( get_the_title() ); ?>
       </h3>
 
       <ul class="list-comma fs-90">
