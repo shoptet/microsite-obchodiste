@@ -71,31 +71,70 @@ function get_terms_csv_feed( $taxonomy ) {
   return array2csv( $result );
 }
 
-// Check for external company token and authenticate
+function get_cached_csv_feed_file_name( $file_name_postfix ) {
+  $temp_dir = __DIR__ . '/../../tmp';
+  return sprintf( '%s/feed-%s.csv', $temp_dir, $file_name_postfix );
+}
+
+function cache_all_csv_feeds() {
+  $temp_dir = get_temp_dir();
+  $taxonomies_by_post_type = [
+    'product' => 'producttaxonomy',
+    'custom' => 'customtaxonomy',
+  ];
+
+  foreach( $taxonomies_by_post_type as $post_type => $taxonomy ) {
+
+    $csv_data = get_posts_csv_feed( $post_type, $taxonomy );
+    $file_name = get_cached_csv_feed_file_name( $post_type );
+    file_put_contents( $file_name , $csv_data );
+
+    $csv_data = get_terms_csv_feed( $taxonomy );
+    $file_name = get_cached_csv_feed_file_name( $taxonomy );
+    file_put_contents( $file_name , $csv_data );
+  }
+}
+
 add_action( 'wp' , function () {
 	if ( ! isset( $_GET['data-feed'] ) || '' === $_GET['date-feed'] ) return;
   $data_feed = $_GET['data-feed'];
 
   switch ( $data_feed ) {
     case 'products':
-    $csv = get_posts_csv_feed( 'product', 'producttaxonomy' );
+    $file_name = get_cached_csv_feed_file_name( 'product' );
     break;
     case 'wholesalers':
-    $csv = get_posts_csv_feed( 'custom', 'customtaxonomy' );
+    $file_name = get_cached_csv_feed_file_name( 'custom' );
     break;
     case 'product-categories':
-    $csv = get_terms_csv_feed( 'producttaxonomy' );
+    $file_name = get_cached_csv_feed_file_name( 'producttaxonomy' );
     break;
     case 'wholesaler-categories':
-    $csv = get_terms_csv_feed( 'customtaxonomy' );
+    $file_name = get_cached_csv_feed_file_name( 'customtaxonomy' );
     break;
     default:
+    // no match, ignore
     return;
   }
 
-  header( 'Content-Type: application/csv' );
+  if ( ! file_exists( $file_name ) ) {
+    do_action( 'cache_all_csv_feeds');
+  }
+
+  $csv = file_get_contents( $file_name );
+
+  header( 'Content-Type: text/csv' );
   header( 'Content-Disposition: attachment; filename=feed-' . $data_feed . '.csv' );
+  header( 'Pragma: no-cache' );
+  header( 'Expires: 0' );
+
   echo $csv;
 
   die();
 } );
+
+// Set caching cron
+if ( ! wp_next_scheduled( 'cache_all_csv_feeds' ) ) {
+  wp_schedule_event( time(), 'hourly', 'cache_all_csv_feeds' );
+}
+add_action( 'cache_all_csv_feeds', 'cache_all_csv_feeds' );
