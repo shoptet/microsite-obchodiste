@@ -429,3 +429,22 @@ function export_wholesalers(): void
 
   fclose( $fp );
 }
+
+/**
+ * Get unique global id across all posts and terms
+ */
+function get_global_id( $id, $type ) {
+  switch ( $type ) {
+    case 'post':
+    $prefix = 1;
+    break;
+    case 'term':
+    $prefix = 2;
+    break;
+    default:
+    return false;
+    break;
+  }
+  $global_id = $prefix . $id;
+  return $global_id;
+}

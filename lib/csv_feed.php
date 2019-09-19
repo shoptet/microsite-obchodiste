@@ -48,7 +48,8 @@ function get_posts_csv_feed( $post_type, $taxonomy ) {
   foreach( $wp_query->posts as $post_id ) {
     $result[] = [
       'URL' => get_permalink( $post_id ),
-      'Custom label' => get_post_term_breadcrumbs( $post_id, $taxonomy ),
+      'ID' => get_global_id( $post_id, 'post' ),
+      'Category' => get_post_term_breadcrumbs( $post_id, $taxonomy ),
     ];
   }
 
@@ -65,6 +66,7 @@ function get_terms_csv_feed( $taxonomy ) {
     if ( $term->count < 5 ) continue;
     $result[] = [
       'URL' => get_term_link( $term ),
+      'ID' => get_global_id( $term->term_id, 'term' ),
     ];
   }
 
