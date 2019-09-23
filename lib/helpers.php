@@ -386,9 +386,11 @@ function export_wholesalers(): void
   $header = [
     'company name',
     'status',
+    'shoptet',
     'products',
     'contact person name',
     'contact person e-mail',
+    'contact person tel',
   ];
   fputcsv( $fp, $header );
 
@@ -403,6 +405,8 @@ function export_wholesalers(): void
     $row = [];
     $contact_person_name = get_post_meta( $post->ID, 'contact_full_name', true );
     $contact_person_email = get_post_meta( $post->ID, 'contact_email', true );
+    $contact_person_tel = get_post_meta( $post->ID, 'contact_tel', true );
+    $is_shoptet = boolval( get_post_meta( $post->ID, 'is_shoptet', true ) );
 
     $wp_query_all_products = new WP_Query( [
       'post_type' => 'product',
@@ -421,9 +425,11 @@ function export_wholesalers(): void
 
     $row[] = $post->post_title;
     $row[] = $post->post_status;
+    $row[] = $is_shoptet ? 1 : 0;
     $row[] = $wp_query_all_products->found_posts;
     $row[] = $contact_person_name;
     $row[] = $contact_person_email;
+    $row[] = $contact_person_tel;
 
     fputcsv( $fp, $row );
   }
