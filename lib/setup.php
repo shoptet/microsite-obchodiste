@@ -1902,7 +1902,7 @@ add_action( 'admin_notices', function() {
   $disable_admin = $options[ 'disable_admin' ];
   if ( $disable_admin ) : ?>
     <div class="notice notice-error">
-      <p><?php _e( '<strong>Probíhá aktualizace webu</strong>. Všechny změny, které provedete mohou být přepsány.', 'shp-obchodiste' ); ?></p>
+      <p><?php _e( '<strong>Probíhá aktualizace webu</strong>. Všechny změny, které provedete, mohou být přepsány.', 'shp-obchodiste' ); ?></p>
     </div>
   <?php endif;
 } );
