@@ -83,6 +83,7 @@ $(function() {
       complete: function() {
         $contactForm.removeClass('is-loading');
         $contactFormFields.remove();
+        window.dataLayer.push( { 'event': data['data_layer_event'] } );
       },
     });
   };
