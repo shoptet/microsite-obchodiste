@@ -4,9 +4,11 @@ $form_id = '';
 switch ( $post_type ) {
   case 'custom':
   $form_id = 'wholesalerContactForm';
+  $dataLayerEvent = 'poptavkaVelkoobchod';
   break;
   case 'product':
   $form_id = 'productContactForm';
+  $dataLayerEvent = 'poptavkaProdukt';
   break;
 }
 ?>
@@ -46,6 +48,7 @@ switch ( $post_type ) {
 
     <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
     <input type="hidden" name="post_id" value="<?php the_ID(); ?>">
+    <input type="hidden" name="data_layer_event" value="<?php echo $dataLayerEvent; ?>">
 
     <div class="g-recaptcha mb-3" data-sitekey="<?php echo G_RECAPTCHA_SITE_KEY; ?>"></div>
 
