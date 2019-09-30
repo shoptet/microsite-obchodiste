@@ -4,11 +4,11 @@ $form_id = '';
 switch ( $post_type ) {
   case 'custom':
   $form_id = 'wholesalerContactForm';
-  $dataLayerEvent = 'poptavkaProdukt';
+  $dataLayerEvent = 'poptavkaVelkoobchod';
   break;
   case 'product':
   $form_id = 'productContactForm';
-  $dataLayerEvent = 'poptavkaVelkoobchod';
+  $dataLayerEvent = 'poptavkaProdukt';
   break;
 }
 ?>
