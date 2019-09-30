@@ -81,6 +81,7 @@ $(function() {
       error: onError,
       complete: function() {
         $contactForm.removeClass('is-loading');
+        window.dataLayer.push( { 'event': data['data_layer_event'] } );
       },
     });
   };
