@@ -337,96 +337,23 @@ add_action( 'admin_menu', function() {
  */
 add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
+  if (
+    is_admin() ||
+    ! $wp_query->is_main_query() ||
+    (
+      $wp_query->get( 'post_type' ) !== 'custom' &&
+      ! $wp_query->is_tax( 'customtaxonomy' )
+    )
+  ) return;
 
-	$meta_query = $wp_query->get( 'meta_query' );
-
-	if ( $meta_query == '' ) {
-		$meta_query = [];
-	}
-
-	$wp_query->set( 'posts_per_page', 12 );
-
-	/**
-	 * Handle searching
-	 */
-
-	if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
-		$wp_query->set( 's', $_GET[ 's' ] );
-	}
-
-	/**
-	 * Handle ordering queries – first order by is_shoptet value, then by order query
-	 */
-
-	if( ! isset( $_GET[ 'orderby' ] ) ) {
-    $wp_query->set( 'meta_key', 'is_shoptet' );
-    $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => 'DESC' ] );
-  } else {
-    $query = explode( '_', $_GET[ 'orderby' ] );
-		if ( $query == [ 'date', 'desc' ] ) {
-      $wp_query->set( 'meta_key', 'is_shoptet' );
-      $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => $query[1] ] );
-    } else {
-      if ( $query[0] == 'title' ) {
-        // title is not a meta key
-        $wp_query->set( 'meta_key', 'is_shoptet' );
-        $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
-      } else if ( $query[0] == 'favorite' ) {
-        $meta_query[ 'is_shoptet_clause' ] = [
-          'key' => 'is_shoptet',
-          'compare' => 'EXISTS',
-          'type' => 'numeric',
-        ];
-        $meta_query[ 'contact_count_clause' ] = [
-          'key' => 'contact_count',
-          'compare' => 'EXISTS',
-          'type' => 'numeric',
-        ];
-        $wp_query->set( 'orderby', [
-          'is_shoptet_clause' => 'DESC',
-          'contact_count_clause' => $query[1],
-        ] );
-      }
-		}
-	}
-
-	/**
-	 * Handle filtering queries
-	 */
-
-	 // Get array meta query
-	 // e.g. '?query[]=0&query[]=1...'
-	$get_array_meta_query = function($query) {
-		$result = [];
-		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
-			$result[] = [
-				'key' => $query,
-				'value' => $_GET[ $query ],
-				'compare'	=> 'IN',
-			];
-		}
-		return $result;
-	};
-
-	$meta_query[] = $get_array_meta_query( 'region' );
+  $fs = new FacetedSearchWholesalers( $wp_query );
+  $fs->order();
+  $fs->filterBySearchQuery();
+  $fs->filterByMetaQuery( 'region', 'OR' );
+  $fs->filterByMetaQuery( 'services', 'AND', 'LIKE' );
+  //$fs->filterAdultContent();
+  //$fs->filterByTaxQuery();
   
-  // Set service meta query
-  // checkbox fields are stored as serialized arrays
-  if( isset( $_GET[ 'services' ] ) && is_array( $_GET[ 'services' ] ) ) {
-    $result = [ 'relation' => 'OR' ];
-    foreach( $_GET[ 'services' ] as $service ) {
-      $result[] = [
-        'key' => 'services',
-        'value' => $service,
-        'compare' =>  'LIKE',
-      ];
-    }
-    $meta_query[] = $result;
-  }
-
-  $wp_query->set( 'meta_query', $meta_query );
-
   $tax_query = [];
 
   // Exclude adult wholesalers from archive page when no category selected
@@ -565,33 +492,9 @@ add_action('pre_get_posts', function( $wp_query ) {
 
 	$wp_query->set( 'posts_per_page', 12 );
 
-	/**
-	 * Handle searching
-	 */
+  handle_query_search( $wp_query );  
 
-	if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
-		$wp_query->set( 's', $_GET[ 's' ] );
-	}
-
-	/**
-	 * Handle ordering queries
-	 */
-
-  if( isset($_GET[ 'orderby' ]) ) {
-		$query = explode( "_", $_GET[ 'orderby' ] );
-		
-    if ( $query[0] == 'title' ) {
-      $wp_query->set('orderby', 'title');
-			$wp_query->set('order', $query[1]);
-    } else if ( $query != ['date', 'desc'] ) {
-      // skip default ordering by post_date DESC
-      // e.g. '?orderby=date_asc'
-			$wp_query->set('orderby', 'meta_value_num');
-			$wp_query->set('meta_key', $query[0]);
-			$wp_query->set('order', $query[1]);
-    }
-    
-	}
+  handle_query_order_products( $wp_query );  
 
 	/**
 	 * Handle filtering queries - filtered by wholesalers

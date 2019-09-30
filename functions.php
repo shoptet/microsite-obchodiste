@@ -3,6 +3,8 @@
 require __DIR__ . '/vendor/autoload.php';
 
 $includes = [
+	'src/lib/FacetedSearch/FacetedSearch.php',
+	'src/lib/FacetedSearch/FacetedSearchWholesalers.php',
 	'src/lib/setup.php',
 	'src/lib/cpt.php',
 	'src/lib/acf.php',

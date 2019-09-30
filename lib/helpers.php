@@ -429,3 +429,102 @@ function export_wholesalers(): void
 
   fclose( $fp );
 }
+
+/**
+ * Handle ordering queries – first order by is_shoptet value, then by order query
+ */
+function handle_query_order_wholesalers( &$wp_query ) {
+
+  $meta_query = $wp_query->get( 'meta_query' );
+
+	if ( $meta_query == '' ) {
+		$meta_query = [];
+	}
+
+	if( ! isset( $_GET[ 'orderby' ] ) ) {
+    $wp_query->set( 'meta_key', 'is_shoptet' );
+    $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => 'DESC' ] );
+  } else {
+    $query = explode( '_', $_GET[ 'orderby' ] );
+		if ( $query == [ 'date', 'desc' ] ) {
+      $wp_query->set( 'meta_key', 'is_shoptet' );
+      $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'post_date' => $query[1] ] );
+    } else {
+      if ( $query[0] == 'title' ) {
+        // title is not a meta key
+        $wp_query->set( 'meta_key', 'is_shoptet' );
+        $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
+      } else if ( $query[0] == 'favorite' ) {
+        $meta_query[ 'is_shoptet_clause' ] = [
+          'key' => 'is_shoptet',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $meta_query[ 'contact_count_clause' ] = [
+          'key' => 'contact_count',
+          'compare' => 'EXISTS',
+          'type' => 'numeric',
+        ];
+        $wp_query->set( 'orderby', [
+          'is_shoptet_clause' => 'DESC',
+          'contact_count_clause' => $query[1],
+        ] );
+      }
+		}
+  }
+  
+  $wp_query->set( 'meta_query', $meta_query );
+}
+
+function handle_query_order_products( &$wp_query ) {
+  if( ! isset($_GET[ 'orderby' ]) ) return;
+
+  $query = explode( "_", $_GET[ 'orderby' ] );
+  
+  if ( $query[0] == 'title' ) {
+    $wp_query->set('orderby', 'title');
+    $wp_query->set('order', $query[1]);
+  } else if ( $query != ['date', 'desc'] ) {
+    // skip default ordering by post_date DESC
+    // e.g. '?orderby=date_asc'
+    $wp_query->set('orderby', 'meta_value_num');
+    $wp_query->set('meta_key', $query[0]);
+    $wp_query->set('order', $query[1]);
+  }
+}
+
+
+/**
+ * Handle searching
+ */
+function handle_query_search( &$wp_query ) {
+  if( isset( $_GET[ 's' ] ) && ! empty( $_GET[ 's' ] ) ) {
+		$wp_query->set( 's', $_GET[ 's' ] );
+  }
+}
+
+/**
+ * Handle array meta query
+ * e.g. '?query[]=0&query[]=1...'
+ */
+function handle_query_meta( &$wp_query, $key, $relation = 'AND', $compare = '=' ) {
+  $meta_query = $wp_query->get( 'meta_query' );
+
+	if ( $meta_query == '' ) {
+		$meta_query = [];
+  }
+  
+  if( isset( $_GET[ $key ] ) && is_array( $_GET[ $key ] ) ) {
+    $result = [ 'relation' => $relation ];
+    foreach( $_GET[ $key ] as $value ) {
+      $result[] = [
+        'key' => $key,
+        'value' => $value,
+        'compare' => $compare,
+      ];
+    }
+    $meta_query[] = $result;
+  }
+
+  $wp_query->set( 'meta_query', $meta_query );
+}
