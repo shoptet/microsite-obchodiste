@@ -4,6 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 $includes = [
 	'src/lib/setup.php',
+	'src/lib/generator.php',
 	'src/lib/cpt.php',
 	'src/lib/acf.php',
 	'src/lib/filters.php',
