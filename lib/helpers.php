@@ -398,35 +398,38 @@ function export_wholesalers(): void
     'post_type' => 'custom',
     'posts_per_page' => -1,
     'post_status' => 'any',
+    'fields' => 'ids',
     'no_found_rows' => true,
+    'update_post_meta_cache' => false,
     'update_post_term_cache' => false,
   ] );
-  foreach( $wp_query->posts as $post ) {
+  foreach( $wp_query->posts as $post_id ) {
     $row = [];
-    $contact_person_name = get_post_meta( $post->ID, 'contact_full_name', true );
-    $contact_person_email = get_post_meta( $post->ID, 'contact_email', true );
-    $contact_person_tel = get_post_meta( $post->ID, 'contact_tel', true );
-    $is_shoptet = boolval( get_post_meta( $post->ID, 'is_shoptet', true ) );
+    $contact_person_name = get_post_meta( $post_id, 'contact_full_name', true );
+    $contact_person_email = get_post_meta( $post_id, 'contact_email', true );
+    $contact_person_tel = get_post_meta( $post_id, 'contact_tel', true );
+    $is_shoptet = boolval( get_post_meta( $post_id, 'is_shoptet', true ) );
 
     $wp_query_all_products = new WP_Query( [
       'post_type' => 'product',
       'posts_per_page' => -1,
       'post_status' => 'any',
       'fields' => 'ids',
+      'no_found_rows' => true,
       'update_post_meta_cache' => false,
       'update_post_term_cache' => false,
       'meta_query' => [
         [
           'key' => 'related_wholesaler',
-          'value' => $post->ID,
+          'value' => $post_id,
         ],
       ],
     ] );
 
-    $row[] = $post->post_title;
-    $row[] = $post->post_status;
+    $row[] = get_the_title( $post_id );
+    $row[] = get_post_status( $post_id );
     $row[] = $is_shoptet ? 1 : 0;
-    $row[] = $wp_query_all_products->found_posts;
+    $row[] = count( $wp_query_all_products->posts );
     $row[] = $contact_person_name;
     $row[] = $contact_person_email;
     $row[] = $contact_person_tel;
