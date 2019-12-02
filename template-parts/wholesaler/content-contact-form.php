@@ -43,10 +43,11 @@ switch ( $post_type ) {
         <label class="required-asterisk" for="wholesalerContactFormMessage">
           <?php _e( 'Zpráva velkoobchodu', 'shp-obchodiste' ); ?>
         </label>
-        <textarea class="form-control" name="message" rows="9" id="wholesalerContactFormMessage" required></textarea>
+        <textarea class="form-control" name="message" rows="11" id="wholesalerContactFormMessage" required></textarea>
       </div>
 
-      <input type="hidden" name="wholesaler_id" value="<?php the_ID(); ?>">
+      <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
+      <input type="hidden" name="post_id" value="<?php the_ID(); ?>">
 
       <div class="g-recaptcha mb-3" data-sitekey="<?php echo G_RECAPTCHA_SITE_KEY; ?>"></div>
 
@@ -64,8 +65,8 @@ switch ( $post_type ) {
       </button>
 
     </div>
-
-    <p class="text-danger mb-0 d-none" id="wholesalerContactFormError"></p>
+    
+    <p class="text-danger d-none mb-0" id="wholesalerContactFormError"></p>
 
     <p class="text-success text-center form-control-plaintext font-weight-bold d-none" id="wholesalerContactFormSuccess"></p>
 

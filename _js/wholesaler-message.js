@@ -1,6 +1,6 @@
 $(function() {
 
-  var $contactForm = $('#wholesalerContactForm');
+  var $contactForm = $('#wholesalerContactForm, #productContactForm');
   var $contactFormFields = $('#wholesalerContactFormFields');
   var $contactFormError = $('#wholesalerContactFormError');
   var $contactFormSuccess = $('#wholesalerContactFormSuccess');
