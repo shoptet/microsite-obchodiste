@@ -2,8 +2,33 @@ $(function() {
 
   var $archiveForm = $('#archiveForm');
 
+  var termsCache = {};
+
+  var initTermsCache = function () {
+    if ( currentTerm = window.currentTerm ) {
+      termsCache[ currentTerm['id'] ] = currentTerm['slug'];
+    }
+  };
+
+  var updateTermsCache = function (el) {
+    var $el = $(el);
+    var termSlug = $el.data('slug');
+    var termID = $el.data('id');
+    termsCache[termID] = termSlug;
+  }
+
   var initOrderSelect = function () {
     $('#archiveForm select, #archiveFormServices input[type=checkbox]').on('change', function (e) {
+      $archiveForm.submit();
+    });
+  };
+
+  var initCategoryLinkClick = function () {
+    $('#archiveFormCategoryLinks a').on('click', function (e) {
+      e.preventDefault();
+      updateTermsCache(this);
+      var categoryID = $(this).data('id');
+      $archiveForm.find('[name="category[]"]').val(categoryID);
       $archiveForm.submit();
     });
   };
@@ -17,8 +42,10 @@ $(function() {
         var $response = $(response);
 
         $('#archiveList').html($response.find('#archiveList'));
+        $('#archiveFormCategoryLinks').html($response.find('#archiveFormCategoryLinks'));
         $archiveForm.removeClass('is-loading');
         initOrderSelect(); // initialize order select change event
+        initCategoryLinkClick(); // initialize category link click event
         if (moveToTop) $('html, body').animate({scrollTop: $archiveForm.offset().top});
 
         var $ageTest = $response.find('#ageTest');
@@ -55,7 +82,7 @@ $(function() {
       queryString += (i !== 0 ? '&' : '' ) + item.name + '=' + item.value;
     });
     var url = window.archiveUrl[ postType ];
-    url += ( (postTypesWithSingleCategory.includes(postType) && categoryCount === 1) ? window.terms[ postType ][ lastCategoryId ] + '/' : '' ); // Add category slug
+    url += ( (postTypesWithSingleCategory.includes(postType) && categoryCount === 1) ? termsCache[ lastCategoryId ] + '/' : '' ); // Add category slug from cache
     url += ( queryString.length ? '?' + queryString : '' ); // Add query string
     return url;
   };
@@ -76,6 +103,9 @@ $(function() {
   });
 
   $('#archiveForm input[type=checkbox]').on('change', function () {
+    if ( $(this).attr('name') == 'category[]' ) {
+      updateTermsCache(this);
+    }
     $archiveForm.submit();
   });
 
@@ -83,6 +113,10 @@ $(function() {
   window.onpopstate = function () {
     window.location.href = document.location;
   };
+
+  initTermsCache();
+
+  initCategoryLinkClick();
 
   initOrderSelect();
 

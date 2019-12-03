@@ -37,6 +37,5 @@
     "_js/block-ellipsis.js",
     "_js/main.js"
   ],
-  "dependencies": {
-  }
+  "dependencies": {}
 }
