@@ -557,8 +557,9 @@ add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
 	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
 
+  $wp_query->set( 'ep_integrate', true );
+  
 	$meta_query = $wp_query->get( 'meta_query' );
-
 	if ( $meta_query == '' ) {
 		$meta_query = [];
 	}
@@ -597,14 +598,6 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle filtering queries - filtered by wholesalers
 	 */
   
-  // Filtered wholesalers arguments
-  $wp_query_wholesaler_args = [
-    'post_type' => 'custom',
-    'posts_per_page' => -1,
-    'post_status' => 'publish',
-    'fields' => 'ids',
-  ];
-
   // Get array meta query
 	// e.g. '?query[]=0&query[]=1...'
 	$get_array_meta_query = function($query) {
@@ -619,17 +612,29 @@ add_action('pre_get_posts', function( $wp_query ) {
 		return $result;
 	};
 
-  $wp_query_wholesaler_args[ 'meta_query' ] = [];
-  $wp_query_wholesaler_args[ 'meta_query' ][] = $get_array_meta_query( 'region' );
+  if ( $region_meta_array = $get_array_meta_query( 'region' ) ) {
 
-  $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+    // Filtered wholesalers arguments
+    $wp_query_wholesaler_args = [
+      'post_type' => 'custom',
+      'posts_per_page' => -1,
+      'post_status' => 'publish',
+      'fields' => 'ids',
+      'meta_query' => [],
+      'ep_integrate' => true,
+    ];
 
-  // Query for products by filtered wholesalers
-  $meta_query[] = [[
-    'key' => 'related_wholesaler',
-    'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
-    'compare'	=> 'IN',
-  ]];
+    $wp_query_wholesaler_args[ 'meta_query' ][] = $region_meta_array;
+    $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+
+    // Query for products by filtered wholesalers
+    $meta_query[] = [[
+      'key' => 'related_wholesaler',
+      'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
+      'compare'	=> 'IN',
+    ]];
+
+  }
 
   $wp_query->set( 'meta_query', $meta_query );
 
@@ -1906,6 +1911,8 @@ add_action( 'admin_notices', function() {
     </div>
   <?php endif;
 } );
+
+ElasticPressSettings::init();
 
 /**
  * Enable custom part of header
