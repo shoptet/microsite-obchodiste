@@ -8,20 +8,53 @@ class ElasticPressSettings {
   }
 
   static function initActions() {
-
   }
   
   static function initFilters() {
-    add_filter( 'ep_post_mapping', [ get_called_class(), 'useStemmerFilter' ] );
+    add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisDefaultAnalyzer' ] );
+    add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisFilter' ] );
     add_filter( 'ep_formatted_args', [ get_called_class(), 'fixCustumTaxQuery' ], 10, 2 );
+  }
+
+  /**
+	 * Change default analyzer
+	 */
+  static function addAnalysisDefaultAnalyzer( $mapping ) {
+    if ( isset( $mapping['settings']['analysis']['analyzer'] ) ) {
+      $mapping['settings']['analysis']['analyzer'] = [];
+      $mapping['settings']['analysis']['analyzer']['default'] = [
+        'tokenizer' => 'standard',
+        'filter' => [
+          'czech_stop',
+          'czech_stemmer',
+          'lowercase',
+          'czech_stop',
+          'icu_folding',
+          'unique_on_same_position',
+        ],
+      ];
+    }
+    return $mapping;
   }
 
   /**
 	 * Use stemmer analysis filter instead of snowball where Czech is not included
 	 */
-  static function useStemmerFilter( $mapping ) {
-    if ( isset( $mapping['settings']['analysis']['filter']['ewp_snowball']['type'] ) ) {
-      $mapping['settings']['analysis']['filter']['ewp_snowball']['type'] = 'stemmer';
+  static function addAnalysisFilter( $mapping ) {
+    if ( isset( $mapping['settings']['analysis'] ) ) {
+      $mapping['settings']['analysis']['filter'] = [];
+      $mapping['settings']['analysis']['filter']['czech_stemmer'] = [
+        'type' => 'stemmer',
+        'language' => 'czech',
+      ];
+      $mapping['settings']['analysis']['filter']['czech_stop'] = [
+        'type' => 'stop',
+        'stopwords' => [ 'že', '_czech_' ],
+      ];
+      $mapping['settings']['analysis']['filter']['unique_on_same_position'] = [
+        'type' => 'unique',
+        'only_on_same_position' => true,
+      ];
     }
     return $mapping;
   }
@@ -32,25 +65,24 @@ class ElasticPressSettings {
 	 */
   static function fixCustumTaxQuery( $formatted_args, $args ) {
 
-    $taxes = get_taxonomies(
-      array(
-        'public' => true,
-        '_builtin' => false
-      ),
-    'names' );
+    $custom_taxonomies = [
+      'producttaxonomy',
+      'customtaxonomy',
+    ];
 
     // Set related post type if taxonomy is being queried
-    if ( isset( $args['taxonomy'] ) && $args['taxonomy'] == 'producttaxonomy' ) {
+    if ( isset( $args['taxonomy'] ) && in_array( $args['taxonomy'], $custom_taxonomies ) ) {
+      $related_post_type = str_replace( 'taxonomy', '', $args['taxonomy'] );
       $post_filter = $formatted_args['post_filter']['bool']['must'];
       for( $i = 0; $i < count( $post_filter ); $i++ ) {
         if ( isset( $post_filter[$i]['terms']['post_type.raw'] ) ) {
-          $formatted_args['post_filter']['bool']['must'][$i]['terms']['post_type.raw'] = ['product'];
+          $formatted_args['post_filter']['bool']['must'][$i]['terms']['post_type.raw'] = [ $related_post_type ];
         }
       }
     }
 
     // Inlcude taxonomy to query arguments
-    foreach ( $taxes as $taxonomy ) {
+    foreach ( $custom_taxonomies as $taxonomy ) {
       if ( empty( $args[$taxonomy] ) ) continue;
       $new_formated_args = array(
         'bool' => array(

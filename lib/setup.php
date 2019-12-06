@@ -343,13 +343,15 @@ add_action( 'admin_menu', function() {
  */
 add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->is_single() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
 
+  
 	$meta_query = $wp_query->get( 'meta_query' );
-
 	if ( $meta_query == '' ) {
-		$meta_query = [];
-	}
+    $meta_query = [];
+  }
+  
+  $wp_query->set( 'ep_integrate', true );
 
 	$wp_query->set( 'posts_per_page', 12 );
 
@@ -560,8 +562,8 @@ add_action('pre_get_posts', function( $wp_query ) {
  * Handle filtering and ordering product archive
  */
 add_action('pre_get_posts', function( $wp_query ) {
-	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
+  // bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->is_single() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
 
   $wp_query->set( 'ep_integrate', true );
   
@@ -607,7 +609,7 @@ add_action('pre_get_posts', function( $wp_query ) {
   // Get array meta query
 	// e.g. '?query[]=0&query[]=1...'
 	$get_array_meta_query = function($query) {
-		$result = [];
+    $result = [];
 		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
 			$result[] = [
 				'key' => $query,
@@ -640,6 +642,10 @@ add_action('pre_get_posts', function( $wp_query ) {
       'compare'	=> 'IN',
     ]];
 
+  }
+
+  if ( $wholesaler_meta_array = $get_array_meta_query( 'related_wholesaler' ) ) {
+    $meta_query[] = $wholesaler_meta_array;
   }
 
   $wp_query->set( 'meta_query', $meta_query );

@@ -6,6 +6,7 @@ $the_query = new WP_Query( [
   'post_status' => 'publish',
   'post__not_in' => [ $post->ID ], // exclude current post
   'orderby' => 'rand',
+  'ep_integrate' => true,
   'meta_query' => [
     [
       'key' => 'related_wholesaler',

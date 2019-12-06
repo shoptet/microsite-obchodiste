@@ -86,9 +86,9 @@ class RandomDataGenerator {
     return $wholesaler_id;
   }
   
-  static function generate_wholeasers( $bunch ) {
-    $wholesalers_num = $bunch['wholesalers'];
-    $products_per_wholesaler = $bunch['products_per_wholesaler'];
+  static function generate_wholeasers( $wholesalers, $products_per_wholesaler ) {
+    $wholesalers_num = $wholesalers;
+    $products_per_wholesaler = $products_per_wholesaler;
     for( $i = 0; $i < $wholesalers_num; $i++ ) {
       $user_id = self::get_random_user();
       $wholesaler_id = self::get_random_wholesaler( $user_id );
@@ -214,46 +214,9 @@ class RandomDataGenerator {
     }
   }
   
-  static function generate(): void
+  static function generate( $wholesalers, $products_per_wholesaler ): void
   {
-  
-    $config = [
-      // [
-      //   'wholesalers' => 5000,
-      //   'products_per_wholesaler' => 100,
-      // ],
-      // [
-      //   'wholesalers' => 250,
-      //   'products_per_wholesaler' => 800,
-      // ],
-      // [
-      //   'wholesalers' => 50,
-      //   'products_per_wholesaler' => 1500,
-      // ],
-      [
-        'wholesalers' => 5000,
-        'products_per_wholesaler' => 10,
-      ],
-      // [
-      //   'wholesalers' => 3000,
-      //   'products_per_wholesaler' => 0,
-      // ],
-    ];
-  
-    // global $wpdb;
-    // $wpdb->query( 'SET autocommit = 0;' );
-  
-    // $config = [
-    //   [
-    //     'wholesalers' => 1,
-    //     'products_per_wholesaler' => 1000,
-    //   ],
-    // ];
-  
-    foreach( $config as $bunch ) {
-      $wholesalers_by_user_id = self::generate_wholeasers( $bunch );
-    }
+    $wholesalers_by_user_id = self::generate_wholeasers( $wholesalers, $products_per_wholesaler );
   }
 
 }
-

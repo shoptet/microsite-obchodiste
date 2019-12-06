@@ -448,3 +448,45 @@ function count_posts_by_term ( $post_type, $term, $taxonomy ): int
   ] );
   return $query->found_posts;
 }
+
+function update_term_count_include_children( $post_type, $term_id, $taxonomy ) {
+  $query = new WP_Query( [
+    'post_type' => $post_type,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+    'tax_query' => [
+      [
+        'taxonomy' => $taxonomy,
+        'terms' => $term_id,
+        'include_children' => true,
+      ],
+    ],
+  ] );
+  $count = $query->found_posts;
+  update_term_meta( $term_id, 'count_include_children', $count );
+}
+
+function update_all_terms_count_include_children( $post_type, $taxonomy ) {
+  $terms = get_terms( [
+    'taxonomy' => $taxonomy,
+    'hide_empty' => true,
+    'hierarchical_force' => true,
+    'fields' => 'ids',
+  ] );
+  foreach( $terms as $term_id ) {
+    update_term_count_include_children( $post_type, $term_id, $taxonomy );
+  }
+}
+
+function update_post_count( $post_type ) {
+  $post_count = wp_count_posts( $post_type )->publish;
+  update_option( 'post_count_' . $post_type , $post_count );
+}
+
+function update_all_post_count() {
+  update_post_count( 'product' );
+  update_post_count( 'custom' );
+  update_post_count( 'wholesaler_message' );
+}
