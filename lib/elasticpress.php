@@ -11,9 +11,17 @@ class ElasticPressSettings {
   }
   
   static function initFilters() {
+    add_filter( 'ep_index_name', [ get_called_class(), 'setIndexName' ], 10, 3 );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisDefaultAnalyzer' ] );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisFilter' ] );
     add_filter( 'ep_formatted_args', [ get_called_class(), 'fixCustumTaxQuery' ], 10, 2 );
+  }
+
+  /**
+	 * Change index name
+	 */
+  static function setIndexName( $index_name, $blog_id, $indexable ) {
+    return 'obchodiste-' . $indexable->slug;
   }
 
   /**
