@@ -1,9 +1,9 @@
 <?php
 $options = get_fields( 'options' );
 $fake_message_number = ( isset( $options[ 'fake_message_number' ] ) ) ? (int) $options[ 'fake_message_number' ] : 0;
-$custom_post_count = intval( get_option( 'post_count_custom', 0 ) );
-$product_post_count = intval( get_option( 'post_count_product', 0 ) );
-$message_post_count = intval( get_option( 'post_count_wholesaler_message', 0 ) );
+$custom_post_count = CounterCache::getPostTypeCount( 'custom' );
+$product_post_count = CounterCache::getPostTypeCount( 'product' );
+$message_post_count = CounterCache::getPostTypeCount( 'wholesaler_message' );
 ?>
 <div class="row-status">
   <div class="container">

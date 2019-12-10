@@ -1927,6 +1927,8 @@ add_action( 'admin_notices', function() {
 
 ElasticPressSettings::init();
 
+CounterCache::init();
+
 /**
  * Enable custom part of header
  */

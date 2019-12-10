@@ -4,6 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 $includes = [
   'src/lib/elasticpress.php',
+	'src/lib/counter-cache.php',
 	'src/lib/setup.php',
 	'src/lib/random-data-generator.php',
 	'src/lib/cpt.php',
