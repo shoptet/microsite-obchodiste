@@ -1929,6 +1929,8 @@ ElasticPressSettings::init();
 
 CounterCache::init();
 
+SyncCleaner::init();
+
 /**
  * Enable custom part of header
  */
