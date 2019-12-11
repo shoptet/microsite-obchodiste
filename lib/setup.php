@@ -352,6 +352,16 @@ add_action('pre_get_posts', function( $wp_query ) {
   }
   
   $wp_query->set( 'ep_integrate', true );
+  $wp_query->set( 'search_fields', [
+    'post_title',
+    'taxonomies' => [ 'customtaxonomy' ],
+    'meta' => [
+      'project_title',
+      'short_about',
+      'about_company',
+      'about_products',
+    ],
+  ] );
 
 	$wp_query->set( 'posts_per_page', 12 );
 
@@ -564,13 +574,21 @@ add_action('pre_get_posts', function( $wp_query ) {
 add_action('pre_get_posts', function( $wp_query ) {
   // bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
 	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->is_single() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
-
-  $wp_query->set( 'ep_integrate', true );
   
 	$meta_query = $wp_query->get( 'meta_query' );
 	if ( $meta_query == '' ) {
 		$meta_query = [];
-	}
+  }
+
+  $wp_query->set( 'ep_integrate', true );
+  $wp_query->set( 'search_fields', [
+    'post_title',
+    'taxonomies' => [ 'producttaxonomy' ],
+    'meta' => [
+      'short_description',
+      'description',
+    ],
+  ] );
 
 	$wp_query->set( 'posts_per_page', 12 );
 
