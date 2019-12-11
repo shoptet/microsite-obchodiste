@@ -9,11 +9,11 @@ $includes = [
 	'src/lib/setup.php',
 	'src/lib/random-data-generator.php',
 	'src/lib/cpt.php',
-	'src/lib/acf.php',
+	'src/lib/acf/field-group.php',
+	'src/lib/acf/options-page.php',
 	'src/lib/filters.php',
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
-  'src/lib/google_product_categories/google_product_categories.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {
