@@ -390,7 +390,7 @@ add_action('pre_get_posts', function( $wp_query ) {
         // title is not a meta key
         $wp_query->set( 'meta_key', 'is_shoptet' );
         $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
-      } else if ( $query[0] == 'favorite' ) {
+      } else if ( false && $query[0] == 'favorite' ) { // ElasticPress cannot work with clause
         $meta_query[ 'is_shoptet_clause' ] = [
           'key' => 'is_shoptet',
           'compare' => 'EXISTS',

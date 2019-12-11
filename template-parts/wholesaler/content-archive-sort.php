@@ -7,7 +7,7 @@
       <?php
       $order_choices = [
         'date_desc' => __( 'Nejnověji přidáno', 'shp-obchodiste' ),
-        'favorite_desc' => __( 'Nejoblíbenější', 'shp-obchodiste' ),
+        //'favorite_desc' => __( 'Nejoblíbenější', 'shp-obchodiste' ), // ElasticPress cannot work with clause
         'title_asc' => __( 'Dle jména A-Z', 'shp-obchodiste' ),
         'title_desc' => __( 'Dle jména Z-A', 'shp-obchodiste' ),
       ];
