@@ -818,3 +818,15 @@ add_filter( 'wpseo_title', function ( $title ) {
   }
   return $title;
 } );
+
+/**
+ * Post Count API Plugin: Increase leads count of fake message number
+ */
+add_filter( 'post-count-api-items', function ( $items ) {
+  if ( isset( $items['obchodisteLeadsCount'] ) ) {
+    $options = get_fields( 'options' );
+    $fake_message_number = ( isset( $options[ 'fake_message_number' ] ) ) ? intval( $options[ 'fake_message_number' ] ) : 0;
+    $items['obchodisteLeadsCount'] = intval( $items['obchodisteLeadsCount'] ) + $fake_message_number;
+  }
+  return $items;
+} );
