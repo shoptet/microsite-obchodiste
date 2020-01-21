@@ -1930,13 +1930,20 @@ add_action( 'transition_post_status', function( $new_status, $old_status, $post 
   ] );
 
   foreach( $query->posts as $product_id ) {
-    wp_update_post( [
-      'ID' => $product_id,
-      'post_status' => 'trash',
-    ] );
+    as_enqueue_async_action( 'move_post_to_trash_job', [ $product_id ] );
   }
 
 }, 10, 3 );
+
+/**
+ * Move post to trash action used by action scheduler
+ */
+add_action( 'move_post_to_trash_job', function( $post_id ) {
+  wp_update_post( [
+    'ID' => $post_id,
+    'post_status' => 'trash',
+  ] );
+} );
 
 /**
  * Enable custom part of header
