@@ -1908,6 +1908,37 @@ add_action( 'admin_notices', function() {
 } );
 
 /**
+ * Remove related products when a wholesaler is deleted
+ */
+add_action( 'transition_post_status', function( $new_status, $old_status, $post ) {
+
+  if ( 'custom' != $post->post_type || 'trash' != $new_status ) return;
+
+  $query = new WP_Query( [
+    'post_type' => 'product',
+    'posts_per_page' => -1,
+    'post_status' => 'any',
+    'fields' => 'ids',
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+    'meta_query' => [
+      [
+        'key' => 'related_wholesaler',
+        'value' => $post->ID,
+      ],
+    ],
+  ] );
+
+  foreach( $query->posts as $product_id ) {
+    wp_update_post( [
+      'ID' => $product_id,
+      'post_status' => 'trash',
+    ] );
+  }
+
+}, 10, 3 );
+
+/**
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
