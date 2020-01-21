@@ -3,6 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 $includes = [
+	'src/lib/action_scheduler.php',
 	'src/lib/setup.php',
 	'src/lib/cpt.php',
 	'src/lib/acf.php',
