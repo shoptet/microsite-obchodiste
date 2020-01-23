@@ -35,6 +35,7 @@
     "_js/filters.js",
     "_js/search-form.js",
     "_js/block-ellipsis.js",
+    "_js/collapse-anchor.js",
     "_js/main.js"
   ],
   "dependencies": {
