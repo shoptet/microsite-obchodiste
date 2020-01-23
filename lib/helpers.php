@@ -635,3 +635,64 @@ function get_global_id( $id, $type ) {
   $global_id = $prefix . $id;
   return $global_id;
 }
+
+function get_product_description_allowed_html() {
+  $allowed_html = [
+    'address' => [],
+    'abbr' => [],
+    'article' => [],
+    'aside' => [],
+    'b' => [],
+    'blockquote' => [
+      'cite' => true,
+    ],
+    'br' => [],
+    'cite' => [],
+    'code' => [],
+    'dd' => [],
+    'div' => [],
+    'dl' => [],
+    'dt' => [],
+    'em' => [],
+    'footer' => [],
+    'h1' => [],
+    'h2' => [],
+    'h3' => [],
+    'h4' => [],
+    'h5' => [],
+    'h6' => [],
+    'header' => [],
+    'hgroup' => [],
+    'hr' => [],
+    'i' => [],
+    'li' => [],
+    'menu' => [],
+    'nav' => [],
+    'p' => [],
+    'span' => [],
+    'section' => [],
+    'small' => [],
+    'strike' => [],
+    'strong' => [],
+    'sub' => [],
+    'sup' => [],
+    'table' => [],
+    'tbody' => [],
+    'td' => [
+      'colspan' => true,
+      'rowspan' => true,
+      'scope' => true,
+    ],
+    'tfood' => [],
+    'thead' => [],
+    'th' => [
+      'colspan' => true,
+      'rowspan' => true,
+    ],
+    'tr' => [],
+    'u' => [],
+    'ul' => [],
+    'ol' => [],
+  ];
+  return $allowed_html;
+}
