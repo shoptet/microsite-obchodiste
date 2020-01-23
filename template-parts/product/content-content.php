@@ -9,7 +9,7 @@
       <h2 class="h3">
         <?php _e( 'Popis produktu', 'shp-obchodiste' ); ?>
       </h2>
-      <?php echo wp_kses_post( $description ); ?>
+      <?php echo wp_kses( $description, get_product_description_allowed_html() ); ?>
     </div>
     <?php endif; ?>
 
