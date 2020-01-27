@@ -4,13 +4,13 @@ class CounterCache {
 
   static function init() {
     self::scheduleEvents();
-    add_action( 'update_all_terms_count', [ get_called_class(), 'updateAllTermsCount' ] );
+    add_action( 'update_all_taxonomies_count', [ get_called_class(), 'updateAllTaxonomiesCount' ] );
     add_action( 'update_all_post_types_count', [ get_called_class(), 'updateAllPostTypesCount' ] );
   }
 
   static function scheduleEvents() {
-    if ( ! wp_next_scheduled( 'update_all_terms_count' ) ) {
-      wp_schedule_event( time(), 'hourly', 'update_all_terms_count' );
+    if ( ! wp_next_scheduled( 'update_all_taxonomies_count' ) ) {
+      wp_schedule_event( time(), 'hourly', 'update_all_taxonomies_count' );
     }
     if ( ! wp_next_scheduled( 'update_all_post_types_count' ) ) {
       wp_schedule_event( time(), 'hourly', 'update_all_post_types_count' );
@@ -44,7 +44,7 @@ class CounterCache {
     update_term_meta( $term_id, 'count_include_children', $count );
   }
   
-  static function updateAllTermsCount( $post_type, $taxonomy ) {
+  static function updateTaxonomyCount( $post_type, $taxonomy ) {
     $terms = get_terms( [
       'taxonomy' => $taxonomy,
       'hide_empty' => true,
@@ -54,6 +54,10 @@ class CounterCache {
     foreach( $terms as $term_id ) {
       self::updateTermCount( $post_type, $term_id, $taxonomy );
     }
+  }
+
+  static function updateAllTaxonomiesCount() {
+    self::updateTaxonomyCount( 'product', 'producttaxonomy' );
   }
   
   static function updatePostTypeCount( $post_type ) {
