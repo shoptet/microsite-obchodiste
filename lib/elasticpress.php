@@ -37,7 +37,7 @@ class ElasticPressSettings {
           'czech_stemmer',
           'lowercase',
           'czech_stop',
-          'icu_folding',
+          'asciifolding',
           'unique_on_same_position',
         ],
       ];
