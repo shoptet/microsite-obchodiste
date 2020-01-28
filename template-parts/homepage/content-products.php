@@ -5,7 +5,8 @@ $the_query = new WP_Query( [
   'post_type' => 'product',
   'posts_per_page' => 18,
   'post_status' => 'publish',
-  'orderby' => 'rand',
+  'ep_integrate' => true,
+  'orderby'      => 'rand',
   'tax_query' => [
     [
       'taxonomy' => 'producttaxonomy',

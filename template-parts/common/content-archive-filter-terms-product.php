@@ -18,7 +18,7 @@ $render_tree = function ( $parent_term = null ) use ( &$render_tree, &$taxonomy,
       <?php
       $is_current = $current_term && $term->term_id == $current_term->term_id;
       $is_parent = $current_term && term_is_ancestor_of( $term, $current_term, $taxonomy );
-      $posts_in_term = count_posts_by_term( $post_type, $term, $taxonomy );
+      $posts_in_term = CounterCache::getTermCount( $term->term_id );
       ?>
       <li>
         <a

@@ -38,6 +38,5 @@
     "_js/collapse-anchor.js",
     "_js/main.js"
   ],
-  "dependencies": {
-  }
+  "dependencies": {}
 }

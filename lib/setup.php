@@ -343,13 +343,25 @@ add_action( 'admin_menu', function() {
  */
 add_action('pre_get_posts', function( $wp_query ) {
 	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not wholesaler archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->is_single() || ( $wp_query->get( 'post_type' ) !== 'custom' && !$wp_query->is_tax( 'customtaxonomy' ) ) ) return;
 
+  
 	$meta_query = $wp_query->get( 'meta_query' );
-
 	if ( $meta_query == '' ) {
-		$meta_query = [];
-	}
+    $meta_query = [];
+  }
+  
+  $wp_query->set( 'ep_integrate', true );
+  $wp_query->set( 'search_fields', [
+    'post_title',
+    'taxonomies' => [ 'customtaxonomy' ],
+    'meta' => [
+      'project_title',
+      'short_about',
+      'about_company',
+      'about_products',
+    ],
+  ] );
 
 	$wp_query->set( 'posts_per_page', 12 );
 
@@ -378,7 +390,7 @@ add_action('pre_get_posts', function( $wp_query ) {
         // title is not a meta key
         $wp_query->set( 'meta_key', 'is_shoptet' );
         $wp_query->set( 'orderby', [ 'meta_value_num' => 'DESC', 'title' => $query[1] ] );
-      } else if ( $query[0] == 'favorite' ) {
+      } else if ( false && $query[0] == 'favorite' ) { // ElasticPress cannot work with clause
         $meta_query[ 'is_shoptet_clause' ] = [
           'key' => 'is_shoptet',
           'compare' => 'EXISTS',
@@ -560,14 +572,23 @@ add_action('pre_get_posts', function( $wp_query ) {
  * Handle filtering and ordering product archive
  */
 add_action('pre_get_posts', function( $wp_query ) {
-	// bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
-	if ( is_admin() || !$wp_query->is_main_query() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
-
+  // bail early if is in admin, if not main query (allows custom code / plugins to continue working) or if not product archive or taxonomy page
+	if ( is_admin() || !$wp_query->is_main_query() || $wp_query->is_single() || ( $wp_query->get( 'post_type' ) !== 'product' ) && !$wp_query->is_tax( 'producttaxonomy' ) ) return;
+  
 	$meta_query = $wp_query->get( 'meta_query' );
-
 	if ( $meta_query == '' ) {
 		$meta_query = [];
-	}
+  }
+
+  $wp_query->set( 'ep_integrate', true );
+  $wp_query->set( 'search_fields', [
+    'post_title',
+    'taxonomies' => [ 'producttaxonomy' ],
+    'meta' => [
+      'short_description',
+      'description',
+    ],
+  ] );
 
 	$wp_query->set( 'posts_per_page', 12 );
 
@@ -603,18 +624,10 @@ add_action('pre_get_posts', function( $wp_query ) {
 	 * Handle filtering queries - filtered by wholesalers
 	 */
   
-  // Filtered wholesalers arguments
-  $wp_query_wholesaler_args = [
-    'post_type' => 'custom',
-    'posts_per_page' => -1,
-    'post_status' => 'publish',
-    'fields' => 'ids',
-  ];
-
   // Get array meta query
 	// e.g. '?query[]=0&query[]=1...'
 	$get_array_meta_query = function($query) {
-		$result = [];
+    $result = [];
 		if( isset( $_GET[ $query ] ) && is_array( $_GET[ $query ] ) ) {
 			$result[] = [
 				'key' => $query,
@@ -625,17 +638,33 @@ add_action('pre_get_posts', function( $wp_query ) {
 		return $result;
 	};
 
-  $wp_query_wholesaler_args[ 'meta_query' ] = [];
-  $wp_query_wholesaler_args[ 'meta_query' ][] = $get_array_meta_query( 'region' );
+  if ( $region_meta_array = $get_array_meta_query( 'region' ) ) {
 
-  $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+    // Filtered wholesalers arguments
+    $wp_query_wholesaler_args = [
+      'post_type' => 'custom',
+      'posts_per_page' => -1,
+      'post_status' => 'publish',
+      'fields' => 'ids',
+      'meta_query' => [],
+      'ep_integrate' => true,
+    ];
 
-  // Query for products by filtered wholesalers
-  $meta_query[] = [[
-    'key' => 'related_wholesaler',
-    'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
-    'compare'	=> 'IN',
-  ]];
+    $wp_query_wholesaler_args[ 'meta_query' ][] = $region_meta_array;
+    $wp_query_wholesaler = new WP_Query( $wp_query_wholesaler_args );
+
+    // Query for products by filtered wholesalers
+    $meta_query[] = [[
+      'key' => 'related_wholesaler',
+      'value' => ( empty( $wp_query_wholesaler->posts ) ? NULL : $wp_query_wholesaler->posts ), // unexpected behavior if empty array – returning all items instead of empty result
+      'compare'	=> 'IN',
+    ]];
+
+  }
+
+  if ( $wholesaler_meta_array = $get_array_meta_query( 'related_wholesaler' ) ) {
+    $meta_query[] = $wholesaler_meta_array;
+  }
 
   $wp_query->set( 'meta_query', $meta_query );
 
@@ -1950,6 +1979,12 @@ add_action( 'admin_notices', function() {
     </div>
   <?php endif;
 } );
+
+ElasticPressSettings::init();
+
+CounterCache::init();
+
+SyncCleaner::init();
 
 /**
  * Remove related products when a wholesaler is deleted

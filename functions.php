@@ -4,14 +4,17 @@ require __DIR__ . '/vendor/autoload.php';
 
 $includes = [
 	'src/lib/action_scheduler.php',
+  'src/lib/elasticpress.php',
+	'src/lib/counter-cache.php',
+	'src/lib/sync-cleaner.php',
 	'src/lib/setup.php',
 	'src/lib/cpt.php',
-	'src/lib/acf.php',
+	'src/lib/acf/field-group.php',
+	'src/lib/acf/options-page.php',
 	'src/lib/filters.php',
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
   'src/lib/csv_feed.php',
-  'src/lib/google_product_categories/google_product_categories.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {
