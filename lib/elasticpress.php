@@ -21,7 +21,7 @@ class ElasticPressSettings {
 	 * Change index name
 	 */
   static function setIndexName( $index_name, $blog_id, $indexable ) {
-    return 'obchodiste-' . $indexable->slug;
+    return 'obchodiste-cz-' . $indexable->slug;
   }
 
   /**
