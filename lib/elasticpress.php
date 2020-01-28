@@ -92,13 +92,25 @@ class ElasticPressSettings {
     // Inlcude taxonomy to query arguments
     foreach ( $custom_taxonomies as $taxonomy ) {
       if ( empty( $args[$taxonomy] ) ) continue;
+      $term_slug = $args[$taxonomy];
+      $term = get_term_by( 'slug', $term_slug, $taxonomy );
+      $all_terms = [];
+      $child_term_ids = [];
+
+      // include child terms
+      if ( isset( $term->term_id ) ) {
+        $child_term_ids = get_term_children( $term->term_id, $taxonomy );
+        $all_terms = array_map( function ( $term_id ) {
+          return get_term( $term_id )->slug;
+        }, $child_term_ids );
+      }
+
+      array_push( $all_terms, $term_slug );
       $new_formated_args = array(
         'bool' => array(
           'must' => array(
             'terms' => array(
-              'terms.' . $taxonomy . '.slug' => array(
-                $args[$taxonomy]
-              )
+              'terms.' . $taxonomy . '.slug' => $all_terms
             )
           )
         )
