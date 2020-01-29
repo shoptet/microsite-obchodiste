@@ -6,6 +6,7 @@
       <img
         src="<?php echo get_field( "image" )[ "sizes" ][ "medium" ]; ?>"
         alt="<?php echo the_title(); ?>"
+        loading="lazy"
       >
     </a>
     <?php else: ?>

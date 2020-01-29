@@ -31,6 +31,7 @@
                 class="testimonial-thumbnail-image"
                 src="<?php echo $testimonials[ $i ][ 'image' ][ "sizes" ][ "thumbnail" ]; ?>"
                 alt="<?php echo $testimonials[ $i ][ 'name' ]; ?>"
+                loading="lazy"
               >
               <div class="testimonial-thumbnail-body">
                 <p class="font-weight-bold mb-0"><?php echo $testimonials[ $i ][ 'name' ]; ?></p>

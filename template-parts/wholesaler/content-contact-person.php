@@ -10,6 +10,7 @@
   <div
     class="contact-person-image"
     style="background-image: url(<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>)"
+    loading="lazy"
   >
     <img
       src="<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>"

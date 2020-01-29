@@ -9,6 +9,7 @@
     <img
       src="<?php echo $logo_url; ?>"
       alt="<?php echo esc_html( get_the_title() ); ?>"
+      loading="lazy"
       <?php if ( is_singular('custom') ): ?>itemprop="logo"<?php endif; ?>
     >
   </div>

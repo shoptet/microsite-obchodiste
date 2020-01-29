@@ -20,6 +20,7 @@ $logo_url = get_wholesaler_logo_url();
       <img
         src="<?php echo $logo_url; ?>"
         alt="<?php the_title(); ?>"
+        loading="lazy"
       >
       <?php endif; ?>
     </div>
