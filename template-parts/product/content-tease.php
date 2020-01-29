@@ -20,6 +20,7 @@
         <img
           src="<?php echo $image[0]; ?>"
           alt="<?php echo the_title(); ?>"
+          loading="lazy"
         >
       </div>
       <?php else: ?>

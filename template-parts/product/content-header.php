@@ -78,6 +78,7 @@
           class="product-image"
           src="<?php echo $thumbnail[ "sizes" ][ "product-thumb" ]; ?>"
           alt="<?php echo the_title(); ?>"
+          loading="lazy"
         >
       </a>
       <?php endif; ?>
@@ -90,6 +91,7 @@
             <img
               src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
               alt="<?php echo $image[ "alt" ]; ?>"
+              loading="lazy"
             >
           </a>
         </li>

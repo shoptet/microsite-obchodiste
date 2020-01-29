@@ -15,6 +15,7 @@
     <?php endif; ?>
     height="105"
     width="105"
+    loading="lazy"
   >
   <?php endif; ?>
 

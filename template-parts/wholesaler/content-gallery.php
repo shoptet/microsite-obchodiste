@@ -6,6 +6,7 @@
       <img
         src="<?php echo $image[ "sizes" ][ "medium" ]; ?>"
         alt="<?php echo $image[ "alt" ]; ?>"
+        loading="lazy"
       >
     </a>
   </li>

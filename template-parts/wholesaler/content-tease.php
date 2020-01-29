@@ -16,6 +16,7 @@
       <img
         src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
         alt="<?php echo the_title(); ?>"
+        loading="lazy"
       >
       <?php endif; ?>
     </div>

@@ -9,6 +9,7 @@
     <img
       src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
       alt="<?php echo esc_html( get_the_title() ); ?>"
+      loading="lazy"
       <?php if ( is_singular('custom') ): ?>itemprop="logo"<?php endif; ?>
     >
   </div>
