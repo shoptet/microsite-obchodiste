@@ -14,10 +14,11 @@
   <div class="d-flex">
 
     <div class="flex-shrink-0">
-      <?php if ( $thumbnail = get_field( "thumbnail" ) ): ?>
+      <?php if ( has_post_thumbnail() ): ?>
+      <?php $image = wp_get_attachment_image_src( get_post_thumbnail_id(), 'medium' ); ?>
       <div class="product-tease-image d-block">
         <img
-          src="<?php echo $thumbnail[ "sizes" ][ "medium" ]; ?>"
+          src="<?php echo $image[0]; ?>"
           alt="<?php echo the_title(); ?>"
         >
       </div>
