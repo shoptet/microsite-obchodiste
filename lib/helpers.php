@@ -396,8 +396,9 @@ function get_wholesaler_logo_url( $post_id = NULL ) {
   }
 
   $logo_url = '';
-  if ( $logo = get_field( "logo", $post_id ) ) {
-    $logo_url = $logo[ "sizes" ][ "medium" ];
+  if ( has_post_thumbnail( $post_id ) ) {
+    $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'medium' );
+    $logo_url = $image[0];
   } else {
     $placeholder_logo_dir = get_placeholder_logo_dir( 'baseurl' );
     $logo_url = sprintf( '%s/%s.png', $placeholder_logo_dir, $post_id );
