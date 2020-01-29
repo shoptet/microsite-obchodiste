@@ -43,7 +43,9 @@
         <?php endif; ?>
 
         <meta itemprop="url" content="<?php the_permalink(); ?>">
-        <meta itemprop="image" content="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
+        <?php if ( isset( $image[0] ) ): ?>
+          <meta itemprop="image" content="<?php echo $image[0]; ?>">
+        <?php endif; ?>
 
       </div>
 
