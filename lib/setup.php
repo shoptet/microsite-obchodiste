@@ -916,8 +916,9 @@ add_action( 'transition_post_status',  function ( $new_status, $old_status, $pos
 	if ( $old_status === 'draft' && $new_status === 'pending' ) {
     // Set recipients for pending notification email
 
-    // Only new wholesaler, special offer or product post
-    if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
+    // Only new wholesaler
+    //if ( ! in_array( $post_type, [ 'custom', 'special_offer', 'product' ] ) ) return;
+    if ( ! in_array( $post_type, [ 'custom' ] ) ) return;
 
     // Check e-mail recipients
     if ( ! isset( $options[ 'pending_email_recipients' ] ) || ! is_array( $options[ 'pending_email_recipients' ] ) ) return;
@@ -956,7 +957,10 @@ add_action( 'transition_post_status',  function ( $new_status, $old_status, $pos
     case 'custom':
     $email_subject = $options[ $new_status . '_email_subject' ];
     $email_body = $options[ $new_status . '_email_body' ];
-    $to_replace = [ '%wholesaler_name%' => $title ];
+    $to_replace = [
+      '%wholesaler_name%' => $title,
+      '%wholesaler_url%' => get_permalink( $post ),
+    ];
     break;
 
     case 'special_offer':
@@ -975,6 +979,7 @@ add_action( 'transition_post_status',  function ( $new_status, $old_status, $pos
   // Set option variables for related wholesaler  
   if ( $related_wholesaler_id = get_post_meta( $post->ID, 'related_wholesaler', true ) ) {
     $to_replace['%wholesaler_name%'] = get_the_title( $related_wholesaler_id );
+    $to_replace['%wholesaler_url%'] = get_permalink( $related_wholesaler_id );
   }
 
   // Replace e-mail body variables

@@ -1364,7 +1364,7 @@ if( function_exists('acf_add_local_field_group') ):
         'label' => 'Tělo e-mailu s upozorněním o zveřejněném velkoobchodu',
         'name' => 'publish_email_body',
         'type' => 'wysiwyg',
-        'instructions' => 'Je možné využít následující proměnné: %wholesaler_name%',
+        'instructions' => 'Je možné využít následující proměnné: %wholesaler_name%, %wholesaler_url%',
         'required' => 0,
         'conditional_logic' => 0,
         'wrapper' => array(
