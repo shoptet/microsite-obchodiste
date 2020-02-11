@@ -14,8 +14,8 @@ class ElasticPressSettings {
     add_filter( 'ep_index_name', [ get_called_class(), 'setIndexName' ], 10, 3 );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisDefaultAnalyzer' ] );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'addAnalysisFilter' ] );
+    add_filter( 'ep_formatted_args', [ get_called_class(), 'unlimitTrackTotalHits' ] );
     add_filter( 'ep_formatted_args', [ get_called_class(), 'fixCustumTaxQuery' ], 10, 2 );
-    add_filter( 'ep_max_results_window', function() { return -1; } );
   }
 
   /**
@@ -119,6 +119,15 @@ class ElasticPressSettings {
       array_unshift( $formatted_args['post_filter']['bool']['must'], $new_formated_args );
     }
     
+    return $formatted_args;
+  }
+
+  /**
+	 * Unlimit total hits
+   * via: https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html#hits-total-now-object-search-response
+	 */
+  static function unlimitTrackTotalHits( $formatted_args ) {
+    $formatted_args['track_total_hits'] = true;
     return $formatted_args;
   }
 
