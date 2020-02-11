@@ -1991,6 +1991,8 @@ CounterCache::init();
 
 SyncCleaner::init();
 
+Migrations::init();
+
 /**
  * Remove related products when a wholesaler is deleted
  */

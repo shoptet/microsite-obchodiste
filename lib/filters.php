@@ -103,7 +103,7 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
   // Skip empty value
   if ( $value != ''  ) {
     // Add the value which is the image ID to the _thumbnail_id meta data for the current post
-    add_post_meta( $post_id, '_thumbnail_id', $value );
+    set_post_thumbnail( $post_id, $value );
     remove_placeholder_logo( $post_id );
   } else {
     generate_placeholder_logo( $post_id );
@@ -122,7 +122,7 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
   // Skip empty value
   if ( $value != ''  ) {
     // Add the value which is the image ID to the _thumbnail_id meta data for the current post
-    add_post_meta( $post_id, '_thumbnail_id', $value );
+    set_post_thumbnail( $post_id, $value );
   }
   return $value;
 }, 10, 3 );
