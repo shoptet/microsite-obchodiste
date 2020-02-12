@@ -8,6 +8,7 @@ $includes = [
 	'src/lib/counter-cache.php',
 	'src/lib/sync-cleaner.php',
 	'src/lib/Migrations.php',
+	'src/lib/LoginScreen.php',
 	'src/lib/setup.php',
 	'src/lib/cpt.php',
 	'src/lib/acf/field-group.php',

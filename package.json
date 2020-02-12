@@ -38,5 +38,6 @@
     "_js/collapse-anchor.js",
     "_js/main.js"
   ],
+  "loginScreenJS": "_js/login-screen.js",
   "dependencies": {}
 }

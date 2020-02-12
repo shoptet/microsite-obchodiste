@@ -11,7 +11,8 @@ module.exports = function(grunt) {
                     style: 'compressed'
                 },
                 files: {
-                    'dist/css/main.css': '_scss/main.scss'
+                    'dist/css/main.css': '_scss/main.scss',
+                    'dist/css/login-screen.css': '_scss/login-screen.scss'
                 }
             }
         },
@@ -45,7 +46,8 @@ module.exports = function(grunt) {
                     compress: true
                 },
                 files: {
-                    'dist/js/build.js': pkg.jsFiles
+                    'dist/js/build.js': pkg.jsFiles,
+                    'dist/js/login-screen.js': pkg.loginScreenJS
                 }
             }
         }

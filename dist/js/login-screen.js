@@ -1,0 +1,1 @@
+$(function(){var $messages,$form;$messages=$(".message-bottom"),$form=$("#loginform, #registerform, #lostpasswordform"),$($messages.get().reverse()).each(function(){$form.after(this)})});

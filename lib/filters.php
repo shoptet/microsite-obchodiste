@@ -286,68 +286,6 @@ add_filter( 'views_edit-special_offer', 'remove_list_view_for_subscribers', 11);
 add_filter( 'views_edit-product', 'remove_list_view_for_subscribers', 11);
 
 /**
- * Update login header
- */
-add_filter( 'login_message', function( $message ) {
-
-  $custom_logo_id = get_theme_mod( 'custom_logo' );
-  $logo = wp_get_attachment_image_src( $custom_logo_id , 'full' );
-  $custom_logo_url = '';
-  if ( has_custom_logo() ) $custom_logo_url = esc_url( $logo[ 0 ] );
-
-  $new_message = '
-    <a href="' . get_home_url() . '">
-      <img
-        src="' . $custom_logo_url . '"
-        style="
-          display: block;
-          margin: 0 auto 15px auto;
-          max-width: 230px;
-        "
-      >
-    </a>
-  ';
-  $new_message .= '<p style="margin-bottom:40px;text-align:center;">';
-  $new_message .= __( 'Nabídněte svoje produkty maloobchodním prodejcům. Služba Obchodistě je zcela zdarma, bez jakýchkoliv přímých nebo nepřímých poplatků.', 'shp-obchodiste' );
-  $new_message .= '</p>';
-
-  // Add title to login pages
-  if ( ! isset( $_REQUEST[ 'action' ] ) )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Přihlášení', 'shp-obchodiste' ) . '</h1>';
-  else if ( $_REQUEST[ 'action' ] === 'register' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Registrace', 'shp-obchodiste' ) . '</h1>';
-  else if ( $_REQUEST[ 'action' ] === 'lostpassword' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Zapomenuté heslo', 'shp-obchodiste' ) . '</h1>';
-
-  // Add messages to login pages
-  if ( ! isset( $_REQUEST[ 'action' ] ) )
-    $new_message .= '
-      <p class="message">
-        ' . sprintf(
-          __( 'Nemáte-li vytvořený účet, nejprve se <a href="%s">registrujte</a>', 'shp-obchodiste' ),
-          wp_registration_url()
-        ) . '
-      </p>
-    ';
-  else if ( $_REQUEST[ 'action' ] === 'register' )
-    $new_message .= '
-      <p class="message">
-        ' . __( 'Zvolte si uživatelské jméno a vložte svůj e-mail', 'shp-obchodiste' ) . '
-      </p>
-      <p class="message">
-        ' . sprintf(
-          __( 'Pokud již máte vytvořený účet, <a href="%s">přihlašte se</a>', 'shp-obchodiste' ),
-          wp_login_url()
-        ) . '
-      </p>
-    ';
-  else
-    $new_message .= $message;
-
-  return $new_message;
-});
-
-/**
  * Redirect subscriber to admin wholesaler list after login
  */
 add_filter( 'login_redirect', function( $redirect_to, $request, $user ) {

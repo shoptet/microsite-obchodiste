@@ -253,16 +253,6 @@ add_action( 'post_submitbox_misc_actions', function() {
   echo '</div>';
 });
 
-/**
- * Hide WP logo on login page
- */
-add_action( 'login_enqueue_scripts', function() {
-  echo '
-  <style type="text/css">
-		#login h1:first-child { display: none; }
-  </style>
-  ';
-} );
 
 /**
  * Remove update nag in admin
@@ -1992,6 +1982,8 @@ CounterCache::init();
 SyncCleaner::init();
 
 Migrations::init();
+
+LoginScreen::init();
 
 /**
  * Remove related products when a wholesaler is deleted
