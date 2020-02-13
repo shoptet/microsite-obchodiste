@@ -29,6 +29,12 @@ if( function_exists('acf_add_options_page') ) {
 	]);
 
 	acf_add_options_sub_page([
+		'page_title' 	=> __( 'Nastavení stránky přihlášení', 'shp-obchodiste' ),
+		'menu_title' 	=> __( 'Přihlášení', 'shp-obchodiste' ),
+		'parent_slug' => 'theme-settings',
+	]);
+
+	acf_add_options_sub_page([
 		'page_title' 	=> __( 'Import produktů', 'shp-obchodiste' ),
 		'menu_title' 	=> __( 'Import', 'shp-obchodiste' ),
 		'parent_slug' => 'edit.php?post_type=product',

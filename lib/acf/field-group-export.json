@@ -1346,7 +1346,7 @@
                 "label": "Tělo e-mailu s upozorněním o zveřejněném velkoobchodu",
                 "name": "publish_email_body",
                 "type": "wysiwyg",
-                "instructions": "Je možné využít následující proměnné: %wholesaler_name%",
+                "instructions": "Je možné využít následující proměnné: %wholesaler_name%, %wholesaler_url%",
                 "required": 0,
                 "conditional_logic": 0,
                 "wrapper": {
@@ -1367,6 +1367,107 @@
                     "param": "options_page",
                     "operator": "==",
                     "value": "acf-options-mailing"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "seamless",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": true,
+        "description": ""
+    },
+    {
+        "key": "group_5e451ef871db5",
+        "title": "Nastavení stránky přihlášení",
+        "fields": [
+            {
+                "key": "field_5e451f1681722",
+                "label": "Výhody",
+                "name": "login-screen-benefits",
+                "type": "repeater",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "collapsed": "",
+                "min": 0,
+                "max": 0,
+                "layout": "block",
+                "button_label": "",
+                "sub_fields": [
+                    {
+                        "key": "field_5e451f6781723",
+                        "label": "Font Awesome class",
+                        "name": "icon-class",
+                        "type": "text",
+                        "instructions": "Dle https:\/\/fontawesome.com\/icons?d=gallery",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "placeholder": "",
+                        "prepend": "",
+                        "append": "",
+                        "maxlength": ""
+                    },
+                    {
+                        "key": "field_5e451f9181724",
+                        "label": "Název",
+                        "name": "title",
+                        "type": "text",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "placeholder": "",
+                        "prepend": "",
+                        "append": "",
+                        "maxlength": ""
+                    },
+                    {
+                        "key": "field_5e451f9981725",
+                        "label": "Text",
+                        "name": "text",
+                        "type": "wysiwyg",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "tabs": "all",
+                        "toolbar": "basic",
+                        "media_upload": 0,
+                        "delay": 0
+                    }
+                ]
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "options_page",
+                    "operator": "==",
+                    "value": "acf-options-prihlaseni"
                 }
             ]
         ],

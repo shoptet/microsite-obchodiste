@@ -1399,6 +1399,108 @@ if( function_exists('acf_add_local_field_group') ):
   ));
 
   acf_add_local_field_group(array(
+    'key' => 'group_5e451ef871db5',
+    'title' => 'Nastavení stránky přihlášení',
+    'fields' => array(
+      array(
+        'key' => 'field_5e451f1681722',
+        'label' => 'Výhody',
+        'name' => 'login-screen-benefits',
+        'type' => 'repeater',
+        'instructions' => '',
+        'required' => 0,
+        'conditional_logic' => 0,
+        'wrapper' => array(
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ),
+        'collapsed' => '',
+        'min' => 0,
+        'max' => 0,
+        'layout' => 'block',
+        'button_label' => '',
+        'sub_fields' => array(
+          array(
+            'key' => 'field_5e451f6781723',
+            'label' => 'Font Awesome class',
+            'name' => 'icon-class',
+            'type' => 'text',
+            'instructions' => 'Dle https://fontawesome.com/icons?d=gallery',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+              'width' => '',
+              'class' => '',
+              'id' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+          ),
+          array(
+            'key' => 'field_5e451f9181724',
+            'label' => 'Název',
+            'name' => 'title',
+            'type' => 'text',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+              'width' => '',
+              'class' => '',
+              'id' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+          ),
+          array(
+            'key' => 'field_5e451f9981725',
+            'label' => 'Text',
+            'name' => 'text',
+            'type' => 'wysiwyg',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+              'width' => '',
+              'class' => '',
+              'id' => '',
+            ),
+            'default_value' => '',
+            'tabs' => 'all',
+            'toolbar' => 'basic',
+            'media_upload' => 0,
+            'delay' => 0,
+          ),
+        ),
+      ),
+    ),
+    'location' => array(
+      array(
+        array(
+          'param' => 'options_page',
+          'operator' => '==',
+          'value' => 'acf-options-prihlaseni',
+        ),
+      ),
+    ),
+    'menu_order' => 0,
+    'position' => 'normal',
+    'style' => 'seamless',
+    'label_placement' => 'top',
+    'instruction_placement' => 'label',
+    'hide_on_screen' => '',
+    'active' => true,
+    'description' => '',
+  ));
+  
+  acf_add_local_field_group(array(
     'key' => 'group_5b76a52eb5c0a',
     'title' => 'Obecné nastavení',
     'fields' => array(

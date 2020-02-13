@@ -202,51 +202,30 @@ class LoginScreen {
   static function renderRegisterFooter () {
     $action = self::getAction();
     if ( ! in_array( $action, [ 'register', 'register-success' ] ) ) return;
-    echo '
+
+    $options = get_fields( 'options' );
+    if ( $login_screen_benefits = $options['login-screen-benefits'] ): ?>
       <div class="login-footer" id="loginfooter">
         <div style="max-width:800px;margin: 0 auto; padding: 0 20px">
           <div class="row pt-5">
-            <div class="col-sm-6 mb-5">
-              ' . self::getFooterBlock(
-                'far fa-grin-hearts',
-                __( 'Zdarma', 'shp-obchodiste' ),
-                __( 'Obchodiště je zcela zdarma. Bez poplatků. Bez uložených karet. Bez starostí.', 'shp-obchodiste' )
-              ) . '
-            </div>
-            <div class="col-sm-6 mb-5">
-              ' . self::getFooterBlock(
-                'fas fa-shopping-cart',
-                __( 'Oslovte 17000 e-shopů', 'shp-obchodiste' ),
-                __( '<strong>17000 e-shopů</strong> netrpělivě vyhlíží nabídku Vašich produktů. Oslovte je hned.', 'shp-obchodiste' )
-              ) . '
-            </div>
-            <div class="col-sm-6 mb-5">
-              ' . self::getFooterBlock(
-                'fas fa-bullhorn',
-                __( 'Vaše značka bude vidět', 'shp-obchodiste' ),
-                __( 'Nejen Vaše produkty, ale i značka bude na najvětším B2B tržišti v ČR vidět.', 'shp-obchodiste' )
-              ) . '
-            </div>
-            <div class="col-sm-6 mb-5">
-              ' . self::getFooterBlock(
-                'fas fa-cloud-upload-alt',
-                __( 'Hromadná import', 'shp-obchodiste' ),
-                __( 'Vaše produkty na Obchodiště jednoduše importujete pomocí XML nebo csv souboru.', 'shp-obchodiste' )
-              ) . '
-            </div>
+            <?php foreach( $login_screen_benefits as $benefit ): ?>
+              <div class="col-sm-6 mb-5">
+                <?php echo self::getFooterBlock( $benefit['icon-class'], $benefit['title'], $benefit['text'] ); ?>
+              </div>
+            <?php endforeach; ?>
           </div>
 
           <div class="text-center pt-4 pb-4">
             <div class="footer-backtoblog pb-4" id="backtoblog">
-              <a class="d-inline-block" href="' . esc_url( home_url( '/' ) ) . '">
-                ' . sprintf( _x( '&larr; Back to %s', 'site' ), get_bloginfo( 'title', 'display' ) ) . '
+              <a class="d-inline-block" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+                <?php printf( _x( '&larr; Back to %s', 'site' ), get_bloginfo( 'title', 'display' ) ); ?>
               </a>
             </div>
           </p>
 
         </div>
       </div>
-    ';
+    <?php endif;
   }
 
   static function handleRegisterRedirectURL () {
