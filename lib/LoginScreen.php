@@ -192,8 +192,8 @@ class LoginScreen {
           <i class="' . $icon_class . '" style="font-size:40px;"></i>
         </div>
         <div>
-          <h2 class="mt-0 mb-1" style="font-size:21px">' . $title . '</h2>
-          <div style="font-size:14px;">' . $text . '</div>
+          <h2 class="mt-0 mb-1" style="font-size:21px">' . do_shortcode( $title ) . '</h2>
+          <div style="font-size:14px;">' . do_shortcode( $text ) . '</div>
         </div>
       </div>
     ';

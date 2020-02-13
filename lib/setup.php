@@ -1985,6 +1985,8 @@ Migrations::init();
 
 LoginScreen::init();
 
+ShoptetStats::init();
+
 /**
  * Remove related products when a wholesaler is deleted
  */
