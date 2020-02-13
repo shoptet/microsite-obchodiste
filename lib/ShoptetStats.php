@@ -34,8 +34,8 @@ class ShoptetStats {
     $response = json_decode($json, true);
 
     // Persist exchange rates
-    if ( ! is_array( $$response ) ) {
-      $$response = [];
+    if ( ! is_array( $response ) ) {
+      $response = [];
     }
     update_option( 'shoptet_stats', $shoptet_stats );
   }
