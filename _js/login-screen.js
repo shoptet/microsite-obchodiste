@@ -7,12 +7,15 @@ $(function() {
       $form.after(this);
     })
   };
-    
-  var registerFormLayout = function () {
-    
+
+  var setFooterElHeight = function () {
+    var mapEl = document.getElementById('loginfooter');
+    mapEl.style.minHeight = ( window.innerHeight - mapEl.offsetTop ) + 'px';
   };
 
   moveMessages();
-  registerFormLayout();
+
+  $(window).resize(setFooterElHeight);
+  setFooterElHeight();
 
 });

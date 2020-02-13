@@ -6,6 +6,7 @@
 @import "../../scaffolding/vendor/bs/scss/grid";
 
 #login {
+  padding-bottom: 4rem;
 
   @include media-breakpoint-only(xs) {
     width: 320px !important;
@@ -44,4 +45,8 @@
   &, * {
     box-sizing: border-box;
   }
+}
+
+.login-footer {
+  background-color: #fff;
 }

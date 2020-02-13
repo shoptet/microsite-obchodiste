@@ -10,12 +10,15 @@ class LoginScreen {
     add_action( 'register_form', [ get_called_class(), 'renderRegisterForm' ] );
     add_filter( 'registration_errors', [ get_called_class(), 'handleRegisterFormErrors' ] );
     add_action( 'login_form_register', [ get_called_class(), 'handleRegisterForm' ] );
+    add_action( 'login_footer', [ get_called_class(), 'renderRegisterFooter' ] );
     add_filter( 'registration_redirect', [ get_called_class(), 'handleRegisterRedirectURL' ] );
   }
 
   static function enqueueScriptsAndStyles () {
 
     wp_enqueue_script( 'jQuery', 'https://code.jquery.com/jquery-3.4.1.slim.min.js' );
+
+    wp_enqueue_script( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js' );
 
     $fileName = '/src/dist/js/login-screen.js';
     $fileUrl = get_template_directory_uri() . $fileName;
@@ -26,6 +29,7 @@ class LoginScreen {
     $fileUrl = get_template_directory_uri() . $fileName;
     $filePath = get_template_directory() . $fileName;
     wp_enqueue_style( 'login-screen', $fileUrl, [], filemtime($filePath), 'all' );
+
   }
 
   static function getLogoHTML () {
@@ -93,7 +97,7 @@ class LoginScreen {
 
     echo '
       <style>
-        #backtoblog{ display:none; }
+        #backtoblog:not(.footer-backtoblog){ display:none; }
         #login { width: 420px; }
         #login form p { display: none; }
         #login .clear { display:none; }
@@ -166,19 +170,83 @@ class LoginScreen {
       break;
       case 'register-success':
         echo '
-          <div class="row align-items-center no-gutters mt-2 pt-1">
-            <div class="col-2 pr-sm-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path style="fill:#A7C957" d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"/></svg>
+          <div class="d-flex align-items-center mt-2 pt-1">
+            <div class="pr-3 pr-sm-4">
+              <i class="fas fa-check-circle" style="color:#A7C957;font-size:40px;"></i>
             </div>
-            <div class="col-10 pl-3">
+            <div>
               <h2 class="mt-0 mb-1" style="font-size:21px">' . __( 'Registrace hotova', 'shp-obchodiste' ) . '</h2>
-              <div style="font-size:14px;">' . __( 'Zkontrolujte svou e-mailovou schránku.<br>Poslali jsme Vám přihlašovací údaje.', 'shp-obchodiste' ) . '<div>
+              <div style="font-size:14px;">' . __( 'Zkontrolujte svou e-mailovou schránku.<br>Poslali jsme Vám přihlašovací údaje.', 'shp-obchodiste' ) . '</div>
             </div>
           </div>
         ';
       break;
     }
     
+  }
+
+  static function getFooterBlock ( $icon_class, $title, $text ) {
+    return '
+      <div class="d-flex align-items-center" style="color:#3583B3">
+        <div class="pr-3 pr-sm-4">
+          <i class="' . $icon_class . '" style="font-size:40px;"></i>
+        </div>
+        <div>
+          <h2 class="mt-0 mb-1" style="font-size:21px">' . $title . '</h2>
+          <div style="font-size:14px;">' . $text . '</div>
+        </div>
+      </div>
+    ';
+  }
+
+  static function renderRegisterFooter () {
+    $action = self::getAction();
+    if ( ! in_array( $action, [ 'register', 'register-success' ] ) ) return;
+    echo '
+      <div class="login-footer" id="loginfooter">
+        <div style="max-width:800px;margin: 0 auto; padding: 0 20px">
+          <div class="row pt-5">
+            <div class="col-sm-6 mb-5">
+              ' . self::getFooterBlock(
+                'far fa-grin-hearts',
+                __( 'Zdarma', 'shp-obchodiste' ),
+                __( 'Obchodiště je zcela zdarma. Bez poplatků. Bez uložených karet. Bez starostí.', 'shp-obchodiste' )
+              ) . '
+            </div>
+            <div class="col-sm-6 mb-5">
+              ' . self::getFooterBlock(
+                'fas fa-shopping-cart',
+                __( 'Oslovte 17000 e-shopů', 'shp-obchodiste' ),
+                __( '<strong>17000 e-shopů</strong> netrpělivě vyhlíží nabídku Vašich produktů. Oslovte je hned.', 'shp-obchodiste' )
+              ) . '
+            </div>
+            <div class="col-sm-6 mb-5">
+              ' . self::getFooterBlock(
+                'fas fa-bullhorn',
+                __( 'Vaše značka bude vidět', 'shp-obchodiste' ),
+                __( 'Nejen Vaše produkty, ale i značka bude na najvětším B2B tržišti v ČR vidět.', 'shp-obchodiste' )
+              ) . '
+            </div>
+            <div class="col-sm-6 mb-5">
+              ' . self::getFooterBlock(
+                'fas fa-cloud-upload-alt',
+                __( 'Hromadná import', 'shp-obchodiste' ),
+                __( 'Vaše produkty na Obchodiště jednoduše importujete pomocí XML nebo csv souboru.', 'shp-obchodiste' )
+              ) . '
+            </div>
+          </div>
+
+          <div class="text-center pt-4 pb-4">
+            <div class="footer-backtoblog pb-4" id="backtoblog">
+              <a class="d-inline-block" href="' . esc_url( home_url( '/' ) ) . '">
+                ' . sprintf( _x( '&larr; Back to %s', 'site' ), get_bloginfo( 'title', 'display' ) ) . '
+              </a>
+            </div>
+          </p>
+
+        </div>
+      </div>
+    ';
   }
 
   static function handleRegisterRedirectURL () {
