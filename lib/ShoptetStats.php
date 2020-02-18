@@ -33,11 +33,11 @@ class ShoptetStats {
     // Decode JSON response
     $response = json_decode($json, true);
 
-    // Persist exchange rates
+    // Persist
     if ( ! is_array( $response ) ) {
       $response = [];
     }
-    update_option( 'shoptet_stats', $shoptet_stats );
+    update_option( 'shoptet_stats', $response );
   }
 
   static function statsShortcode( $atts ) {
