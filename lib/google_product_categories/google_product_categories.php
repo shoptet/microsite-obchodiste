@@ -1,22 +1,5 @@
 <?php
 
-function stop_the_insanity () {
-	global $wpdb, $wp_object_cache;
-
-	$wpdb->queries = [];
-
-	if ( is_object( $wp_object_cache ) ) {
-		$wp_object_cache->group_ops      = [];
-		$wp_object_cache->stats          = [];
-		$wp_object_cache->memcache_debug = [];
-		$wp_object_cache->cache          = [];
-
-		if ( method_exists( $wp_object_cache, '__remoteset' ) ) {
-			$wp_object_cache->__remoteset();
-		}
-	}
-}
-
 function find_inserted_term_by_name ( $term_name, $inserted_terms ) {
   foreach( $inserted_terms as $inserted_term ) {
     if ( $term_name == $inserted_term->name ) return $inserted_term;
@@ -55,7 +38,7 @@ function create_google_terms ( $taxonomy, $level = 0 ) {
       [ 'parent' => array_key_exists( 'parent_id', $term ) ? $term['parent_id'] : 0 ]
     );
     if ( is_wp_error( $inserted_term ) ) {
-      echo $inserted_term . PHP_EOL;
+      echo $inserted_term->get_error_message() . PHP_EOL;
       continue;
     }
     $inserted_terms[] = get_term( $inserted_term['term_id'], $taxonomy );
@@ -252,4 +235,15 @@ function migrate_google_product_categories () {
   migrate_terms( 'product', 'producttaxonomy' );
   stop_the_insanity();
   remove_old_terms( 'producttaxonomy' );
+}
+
+function create_all_google_terms_for_customtaxonomy () {
+  echo 'Migrating customtaxonomy...' . PHP_EOL;
+  rename_old_terms( 'customtaxonomy' );
+  stop_the_insanity();
+  create_google_terms( 'customtaxonomy' );
+  stop_the_insanity();
+  migrate_terms( 'custom', 'customtaxonomy' );
+  stop_the_insanity();
+  remove_old_terms( 'customtaxonomy' );
 }
