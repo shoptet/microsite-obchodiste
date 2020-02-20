@@ -57,6 +57,7 @@ class CounterCache {
   }
 
   static function updateAllTaxonomiesCount() {
+    self::updateTaxonomyCount( 'custom', 'customtaxonomy' );
     self::updateTaxonomyCount( 'product', 'producttaxonomy' );
   }
   

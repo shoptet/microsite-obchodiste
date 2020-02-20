@@ -19,14 +19,9 @@ $post_type = get_post_type_in_archive_or_taxonomy();
     <div class="mt-3 mt-md-0">
 
       <?php
-      if ( 'product' == $post_type ) {
-        get_template_part( 'src/template-parts/common/content', 'archive-filter-terms-product' );
-      } else {
-        get_template_part( 'src/template-parts/common/content', 'archive-filter-terms' );
-      }
+      get_template_part( 'src/template-parts/common/content', 'archive-filter-terms' );
+      get_template_part( 'src/template-parts/common/content', 'archive-filter-region' );
       ?>
-
-      <?php get_template_part( 'src/template-parts/common/content', 'archive-filter-region' ); ?>
       
       <a
         class="small"

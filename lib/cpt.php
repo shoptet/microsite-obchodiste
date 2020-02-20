@@ -58,7 +58,7 @@ function get_cpt_wholesaler_taxonomy_args(): array
     'label' => __( 'Kategorie', 'shp-obchodiste' ),
     'labels' => $labels,
     'public' => true,
-    'hierarchical' => false,
+    'hierarchical' => true,
     'label' => 'Kategorie',
     'show_ui' => true,
     'show_in_menu' => true,

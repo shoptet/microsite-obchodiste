@@ -3,7 +3,7 @@
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
 add_filter( 'get_terms_args', function( $args, $taxonomies ) {
-  if ( in_array( 'producttaxonomy', $taxonomies ) ) {
+  if ( in_array( 'producttaxonomy', $taxonomies ) || in_array( 'customtaxonomy', $taxonomies ) ) {
     $args['hierarchical'] = false;
   }
   // Force rewrite default filter
@@ -206,9 +206,18 @@ add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $va
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
   if ( is_singular( 'custom' ) ) {
-    array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
+    // Add only homepage and current page
+    $crumbs_copy = [];
+    for ( $i = 0, $len = count($crumbs); $i < $len; $i++ ) {
+      if ( $i == 0 || $i == ($len-1) ) {
+        $crumbs_copy[] = $crumbs[$i];
+      }
+    }
+    $crumbs = $crumbs_copy;
+    // Add main category in the middle
     $term_crumb = [ 'term' => get_field( 'category' ) ];
-    array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
+    array_splice( $crumbs, 1, 0, [ $term_crumb ] );
+
   } else if ( is_singular( 'product' ) ) {
     array_splice( $crumbs, 1, 1 ); // Remove product archive link from breadcrumbs
     if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
