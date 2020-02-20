@@ -7,6 +7,8 @@ $includes = [
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
 	'src/lib/sync-cleaner.php',
+	'src/lib/term-syncer.php',
+	'src/lib/google_product_categories/google_product_categories.php',
 	'src/lib/Migrations.php',
 	'src/lib/ShoptetStats.php',
 	'src/lib/LoginScreen.php',
