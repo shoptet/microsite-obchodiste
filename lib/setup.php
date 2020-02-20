@@ -415,10 +415,12 @@ add_action('pre_get_posts', function( $wp_query ) {
 			];
 		}
 		return $result;
-	};
-
-	$meta_query[] = $get_array_meta_query( 'region' );
+  };
   
+  if ( $region_meta_query = $get_array_meta_query( 'region' ) ) {
+    $meta_query[] = $region_meta_query;
+  }
+
   // Set service meta query
   // checkbox fields are stored as serialized arrays
   if( isset( $_GET[ 'services' ] ) && is_array( $_GET[ 'services' ] ) ) {
@@ -839,24 +841,6 @@ add_action( 'save_post', function( $post_id, $post, $update ) {
 	if ( 'custom' !== get_post_type( $post_id ) || $update ) return;
 	update_post_meta( $post_id, 'contact_count', 0 );
 }, 10, 3 );
-
-/**
- * Update wholesaler categories
- * TODO: check this filter priority
- */
-add_action( 'acf/save_post', function( $post_id ) {
-	// Not the correct post type, bail out
-  if ( 'custom' !== get_post_type( $post_id ) ) return;
-  $post_categories = [];
-  $post_categories[] = get_field( 'category', $post_id )->term_id;
-  if ( get_field( 'minor_category_1', $post_id ) ) {
-    $post_categories[] = get_field( 'minor_category_1', $post_id )->term_id;
-  }
-  if ( get_field( 'minor_category_2', $post_id ) ) {
-    $post_categories[] = get_field( 'minor_category_2', $post_id )->term_id;
-  }
-  wp_set_post_terms( $post_id, $post_categories, 'customtaxonomy' );
-} );
 
 /**
  * Wholesaler address geocoding
@@ -1748,6 +1732,8 @@ add_action( 'acf/save_post', function() {
 
   $_POST['acf'] = []; // Do not save any data
 
+  as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
+
   // Add query param to url for admin notice
   wp_redirect( add_query_arg( [
     'products_imported' => $products_imported,
@@ -1986,6 +1972,8 @@ Migrations::init();
 LoginScreen::init();
 
 ShoptetStats::init();
+
+TermSyncer::init();
 
 /**
  * Remove related products when a wholesaler is deleted

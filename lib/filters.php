@@ -395,7 +395,7 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! is_admin() ) return $value;
   $screen = get_current_screen();
-  if ( 'product_page_product-import' !== $screen->base ) return $value;
+  if ( ! isset( $screen->base ) || 'product_page_product-import' !== $screen->base ) return $value;
   if ( ! user_can( $current_user, 'subscriber' ) ) return NULL;
   if ( $related_wholesaler = get_user_wholesaler( $current_user ) )
     return $related_wholesaler->ID;
