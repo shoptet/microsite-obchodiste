@@ -420,6 +420,20 @@ function handle_product_category_acf_field ( $title, $term, $field, $post_id ) {
 };
 
 /**
+ * Show only parent categories in wholesaler taxonomy ACF field
+ */
+add_filter( 'acf/fields/taxonomy/query', function ( $args, $field ) {
+  if (
+    in_array( $field['name'], [ 'category', 'minor_category_1', 'minor_category_2' ] ) &&
+    'customtaxonomy' == $args['taxonomy']
+  ) {
+    $args['parent'] = 0;
+  }
+  return $args;
+}, 10, 2 );
+
+
+/**
  * Set related wholesaler to product
  */
 add_filter( 'acf/update_value/name=related_wholesaler', function( $value ) {
