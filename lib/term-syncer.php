@@ -111,10 +111,10 @@ class TermSyncer {
     // Remove old term relationships and set new ones
     wp_set_object_terms( $post_id, $term_ids, 'customtaxonomy' );
 
-    $term_slugs = array_map( function ( $term_id ) {
-      return get_term($term_id)->slug;
-    }, $term_ids );
-    error_log(sprintf( 'Wholesaler (%d) has new terms: ', $post_id ) . implode( ', ', $term_slugs ) );
+    // $term_slugs = array_map( function ( $term_id ) {
+    //   return get_term($term_id)->slug;
+    // }, $term_ids );
+    // error_log(sprintf( 'Wholesaler (%d) has new terms: ', $post_id ) . implode( ', ', $term_slugs ) );
   }
 
   static function syncAllWholesalersTerms () {
@@ -125,7 +125,7 @@ class TermSyncer {
       'fields' => 'ids',
     ] );
     for ( $i = 0, $len = count( $query->posts ); $i < $len; $i++ ) {
-      self::sync( $query->posts[$i] );
+      self::syncWholesalerTerms( $query->posts[$i] );
     }
   }
 

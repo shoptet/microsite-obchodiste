@@ -113,6 +113,9 @@ function migrate_terms ( $post_type, $taxonomy ) {
   ] );
   
   $i = 0;
+  $posts_with_cat = 0;
+  $posts_with_mc1 = 0;
+  $posts_with_mc2 = 0;
   foreach( $wp_query->posts as $post ) {
     $terms_to_replace = [];
     $old_cat = get_post_meta( $post->ID, 'category', true );
@@ -127,25 +130,29 @@ function migrate_terms ( $post_type, $taxonomy ) {
     }
 
     // Set new main category
-    if ( $old_cat ) {
+    if ( $old_cat && ! empty( $migration[ $old_cat ] ) ) {
       $new_cat = $migration[ $old_cat ];
+      $posts_with_cat++;
     } else {
       echo 'Skipped post ' . $post->ID . PHP_EOL;
       continue;
     }
 
     // Set new first minor category
-    if ( $old_mc1 && $migration[ $old_mc1 ] != $new_cat ) {
+    if ( $old_mc1 && ! empty( $migration[ $old_mc1 ] ) && $migration[ $old_mc1 ] != $new_cat ) {
       $new_mc1 = $migration[ $old_mc1 ];
-    } elseif ( $old_mc2 && $migration[ $old_mc2 ] != $new_cat ) {
+      $posts_with_mc1++;
+    } elseif ( $old_mc2 && ! empty( $migration[ $old_mc2 ] ) && $migration[ $old_mc2 ] != $new_cat ) {
       $new_mc1 = $migration[ $old_mc2 ];
+      $posts_with_mc1++;
     } else {
       $new_mc1 = NULL;
     }
 
     // Set new second minor category
-    if ( $old_mc2 && $new_mc1 && $migration[ $old_mc2 ] != $new_mc1 ) {
+    if ( $old_mc2 && $new_mc1 && ! empty( $migration[ $old_mc2 ] ) && $migration[ $old_mc2 ] != $new_mc1 ) {
       $new_mc2 = $migration[ $old_mc2 ];
+      $posts_with_mc2++;
     } else {
       $new_mc2 = NULL;
     }
@@ -166,7 +173,9 @@ function migrate_terms ( $post_type, $taxonomy ) {
     //echo 'Migrated post ' . $post->ID . ' ( "' . $old_cat . '", "' . $old_mc1 . '", "' . $old_mc2 . '" ) -> ( "' . $new_cat . '", "' . $new_mc1 . '", "' . $new_mc2 . '" ) ' . PHP_EOL;
   }
 
-  //echo 'Successfully migrated '. $i . ' posts' . PHP_EOL;
+  echo 'Successfully migrated '. $posts_with_cat . ' posts with main category' . PHP_EOL;
+  echo 'Successfully migrated '. $posts_with_mc1 . ' posts with minor category 1' . PHP_EOL;
+  echo 'Successfully migrated '. $posts_with_mc2 . ' posts with minor category 2' . PHP_EOL;
   wp_update_term_count_now( $terms_to_recount, $taxonomy );
 }
 
