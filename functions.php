@@ -20,7 +20,8 @@ $includes = [
 	'src/lib/filters.php',
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
-  'src/lib/csv_feed.php',
+	'src/lib/csv_feed.php',
+	'src/lib/shoptet_categories_map/ShoptetCategoriesMap.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {
