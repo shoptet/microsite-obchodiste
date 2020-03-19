@@ -94,21 +94,26 @@ class Importer {
   }
 
   static function syncProductImage ( $post_sync_id ) {
-    $post_product_id = get_post_meta( $post_sync_id, 'product', true );
     
-    // $attemps = intval( get_post_meta( $post_sync_id, 'attemps', true ) );
-    // if ( $attemps >= 3 ) {
-    //   // Set error status to sync item and product
-    //   wp_update_post( [
-    //     'ID' => $post_sync_id,
-    //     'post_status' => 'error',
-    //   ] );
-    //   update_post_meta( $post_product_id, 'sync_state', 'error' );
-    //   return;
-    // } else {
-    //   update_post_meta( $post_sync_id, 'attemps', $attemps + 1 );
-    //   self::enqueueProductImageSync( $post_sync_id );
-    // }
+    $post_status = get_post_status( $post_sync_id );
+    if ( 'done' == $post_status ) {
+      return;
+    }
+    
+    $post_product_id = get_post_meta( $post_sync_id, 'product', true );
+    $attemps = intval( get_post_meta( $post_sync_id, 'attemps', true ) );
+    if ( $attemps >= 2 ) {
+      // Set error status to sync item and product
+      wp_update_post( [
+        'ID' => $post_sync_id,
+        'post_status' => 'error',
+      ] );
+      update_post_meta( $post_product_id, 'sync_state', 'error' );
+      return;
+    }
+      
+    update_post_meta( $post_sync_id, 'attemps', $attemps + 1 );
+    self::enqueueProductImageSync( $post_sync_id );
 
     $url = get_post_meta( $post_sync_id, 'url', true );
     $is_thumbnail = boolval( intval( get_post_meta( $post_sync_id, 'is_thumbnail', true ) ) );
