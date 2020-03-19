@@ -9,10 +9,96 @@ class AdminProductList {
   private static $isBulkEditRendered = false;
 
   static function init () {
+    add_action( 'admin_notices', [ get_called_class(), 'renderNotices' ] );
+    add_action( 'manage_posts_custom_column', [ get_called_class(), 'manageColumnContent' ], 10, 2 );
     add_action( 'load-edit.php', [ get_called_class(), 'acfFormHead' ] );
     add_action( 'load-edit.php', [ get_called_class(), 'handleBulkEdit' ] );
     add_action( 'bulk_edit_custom_box', [ get_called_class(), 'renderBulkEdit' ], 10, 2 );
+
+    add_filter( 'manage_edit-product_columns', [ get_called_class(), 'manageColumns' ] );
     add_filter( 'acf/load_field/key=' . self::PRODUCT_CATEGORY_ACF_KEY, [ get_called_class(), 'loadBulkEditCategoryField' ] );
+  }
+
+  static function renderNotices () {
+    if ( !self::isAdminProductList() ) return;
+
+    global $current_user;
+    wp_get_current_user();
+
+    if ( user_can( $current_user, 'subscriber' ) ) {
+      if ( $related_wholesaler = get_user_wholesaler( $current_user ) ) {
+        $related_wholesaler_id = $related_wholesaler->ID;
+      } else {
+        return;
+      }
+    } else {
+      $related_wholesaler_id = NULL;
+    }
+
+    $pending_products_count = Importer::getProductsCount( $related_wholesaler_id, 'pending' );
+
+    if ( $pending_products_count > 0 ) : ?>
+      <div class="notice notice-warning">
+        <p>
+          <?php
+          printf(
+            __( 'Počet produktů čekajících na import: <strong>%d</strong>', 'shp-obchodiste' ),
+            $pending_products_count
+          );
+          ?>
+        </p>
+      </div>
+    <?php endif;
+  }
+
+  static function manageColumns ( $columns ) {
+    global $current_user;
+    wp_get_current_user();
+
+    $custom_columns = [];
+    if ( !user_can( $current_user, 'subscriber' ) ) {
+      $custom_columns['related_wholesaler'] = __( 'Velkoobchod', 'shp-obchodiste' );
+    }
+    $custom_columns['sync_state'] = __( 'Stav synchronizace', 'shp-obchodiste' );
+    return (
+      array_slice( $columns, 0, 3, true ) +
+      $custom_columns +
+      array_slice( $columns, 3, 4, true )
+    );
+  }
+
+  static function manageColumnContent ( $column, $post_id ) {
+    switch ( $column ) {
+      case 'related_wholesaler':
+        if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
+          echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
+          echo esc_html( get_the_title( $related_wholesaler ) );
+          echo '</a>';
+        } else {
+          echo '<em>' . __( 'Bez velkoobchodu', 'shp-obchodiste' ) . '</em>';
+        }
+      break;
+      case 'sync_state':
+        $all_product_images_count = Importer::getProductImagesCount( $post_id );
+        if ( $all_product_images_count == 0 ) {
+          echo '–';
+          break;
+        }
+        $pending_product_images_count = Importer::getProductImagesCount( $post_id, 'pending' );
+        $pending_product_images_count += Importer::getProductImagesCount( $post_id, 'running' );
+        if ( $pending_product_images_count == 0 ) {
+          echo '<strong>' . __( 'Synchronizace obrázků dokončena', 'shp-obchodiste' ) . '</strong>';
+        } else {
+          echo '<strong style="color:#ffb900"><em>' . __( 'Čeká na stažení obrázků...', 'shp-obchodiste' )  . '</em></strong>';
+          echo '<br><small>' . sprintf( __( 'Zbývá: <strong>%d</strong>', 'shp-obchodiste' ), $pending_product_images_count ) . '</small>';
+        }
+        $success = intval( get_post_meta( $post_id, 'sync_success', true ) );
+        echo '<br><small>' . sprintf( __( 'Dokončeno: <strong>%d</strong>', 'shp-obchodiste' ), $success ) . '</small>';
+        if ( $errors = intval( get_post_meta( $post_id, 'sync_errors', true ) ) ) {
+          echo '<br><small style="color:#ff0000" title="' . __( 'Počet obrázků, které se nepodařilo stáhnout', 'shp-obchodiste' ) . '">' . sprintf( __( 'Počet chyb: <strong>%d</strong>', 'shp-obchodiste' ), $errors ) . '</small>';
+        }
+      break;
+    }
   }
 
   static function isAdminProductList () {

@@ -12,6 +12,7 @@ $includes = [
 	'src/lib/Migrations.php',
 	'src/lib/AdminProductList.php',
 	'src/lib/Importer.php',
+	'src/lib/AdminProductList.php',
 	'src/lib/ShoptetStats.php',
 	'src/lib/LoginScreen.php',
 	'src/lib/setup.php',

@@ -10,7 +10,6 @@ add_action( 'init', function() {
   register_post_type( 'product', get_cpt_product_args() );
   register_taxonomy( 'producttaxonomy', 'product', get_cpt_product_taxonomy_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
-  register_post_type( 'sync', get_cpt_sync_args() );
 } );
 
 /**
@@ -35,36 +34,6 @@ add_action( 'init', function() {
 	if ( user_can( $current_user, 'subscriber' ) ) {
     remove_action( 'admin_init', [ $GLOBALS['wpseo_meta_columns'], 'setup_hooks' ] ); // Remove Yoast page analysis columns from post lists
   }
-} );
-
-/**
- * Add new post status for sync post
- */
-add_action( 'init', function() {
-  register_post_status( 'waiting', [
-    'label' => __( 'Čeká na zpracování', 'shp-obchodiste' ),
-    'public' => true,
-		'show_in_admin_all_list' => true,
-		'show_in_admin_status_list' => false,
-		'post_type' => [ 'sync' ],
-		'label_count' => _n_noop( 'Čeká na zpracování <span class="count">(%s)</span>', 'Čeká na zpracování <span class="count">(%s)</span>' ),
-  ] );
-  register_post_status( 'done', [
-    'label' => __( 'Zpracováno', 'shp-obchodiste' ),
-    'public' => false,
-		'show_in_admin_all_list' => false,
-		'show_in_admin_status_list' => true,
-		'post_type' => [ 'sync' ],
-		'label_count' => _n_noop( 'Zpracováno <span class="count">(%s)</span>', 'Zpracováno <span class="count">(%s)</span>' ),
-  ] );
-  register_post_status( 'error', [
-    'label' => __( 'Chyba', 'shp-obchodiste' ),
-    'public' => false,
-		'show_in_admin_all_list' => false,
-		'show_in_admin_status_list' => true,
-		'post_type' => [ 'sync' ],
-		'label_count' => _n_noop( 'Chyba <span class="count">(%s)</span>', 'Chyba <span class="count">(%s)</span>' ),
-	] );
 } );
 
 /**
@@ -1211,27 +1180,45 @@ add_action( 'admin_notices', function() {
  */
 add_action( 'admin_notices', function() {
   global $pagenow, $post;
-  
   if ( 'post.php' !== $pagenow || 'product' !== $post->post_type ) return;
-  $sync_state = get_post_meta( $post->ID, 'sync_state', true );
-  if ( 'waiting' === $sync_state ) :
-    $query = new WP_Query( [
-      'post_type' => 'sync',
-      'post_status' => 'waiting',
-      'meta_query' => [ [
-        'key' => 'product',
-        'value' => $post->ID,
-      ] ],
-    ] );
-  ?>
-    <div class="notice notice-warning">
-      <p><?php printf( __( 'Čeká na stažení obrázků (%d)...', 'shp-obchodiste' ), $query->found_posts ); ?></p>
-    </div>
-  <?php elseif ( 'error' === $sync_state ) : ?>
-    <div class="notice notice-error">
-      <p><?php _e( 'Chyba při stahování obrázků', 'shp-obchodiste' ); ?></p>
-    </div>
-  <?php endif;
+
+  $all_product_images_count = Shoptet\Importer::getProductImagesCount( $post->ID );
+  if ( $all_product_images_count == 0 ) {
+    return;
+  }
+  
+  $pending_product_images_count = Shoptet\Importer::getProductImagesCount( $post->ID, 'pending' );
+  $pending_product_images_count += Shoptet\Importer::getProductImagesCount( $post->ID, 'running' );
+
+  $errors = intval( get_post_meta( $post->ID, 'sync_errors', true ) );
+
+  if ( $pending_product_images_count > 0 ) {
+    $notice_class = 'warning';
+  } else if ( $errors ) {
+    $notice_class = 'error';
+  } else {
+    $notice_class = 'success';
+  }
+  
+  if ( $pending_product_images_count == 0 ) {
+    $text = '<strong>' . __( 'Synchronizace obrázků dokončena', 'shp-obchodiste' ) . '</strong>';
+  } else {
+    $text = '<strong>' . __( 'Čeká na stažení obrázků...', 'shp-obchodiste' ) . '</strong>';
+    $text .= '<br><small>' . sprintf( __( 'Počet obrázků, které zbývá stáhnout: <strong>%d</strong>', 'shp-obchodiste' ), $pending_product_images_count ) . '</small>';
+  }
+
+  // Render notice
+  echo '<div class="notice notice-' . $notice_class . '">';
+  echo '<p>';
+  echo $text;
+  $success = intval( get_post_meta( $post->ID, 'sync_success', true ) );
+  echo '<br><small>' . sprintf( __( 'Počet úspěšně stažených obrázků: <strong>%d</strong>', 'shp-obchodiste' ), $success ) . '</small>';
+  if ( $errors ) {
+    echo '<br><small style="color:#ff0000">' . sprintf( __( 'Počet obrázků, které se nepodařilo stáhnout: <strong>%d</strong>', 'shp-obchodiste' ), $errors ) . '</small>';
+  }
+  echo '</p>';
+  echo '</div>';
+  
 } );
 
 /**
@@ -1488,15 +1475,6 @@ add_action( 'admin_init', function () {
  */
 add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
 	switch ( $column ) {
-    // Add related wholesaler to product
-    case 'related_wholesaler':
-    if ( $related_wholesaler = get_field( 'related_wholesaler', $post_id ) ) {
-      echo '<a href="' . get_permalink( $related_wholesaler ) . '">';
-      echo esc_html( get_the_title( $related_wholesaler ) );
-      echo '</a>';
-    } else
-      echo '<em>' . __( 'Bez velkoobchodu', 'shp-obchodiste' ) . '</em>';
-    break;
     // Add message source type to message
     case 'related_post_type':
     if ( get_field( 'wholesaler', $post_id ) )
@@ -1515,26 +1493,6 @@ add_action( 'manage_posts_custom_column', function ( $column, $post_id ) {
     echo '<a href="' . get_permalink( $related_post_id ) . '">';
     echo get_the_title( $related_post_id );
     echo '</a>';
-    break;
-    case 'sync_state':
-    $sync_state = get_field( 'sync_state', $post_id );
-    if ( $sync_state === 'waiting' ) {
-      $query = new WP_Query( [
-        'post_type' => 'sync',
-        'post_status' => 'waiting',
-        'meta_query' => [ [
-          'key' => 'product',
-          'value' => $post_id,
-        ] ],
-      ] );
-      echo '<strong style="color:#ffb900"><em>' . sprintf( __( 'Čeká na stažení obrázků (%d)...', 'shp-obchodiste' ), $query->found_posts )  . '</em></strong>';
-    }
-    elseif ( $sync_state === 'error' )
-      echo '<strong style="color:#a00">' . __( 'Chyba při stahování obrázků', 'shp-obchodiste' ) . '</strong>';
-    elseif ( $sync_state === 'done' )
-      echo '<strong style="color:#006505">✔ ' . __( 'Obrázky staženy', 'shp-obchodiste' ) . '</strong>';
-    else
-      echo '–';
     break;
 	}
 }, 10, 2 );
@@ -1863,8 +1821,6 @@ LoginScreen::init();
 ShoptetStats::init();
 
 TermSyncer::init();
-
-Shoptet\Importer::init();
 
 /**
  * Remove related products when a wholesaler is deleted

@@ -611,23 +611,6 @@ add_filter( 'wpseo_metabox_prio', function () {
 } );
 
 /**
- * Add related wholesaler column to post list in admin
- */
-add_filter( 'manage_edit-product_columns', function ( $columns ) {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  $custom_columns = [];
-  if ( ! user_can( $current_user, 'subscriber' ) ) {
-    $custom_columns['related_wholesaler'] = __( 'Velkoobchod', 'shp-obchodiste' );
-  }
-  $custom_columns['sync_state'] = __( 'Stav synchronizace', 'shp-obchodiste' );
-	return
-		array_slice( $columns, 0, 3, true ) +
-		$custom_columns +
-		array_slice( $columns, 3, 4, true );
-} );
-
-/**
  * Add related post and its type to message post list in admin
  */
 add_filter( 'manage_edit-wholesaler_message_columns', function ( $columns ) {
@@ -707,24 +690,6 @@ add_filter( 'mce_buttons', function ( $buttons ) {
   $filtered_buttons = array_diff( $buttons, $buttons_to_remove );
   return $filtered_buttons;
 } );
-
-/**
- * Add post status to admin list
- */
-add_filter( 'display_post_states', function ( $states, $post ) {
-  switch ( $post->post_status ) {
-    case 'waiting':
-    $states[] = __( 'Čeká na zpracování...', 'shp-obchodiste' );
-    break;
-    case 'done':
-    $states[] = __( 'Hotovo', 'shp-obchodiste' );
-    break;
-    case 'error':
-    $states[] = __( 'Chyba', 'shp-obchodiste' );
-    break;
-  }
-  return $states;
-}, 10, 2 );
 
 /**
  * Add cron schedule interval options

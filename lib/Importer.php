@@ -6,15 +6,69 @@ class Importer {
 
   static function init () {
     add_action( 'importer/insert_product', [ get_called_class(), 'insertProduct' ], 10, 4 );
-    add_action( 'importer/sync_product_image', [ get_called_class(), 'syncProductImage' ] );
+    add_action( 'importer/upload_product_image', [ get_called_class(), 'uploadProductImage' ], 10, 4 );
   }
 
   static function enqueueProduct ( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) {
-    as_enqueue_async_action( 'importer/insert_product', [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ] );
+    as_enqueue_async_action(
+      'importer/insert_product',
+      [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ],
+      'importer_insert_product_' . $related_wholesaler_id
+    );
   }
 
-  static function enqueueProductImageSync ( $post_sync_id ) {
-    as_enqueue_async_action( 'importer/sync_product_image', [ $post_sync_id ] );
+  static function enqueueProductImageUpload ( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
+    as_enqueue_async_action(
+      'importer/upload_product_image',
+      [ $post_product_id, $image_url, $is_thumbnail, $attemps ],
+      'importer_upload_product_image_' . $post_product_id
+    );
+  }
+
+  static function getProductsCount ( $related_wholesaler_id = NULL, $status = NULL ) {
+    $args = [
+      'hook' => 'importer/insert_product',
+      'per_page' => -1,
+    ];
+    if ( $related_wholesaler_id ) {
+      $args['group'] = 'importer_insert_product_' . $related_wholesaler_id;
+    }
+    switch ( $status ) {
+      case 'pending';
+        $args['status'] = \ActionScheduler_Store::STATUS_PENDING;
+      break;
+      case 'running';
+        $args['status'] = \ActionScheduler_Store::STATUS_RUNNING;
+      break;
+      case 'complete';
+        $args['status'] = \ActionScheduler_Store::STATUS_COMPLETE;
+      break;
+    }
+    $actions = as_get_scheduled_actions( $args, 'ids' );
+    return count( $actions );
+  }
+
+  static function getProductImagesCount ( $post_product_id = NULL, $status = NULL ) {
+    $args = [
+      'per_page' => -1,
+      'hook' => 'importer/upload_product_image',
+    ];
+    if ( $post_product_id ) {
+      $args['group'] = 'importer_upload_product_image_' . $post_product_id;
+    }
+    switch ( $status ) {
+      case 'pending';
+        $args['status'] = \ActionScheduler_Store::STATUS_PENDING;
+      break;
+      case 'running';
+        $args['status'] = \ActionScheduler_Store::STATUS_RUNNING;
+      break;
+      case 'complete';
+        $args['status'] = \ActionScheduler_Store::STATUS_COMPLETE;
+      break;
+    }
+    $actions = as_get_scheduled_actions( $args, 'ids' );
+    return count( $actions );
   }
 
   static function insertProduct ( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id = false ) {
@@ -52,27 +106,11 @@ class Importer {
     }
 
     $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];
-    $product_sync_state = false;
     foreach ( $image_items as $image_key ) {
       if ( empty( $product_arr[$image_key] ) ) continue;
-      $postarr = [
-        'post_type' => 'sync',
-        'post_title' => $title . ' – ' . __( 'Obrázek produktu', 'shp-obchodiste' ),
-        'post_status' => 'waiting',
-        'meta_input' => [
-          'product' => $post_product_id,
-          'url' => $product_arr[$image_key],
-          'is_thumbnail' => ( $image_key === 'image' ),
-          'attemps' => 0,
-        ],
-      ];
-      $product_sync_state = 'waiting';
-      $post_sync_id = wp_insert_post( $postarr );
-      self::enqueueProductImageSync( $post_sync_id );
-    }
-
-    if ( $product_sync_state ) {
-      update_post_meta( $post_product_id, 'sync_state', $product_sync_state );
+      $image_url = $product_arr[$image_key];
+      $is_thumbnail = ( 'image' == $image_key );
+      self::enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, 1 );
     }
 
     // Set to pending status
@@ -93,61 +131,33 @@ class Importer {
     error_log(sprintf('Product (%s) inserted', $post_product_id));
   }
 
-  static function syncProductImage ( $post_sync_id ) {
+  static function uploadProductImage ( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
     
-    $post_status = get_post_status( $post_sync_id );
-    if ( 'done' == $post_status ) {
-      return;
-    }
-    
-    $post_product_id = get_post_meta( $post_sync_id, 'product', true );
-    $attemps = intval( get_post_meta( $post_sync_id, 'attemps', true ) );
-    if ( $attemps >= 2 ) {
-      // Set error status to sync item and product
-      wp_update_post( [
-        'ID' => $post_sync_id,
-        'post_status' => 'error',
-      ] );
-      update_post_meta( $post_product_id, 'sync_state', 'error' );
-      return;
-    }
-      
-    update_post_meta( $post_sync_id, 'attemps', $attemps + 1 );
-    self::enqueueProductImageSync( $post_sync_id );
+    $image_id = insert_image_from_url( $image_url, $post_product_id );
 
-    $url = get_post_meta( $post_sync_id, 'url', true );
-    $is_thumbnail = boolval( intval( get_post_meta( $post_sync_id, 'is_thumbnail', true ) ) );
-    $image_id = insert_image_from_url( $url, $post_product_id );
-    if ( ! $image_id ) return;
-    if ( $is_thumbnail ) {
-      // Set thumbnail
-      update_field( 'thumbnail', $image_id, $post_product_id );
+    if ( $image_id ) {
+      if ( $is_thumbnail ) {
+        update_field( 'thumbnail', $image_id, $post_product_id );
+      } else {
+        // Add image to gallery
+        $gallery = get_post_meta( $post_product_id, 'gallery', true );
+        if ( empty( $gallery ) ) $gallery = [];
+        $gallery[] = $image_id;
+        update_field( 'gallery', $gallery, $post_product_id );
+      }
+      $success = intval( get_post_meta( $post_product_id, 'sync_success', true ) );
+      update_post_meta( $post_product_id, 'sync_success', $success + 1 );
+      error_log(sprintf('Image (%s) uploaded', $post_product_id));
     } else {
-      // Add image to gallery
-      $gallery = get_post_meta( $post_product_id, 'gallery', true );
-      if ( empty( $gallery ) ) $gallery = [];
-      $gallery[] = $image_id;
-      update_field( 'gallery', $gallery, $post_product_id );
-    }
-    wp_update_post( [
-      'ID' => $post_sync_id,
-      'post_status' => 'done',
-    ] );
-
-    // Check related product sync is done
-    $query = new \WP_Query( [
-      'post_type' => 'sync',
-      'post_status' => 'waiting',
-      'meta_query' => [ [
-        'key' => 'product',
-        'value' => $post_product_id,
-      ] ],
-    ] );
-    if ( ! $query->found_posts ) {
-      update_post_meta( $post_product_id, 'sync_state', 'done' );
+      if ( $attemps < 2 ) {
+        self::enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, $attemps + 1 );
+      } else {
+        $errors = intval( get_post_meta( $post_product_id, 'sync_errors', true ) );
+        update_post_meta( $post_product_id, 'sync_errors', $errors + 1 );
+      }
+      error_log(sprintf('Image (%s) failed', $post_product_id));
     }
 
-    error_log(sprintf('Image (%s) synced', $post_product_id));
   }
 
   static function getProductCategoryID ( $product_arr ) {
@@ -175,3 +185,5 @@ class Importer {
   }
 
 }
+
+Importer::init();
