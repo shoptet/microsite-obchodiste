@@ -11,6 +11,7 @@ $includes = [
 	'src/lib/google_product_categories/google_product_categories.php',
 	'src/lib/Migrations.php',
 	'src/lib/AdminProductList.php',
+	'src/lib/Importer.php',
 	'src/lib/ShoptetStats.php',
 	'src/lib/LoginScreen.php',
 	'src/lib/setup.php',

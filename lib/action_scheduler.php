@@ -1,6 +1,6 @@
 <?php
 
-add_filter( 'action_scheduler_queue_runner_time_limit', function( $time_limit ) {
+add_filter( 'action_scheduler_queue_runner_time_limit', function() {
   return 120;
 } );
 

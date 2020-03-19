@@ -22,8 +22,9 @@ class TermSyncer {
         as_enqueue_async_action( 'sync_wholesaler_terms', [ $post_id ] );
       break;
       case 'product':
-        $related_wholesaler_id = get_post_meta( $post_id, 'related_wholesaler', true );
-        as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
+        if ( $related_wholesaler_id = get_post_meta( $post_id, 'related_wholesaler', true ) ) {
+          as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
+        }
       break;
     }
   }
