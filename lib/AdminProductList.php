@@ -9,7 +9,8 @@ class AdminProductList {
   private static $isBulkEditRendered = false;
 
   static function init () {
-    add_action( 'admin_notices', [ get_called_class(), 'renderNotices' ] );
+    add_action( 'admin_notices', [ get_called_class(), 'renderPendingProductsNotices' ] );
+    add_action( 'admin_notices', [ get_called_class(), 'renderPendingProductImagesNotices' ] );
     add_action( 'manage_posts_custom_column', [ get_called_class(), 'manageColumnContent' ], 10, 2 );
     add_action( 'load-edit.php', [ get_called_class(), 'acfFormHead' ] );
     add_action( 'load-edit.php', [ get_called_class(), 'handleBulkEdit' ] );
@@ -19,7 +20,7 @@ class AdminProductList {
     add_filter( 'acf/load_field/key=' . self::PRODUCT_CATEGORY_ACF_KEY, [ get_called_class(), 'loadBulkEditCategoryField' ] );
   }
 
-  static function renderNotices () {
+  static function renderPendingProductsNotices () {
     if ( !self::isAdminProductList() ) return;
 
     global $current_user;
@@ -36,14 +37,42 @@ class AdminProductList {
     }
 
     $pending_products_count = Importer::getProductsCount( $related_wholesaler_id, 'pending' );
+    $pending_products_count += Importer::getProductsCount( $related_wholesaler_id, 'running' );
 
     if ( $pending_products_count > 0 ) : ?>
       <div class="notice notice-warning">
         <p>
           <?php
           printf(
-            __( 'Počet produktů čekajících na import: <strong>%d</strong>', 'shp-obchodiste' ),
+            __( '<strong>%d produktů</strong> ve frontě čeká na vytvoření&hellip;', 'shp-obchodiste' ),
             $pending_products_count
+          );
+          ?>
+        </p>
+      </div>
+    <?php endif;
+  }
+
+  static function renderPendingProductImagesNotices () {
+    if ( !self::isAdminProductList() ) return;
+
+    global $current_user;
+    wp_get_current_user();
+
+    if ( user_can( $current_user, 'subscriber' ) ) {
+      return;
+    }
+
+    $pending_product_images_count = Importer::getProductImagesCount( NULL, 'pending' );
+    $pending_product_images_count += Importer::getProductImagesCount( NULL, 'running' );
+
+    if ( $pending_product_images_count > 0 ) : ?>
+      <div class="notice notice-warning">
+        <p>
+          <?php
+          printf(
+            __( '<strong>%d obrázků</strong> ve frontě čeká na stažení&hellip;', 'shp-obchodiste' ),
+            $pending_product_images_count
           );
           ?>
         </p>
