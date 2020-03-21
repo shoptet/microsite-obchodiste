@@ -73,12 +73,11 @@
     <div class="product-gallery">
       <?php if ( has_post_thumbnail() && $thumbnail_id = get_post_thumbnail_id() ): ?>
       <?php $image_large = wp_get_attachment_image_src( $thumbnail_id, 'large' ); ?>
-      <?php $image_preview = wp_get_attachment_image_src( $thumbnail_id, 'product-thumb' ); ?>
       <meta itemprop="image" content="<?php echo $image_large[0]; ?>">
       <a class="d-block colorbox" href="<?php echo $image_large[0]; ?>">
         <img
           class="product-image"
-          src="<?php echo $image_preview[0]; ?>"
+          src="<?php echo $image_large[0]; ?>"
           alt="<?php echo the_title(); ?>"
           loading="lazy"
         >

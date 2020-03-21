@@ -2,12 +2,22 @@
 
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
+/**
+ * Raduce uploaded image quality
+ */
+add_filter( 'jpeg_quality', function() {
+  return 80;
+} );
+
 add_filter( 'get_terms_args', function( $args, $taxonomies ) {
-  if ( in_array( 'producttaxonomy', $taxonomies ) || in_array( 'customtaxonomy', $taxonomies ) ) {
+  if (
+    in_array( 'producttaxonomy', $taxonomies ) ||
+    in_array( 'customtaxonomy', $taxonomies )
+  ) {
     $args['hierarchical'] = false;
   }
   // Force rewrite default filter
-  if ( array_key_exists( 'hierarchical_force', $args ) ) {
+  if ( isset( $args['hierarchical_force'] ) ) {
     $args['hierarchical'] = $args['hierarchical_force'];
   }
   return $args;
