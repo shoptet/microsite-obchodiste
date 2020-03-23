@@ -4,12 +4,12 @@ namespace Shoptet;
 
 class Importer {
 
-  static function init () {
+  public static function init() {
     add_action( 'importer/insert_product', [ get_called_class(), 'insertProduct' ], 10, 4 );
     add_action( 'importer/upload_product_image', [ get_called_class(), 'uploadProductImage' ], 10, 4 );
   }
 
-  static function enqueueProduct ( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) {
+  public static function enqueueProduct( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) {
     as_enqueue_async_action(
       'importer/insert_product',
       [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ],
@@ -17,7 +17,7 @@ class Importer {
     );
   }
 
-  static function enqueueProductImageUpload ( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
+  public static function enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
     as_enqueue_async_action(
       'importer/upload_product_image',
       [ $post_product_id, $image_url, $is_thumbnail, $attemps ],
@@ -25,7 +25,7 @@ class Importer {
     );
   }
 
-  static function getProductsCount ( $related_wholesaler_id = NULL, $status = NULL ) {
+  public static function getProductsCount( $related_wholesaler_id = NULL, $status = NULL ) {
     $args = [
       'hook' => 'importer/insert_product',
       'per_page' => -1,
@@ -48,7 +48,7 @@ class Importer {
     return count( $actions );
   }
 
-  static function getProductImagesCount ( $post_product_id = NULL, $status = NULL ) {
+  public static function getProductImagesCount( $post_product_id = NULL, $status = NULL ) {
     $args = [
       'per_page' => -1,
       'hook' => 'importer/upload_product_image',
@@ -71,7 +71,7 @@ class Importer {
     return count( $actions );
   }
 
-  static function insertProduct ( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id = false ) {
+  public static function insertProduct( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id = false ) {
 
     $is_related_wholesaler_publish = ( 'publish' === get_post_status( $related_wholesaler_id ) );
     $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
@@ -131,7 +131,7 @@ class Importer {
     error_log(sprintf('Product (%s) inserted', $post_product_id));
   }
 
-  static function uploadProductImage ( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
+  public static function uploadProductImage( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
     
     $image_id = insert_image_from_url( $image_url, $post_product_id );
 
@@ -160,7 +160,7 @@ class Importer {
 
   }
 
-  static function getProductCategoryID ( $product_arr ) {
+  public static function getProductCategoryID( $product_arr ) {
     $product_category_id = false;
 
     if ( ! empty( $product_arr['googleCategoryId'] ) ) {
