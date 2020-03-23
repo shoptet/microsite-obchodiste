@@ -8,6 +8,11 @@ add_filter( 'action_scheduler_queue_runner_batch_size', function() {
   return 100;
 } );
 
+add_filter( 'action_scheduler_retention_period', function() {
+  $day_in_seconds = 86400;
+  return ( 14 * $day_in_seconds );
+} );
+
 /**
  * Handle requests initiated by as_run_queue() and start a queue runner if the request is valid.
  */
