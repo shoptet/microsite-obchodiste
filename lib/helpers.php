@@ -418,6 +418,7 @@ function export_wholesalers(): void
       'no_found_rows' => true,
       'update_post_meta_cache' => false,
       'update_post_term_cache' => false,
+      'ep_integrate' => true,
       'meta_query' => [
         [
           'key' => 'related_wholesaler',
@@ -435,6 +436,8 @@ function export_wholesalers(): void
     $row[] = $contact_person_tel;
 
     fputcsv( $fp, $row );
+
+    stop_the_insanity();
   }
 
   fclose( $fp );
