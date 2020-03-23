@@ -5,6 +5,7 @@ class Migrations {
   const OPTION_PREFIX = '_migration_';
   const MIGRATIONS = [
     'fix_product_thumbnail_meta_ids',
+    'map_shoptet_categories',
   ];
 
   static function init() {
@@ -37,6 +38,10 @@ class Migrations {
         add_post_meta( $post_id, '_thumbnail_id', $thumbnail );
       }
     }
+  }
+
+  static function map_shoptet_categories() {
+    ShoptetCategoriesMap::map();
   }
 
 }
