@@ -1618,6 +1618,8 @@ add_action( 'acf/save_post', function() {
 
   as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
 
+  as_run_queue();
+
   // Add query param to url for admin notice
   wp_redirect( add_query_arg( [
     'products_imported' => $products_imported,
