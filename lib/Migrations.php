@@ -6,6 +6,7 @@ class Migrations {
   const MIGRATIONS = [
     'fix_product_thumbnail_meta_ids',
     'map_shoptet_categories',
+    'clean_sync_posts',
   ];
 
   static function init() {
@@ -42,6 +43,18 @@ class Migrations {
 
   static function map_shoptet_categories() {
     ShoptetCategoriesMap::map();
+  }
+
+  static function clean_sync_posts() {
+    $query = new WP_Query( [
+      'post_type' => 'sync',
+      'post_status' => [ 'done', 'error', 'waiting' ],
+      'fields' => 'ids',
+      'posts_per_page' => -1,
+    ] );
+    foreach( $query->posts as $post_id ) {
+      wp_delete_post( $post_id, true );
+    }
   }
 
 }
