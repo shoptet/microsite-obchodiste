@@ -1828,8 +1828,6 @@ ElasticPressSettings::init();
 
 CounterCache::init();
 
-SyncCleaner::init();
-
 Migrations::init();
 
 LoginScreen::init();
