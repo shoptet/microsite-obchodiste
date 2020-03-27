@@ -9,6 +9,22 @@ add_filter( 'jpeg_quality', function() {
   return 80;
 } );
 
+/**
+ * Remove Yoast page analysis columns from post lists
+ */
+add_filter( 'manage_edit-product_columns', 'remove_yoast_columns' );
+add_filter( 'manage_edit-custom_columns', 'remove_yoast_columns' );
+function remove_yoast_columns ($columns) {
+  unset($columns['wpseo-score']);
+  unset($columns['wpseo-score-readability']);
+  unset($columns['wpseo-title']);
+  unset($columns['wpseo-metadesc']);
+  unset($columns['wpseo-focuskw']);
+  unset($columns['wpseo-links']);
+  unset($columns['wpseo-linked']);
+  return $columns;
+}
+
 add_filter( 'get_terms_args', function( $args, $taxonomies ) {
   if (
     in_array( 'producttaxonomy', $taxonomies ) ||
