@@ -26,17 +26,6 @@ add_action( 'init', function() {
 } );
 
 /**
- * Remove Yoast page analysis columns from post lists for subscribers
- */
-add_action( 'init', function() {
-  global $current_user;
-	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-	if ( user_can( $current_user, 'subscriber' ) ) {
-    remove_action( 'admin_init', [ $GLOBALS['wpseo_meta_columns'], 'setup_hooks' ] ); // Remove Yoast page analysis columns from post lists
-  }
-} );
-
-/**
  * Manage image sizes
  */
 add_action( 'init', function() {
@@ -1273,7 +1262,7 @@ add_action( 'admin_head', function() {
   if ( ! $wp_query->query[ 'post_type' ] && ! $post ) return;
   $post_type = $wp_query->query[ 'post_type' ] ?: $post->post_type;
   if (
-    ( in_array( $post_type, [ 'special_offer', 'product' ] ) && is_number_of_posts_exceeded( $post_type ) ) ||
+    is_number_of_posts_exceeded( $post_type ) ||
     'custom' === $post_type
   ) {
     echo '
@@ -1296,7 +1285,6 @@ add_action( 'admin_head', function() {
   if ( 'post-new.php' !== $pagenow ) return;
   $post_type = $post->post_type;
   if ( ! is_number_of_posts_exceeded( $post_type ) ) return;
-  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) return;
   echo '
 <style>
   #poststuff { display: none }
@@ -1315,7 +1303,7 @@ add_action( 'admin_head', function() {
 
   foreach ( [ 'custom', 'special_offer', 'product' ] as $post_type ) {
     if (
-      ( in_array( $post_type, [ 'special_offer', 'product' ] ) && is_number_of_posts_exceeded( $post_type ) ) ||
+      is_number_of_posts_exceeded( $post_type ) ||
       'custom' === $post_type
     ) {
       echo '
@@ -1599,6 +1587,11 @@ add_action( 'acf/save_post', function() {
 
   fclose( $fp );
 
+  if ( user_can( $current_user, 'subscriber' ) ) {
+    $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
+    $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
+  }
+
   // Proccess data
   $products_imported = 0;
   foreach ( $data as $data_item ) {
@@ -1606,7 +1599,7 @@ add_action( 'acf/save_post', function() {
     // break importing for subscriber if number of products exceeded
     if (
       user_can( $current_user, 'subscriber' ) &&
-      is_number_of_posts_exceeded( 'product', $wholesaler_author_id )
+      ( $products_left - $products_imported ) <= 0
     ) break;
 
     Shoptet\Importer::enqueueProduct( $data_item, $related_wholesaler_id, $set_pending_status, $product_category_id );

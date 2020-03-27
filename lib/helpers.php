@@ -275,9 +275,9 @@ function separate_thousands( $num, $decimals = false ): string
 }
 
 /**
- * Is number of posts exceeded for current user
+ * Get number of left posts to exceed for current user
  */
-function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
+function products_left_to_exceed( $post_type, $user_id = NULL ): int
 {
   if ( ! $user_id ) {
     global $current_user;
@@ -290,11 +290,33 @@ function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
     'posts_per_page' => -1,
     'author' => $user_id,
   ] );
+  $products_total = $wp_query->found_posts;
+
+  $user = get_user_by( 'ID', $user_id );
+  if ( $related_wholesaler = get_user_wholesaler( $user ) ) {
+    $related_wholesaler_id = $related_wholesaler->ID;
+    $products_total += Shoptet\Importer::getProductsCount( $related_wholesaler_id, 'pending' );
+    $products_total += Shoptet\Importer::getProductsCount( $related_wholesaler_id, 'running' );
+  }
 
   $options = get_fields( 'options' );
-  $post_type_limit = $options[ $post_type . '_limit' ];
+  $products_limit = intval($options[ $post_type . '_limit' ]);
   
-  return ( $wp_query->found_posts >= $post_type_limit );
+  $products_left = ( $products_limit - $products_total );
+  
+  return $products_left;
+}
+
+/**
+ * Is number of posts exceeded for current user
+ */
+function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
+{
+  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) {
+    return false;
+  }
+  $posts_left = products_left_to_exceed( $post_type, $user_id );
+  return ( $posts_left <= 0 );
 }
 
 /**
