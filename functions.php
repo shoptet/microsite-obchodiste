@@ -5,6 +5,8 @@ require __DIR__ . '/vendor/autoload.php';
 // CLI scripts
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once 'wp-cli/class-update-product-wholesaler-cli.php';
+	require_once 'wp-cli/class-update-attachment-author-cli.php';
+	require_once 'wp-cli/class-update-product-thumbnails-cli.php';
 }
 
 $includes = [
@@ -14,6 +16,7 @@ $includes = [
 	'src/lib/term-syncer.php',
 	'src/lib/google_product_categories/google_product_categories.php',
 	'src/lib/AdminProductList.php',
+	'src/lib/attachment.php',
 	'src/lib/Importer.php',
 	'src/lib/AdminProductList.php',
 	'src/lib/ShoptetStats.php',

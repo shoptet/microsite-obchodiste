@@ -355,8 +355,15 @@ function get_post_type_in_archive_or_taxonomy () {
 }
 
 function insert_image_from_url( $url, $post_id ) {
-  $timeout_seconds = 5;
-  $tmp_file = download_url( $url, $timeout_seconds );
+
+  // Do not download attachment with no parent post
+  $parent_post = get_post( $post_id );
+  if ( ! $parent_post ) {
+    return false;
+  }
+
+  $timeout = 3;
+  $tmp_file = download_url( $url, $timeout );
 
   if ( is_wp_error( $tmp_file ) ) {
     capture_sentry_message( $tmp_file->get_error_message() );
@@ -369,13 +376,9 @@ function insert_image_from_url( $url, $post_id ) {
     'name' => basename( $matches[0] ),
     'tmp_name' => $tmp_file,
   ];
-
-  $author_id = get_post_field( 'post_author', $post_id );
+  
   $args = [];
-  if ( $author_id ) {
-    $args['post_author'] = $author_id;
-  }
-
+  $args['post_author'] = $parent_post->post_author;
   $id = media_handle_sideload( $file, $post_id, null, $args );
 
   // If error storing permanently, unlink.
@@ -384,10 +387,6 @@ function insert_image_from_url( $url, $post_id ) {
     @unlink( $tmp_file );
     return false;
   }
-
-  // attach image to post thumbnail
-  $post_meta_id = set_post_thumbnail( $post_id, $id );
-  if ( ! $post_meta_id  ) return false;
 
   return $id;
 }
