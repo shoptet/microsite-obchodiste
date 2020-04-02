@@ -1746,8 +1746,6 @@ ElasticPressSettings::init();
 
 CounterCache::init();
 
-Migrations::init();
-
 LoginScreen::init();
 
 ShoptetStats::init();

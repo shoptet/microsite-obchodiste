@@ -2,13 +2,17 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+// CLI scripts
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once 'wp-cli/class-update-product-wholesaler-cli.php';
+}
+
 $includes = [
 	'src/lib/action_scheduler.php',
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
 	'src/lib/term-syncer.php',
 	'src/lib/google_product_categories/google_product_categories.php',
-	'src/lib/Migrations.php',
 	'src/lib/AdminProductList.php',
 	'src/lib/Importer.php',
 	'src/lib/AdminProductList.php',
