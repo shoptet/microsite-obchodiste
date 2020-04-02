@@ -82,6 +82,8 @@ class Importer {
       'price' => isset( $product_arr['price'] ) ? floatval( $product_arr['price'] ) : '',
       'minimal_order' => isset( $product_arr['minimumAmount'] ) ? $product_arr['minimumAmount'] : '',
       'ean' => isset( $product_arr['ean'] ) ? $product_arr['ean'] : '',
+      'related_wholesaler' => $related_wholesaler_id,
+      '_related_wholesaler' => 'field_5c7d1fbf2e01c',
     ];
 
     $title = $product_arr['name'];
@@ -95,8 +97,6 @@ class Importer {
       'meta_input' => $meta_input,
     ];
     $post_product_id = wp_insert_post( $postarr );
-
-    update_field( 'field_5c7d1fbf2e01c', $related_wholesaler_id, $post_product_id ); // update product related wholesaler field
 
     $product_category_id = ( $product_category_id ?: self::getProductCategoryID( $product_arr ) );
 
