@@ -1609,7 +1609,7 @@ add_action( 'acf/save_post', function() {
 
   $_POST['acf'] = []; // Do not save any data
 
-  as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
+  Shoptet\TermSyncer::enqueueWholesaler( $related_wholesaler_id );
 
   as_run_queue();
 
@@ -1619,81 +1619,6 @@ add_action( 'acf/save_post', function() {
   ] ) );
   exit;
 }, 1 );
-
-// add_action( 'init', function() {
-//   if ( ! wp_next_scheduled( 'sync_items' ) ) {
-//     wp_schedule_event( time(), 'five_minutes', 'sync_items' );
-//   }
-// } );
-
-// add_action( 'sync_items', function() {
-//   $start_time = time();
-//   $processed_items = 0;
-//   $options = get_fields( 'options' );
-
-// 	$wp_query = new WP_Query( [
-//     'post_type' => 'sync',
-//     'post_status' => 'waiting',
-//     'posts_per_page' => $options[ 'product_image_sync_count' ],
-//     'orderby' => 'date',
-//     'order' => 'ASC',
-//   ] );
-//   $items = $wp_query->posts;
-
-//   foreach ( $items as $item ) {
-//     $product_id = get_post_meta( $item->ID, 'product', true );
-//     $url = get_post_meta( $item->ID, 'url', true );
-//     $is_thumbnail = boolval( intval( get_post_meta( $item->ID, 'is_thumbnail', true ) ) );
-//     $attemps = intval( get_post_meta( $item->ID, 'attemps', true ) );
-//     if ( $attemps >= 3 ) {
-//       // Set error status to sync item and product
-//       wp_update_post( [
-//         'ID' => $item->ID,
-//         'post_status' => 'error',
-//       ] );
-//       update_post_meta( $product_id, 'sync_state', 'error' );
-//       continue;
-//     }
-//     update_post_meta( $item->ID, 'attemps', $attemps + 1 ); // Update attemps
-//     $image_id = insert_image_from_url( $url, $product_id );
-//     if ( ! $image_id ) continue;
-//     if ( $is_thumbnail ) {
-//       // Set thumbnail
-//       update_field( 'thumbnail', $image_id, $product_id );
-//     } else {
-//       // Add image to gallery
-//       $gallery = get_post_meta( $product_id, 'gallery', true );
-//       if ( empty( $gallery ) ) $gallery = [];
-//       $gallery[] = $image_id;
-//       update_field( 'gallery', $gallery, $product_id );
-//     }
-//     wp_update_post( [
-//       'ID' => $item->ID,
-//       'post_status' => 'done',
-//     ] );
-
-//     // Check related product sync is done
-//     $query = new WP_Query( [
-//       'post_type' => 'sync',
-//       'post_status' => 'waiting',
-//       'meta_query' => [ [
-//         'key' => 'product',
-//         'value' => $product_id,
-//       ] ],
-//     ] );
-//     if ( ! $query->found_posts ) {
-//       update_post_meta( $product_id, 'sync_state', 'done' );
-//     }
-//     $processed_items++;
-//   }
-
-//   if ( $processed_items > 0 ) {
-//     $end_time = time();
-//     $execution_time = ( $end_time - $start_time );
-//     $message = sprintf( 'Sync: %d items in %d seconds, %.1f seconds per item on average', $processed_items, $execution_time, ( $execution_time / $processed_items ) );
-//     capture_sentry_message( $message );
-//   }
-// });
 
 /**
  * Show age test modal at selected single pages
@@ -1826,8 +1751,6 @@ Migrations::init();
 LoginScreen::init();
 
 ShoptetStats::init();
-
-TermSyncer::init();
 
 /**
  * Remove related products when a wholesaler is deleted

@@ -1,36 +1,34 @@
 <?php
 
+namespace Shoptet;
+
 class TermSyncer {
 
   static function init() {
-    add_action( 'save_post', [ get_called_class(), 'handleQuickAndBulkPostSave' ] );
     add_action( 'acf/save_post', [ get_called_class(), 'handlePostSave' ] );
-    add_action( 'sync_wholesaler_terms', [ get_called_class(), 'syncWholesalerTerms' ] );
+    add_action( 'term_syncer/sync_wholesaler', [ get_called_class(), 'syncWholesalerTerms' ] );
   }
 
-  static function handleQuickAndBulkPostSave ( $post_id ) {
-    global $pagenow;
-    if ( ! in_array( $pagenow, [ 'post.php', 'post-new.php' ] ) ) {
-      self::handlePostSave($post_id);
-    };
+  public static function enqueueWholesaler ( $post_id ) {
+    as_enqueue_async_action( 'term_syncer/sync_wholesaler', [ $post_id ], 'term_syncer_sync_wholesaler_' . $post_id );
   }
 
   static function handlePostSave ( $post_id ) {
     $post_type = get_post_type($post_id);
     switch ( $post_type ) {
       case 'custom':
-        as_enqueue_async_action( 'sync_wholesaler_terms', [ $post_id ] );
+        self::enqueueWholesaler($post_id);
       break;
       case 'product':
         if ( $related_wholesaler_id = get_post_meta( $post_id, 'related_wholesaler', true ) ) {
-          as_enqueue_async_action( 'sync_wholesaler_terms', [ $related_wholesaler_id ] );
+          self::enqueueWholesaler($related_wholesaler_id);
         }
       break;
     }
   }
 
   static function getAllRelatedProducts ( $wholesaler_id ) {
-    $product_query = new WP_Query( [
+    $query = new \WP_Query( [
       'post_type' => 'product',
       'post_status' => 'publish',
       'fields' => 'ids',
@@ -45,25 +43,31 @@ class TermSyncer {
       ],
     ] );
     $products = [];
-    if ( is_array( $product_query->posts ) ) {
-      $products = $product_query->posts;
+    if ( is_array( $query->posts ) ) {
+      $products = $query->posts;
     }
     return $products;
   }
 
   static function getAllProductsTerms ( $products, $wholesaler_id ) {
     $product_term_slugs = [];
+    $i = 0;
     foreach( $products as $product_id ) {
-      $product_terms_query = new WP_Term_Query( [
+      $query = new \WP_Term_Query( [
         'taxonomy' => 'producttaxonomy',
         'fields' => 'slugs',
         'object_ids' => intval($product_id),
+        'update_term_meta_cache' => false,
       ] );
-      if ( ! is_array( $product_terms_query->terms ) || empty( $product_terms_query->terms ) ) {
+      if ( ! is_array( $query->terms ) || empty( $query->terms ) ) {
         error_log( sprintf( '%d: Product (%d) have no terms', $wholesaler_id, $product_id ) );
       } else {
-        $product_term_slugs = array_unique( array_merge( $product_term_slugs, $product_terms_query->terms ) );
+        $product_term_slugs = array_unique( array_merge( $product_term_slugs, $query->terms ) );
       }
+      if ( ($i % 100) == 0 ) {
+        stop_the_insanity();
+      }
+      $i++;
     }
     return $product_term_slugs;
   }
@@ -71,16 +75,17 @@ class TermSyncer {
   static function getWholesalerRelatedTerms ( $product_term_slugs, $wholesaler_id ) {
     $related_term_ids = [];
     foreach( $product_term_slugs as $product_term_slug ) {
-      $wholesaler_terms_query = new WP_Term_Query( [
+      $query = new \WP_Term_Query( [
         'taxonomy' => 'customtaxonomy',
         'fields' => 'ids',
         'slug' => $product_term_slug,
         'hide_empty' => false,
+        'update_term_meta_cache' => false,
       ] );
-      if ( ! is_array( $wholesaler_terms_query->terms ) || empty( $wholesaler_terms_query->terms )  ) {
+      if ( ! is_array( $query->terms ) || empty( $query->terms )  ) {
         error_log( sprintf( '%d: No related term (%s) found ', $wholesaler_id, $product_term_slug ) );
       } else {
-        $related_term_ids = array_unique( array_merge( $related_term_ids, $wholesaler_terms_query->terms ) );
+        $related_term_ids = array_unique( array_merge( $related_term_ids, $query->terms ) );
       }
     }
     return $related_term_ids;
@@ -111,19 +116,16 @@ class TermSyncer {
 
     // Remove old term relationships and set new ones
     wp_set_object_terms( $post_id, $term_ids, 'customtaxonomy' );
-
-    // $term_slugs = array_map( function ( $term_id ) {
-    //   return get_term($term_id)->slug;
-    // }, $term_ids );
-    // error_log(sprintf( 'Wholesaler (%d) has new terms: ', $post_id ) . implode( ', ', $term_slugs ) );
   }
 
   static function syncAllWholesalersTerms () {
-    $query = new WP_Query( [
+    $query = new \WP_Query( [
       'post_type' => 'custom',
       'posts_per_page' => -1,
       'post_status' => 'any',
       'fields' => 'ids',
+      'update_post_meta_cache' => false,
+      'update_post_term_cache' => false,
     ] );
     for ( $i = 0, $len = count( $query->posts ); $i < $len; $i++ ) {
       self::syncWholesalerTerms( $query->posts[$i] );
@@ -131,3 +133,5 @@ class TermSyncer {
   }
 
 }
+
+TermSyncer::init();

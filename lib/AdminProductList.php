@@ -14,6 +14,7 @@ class AdminProductList {
     add_action( 'manage_posts_custom_column', [ get_called_class(), 'manageColumnContent' ], 10, 2 );
     add_action( 'load-edit.php', [ get_called_class(), 'acfFormHead' ] );
     add_action( 'load-edit.php', [ get_called_class(), 'handleBulkEdit' ] );
+    add_action( 'wp_ajax_inline-save', [ get_called_class(), 'handleQuickEdit' ], 0 ); // Before WordPress
     add_action( 'bulk_edit_custom_box', [ get_called_class(), 'renderBulkEdit' ], 10, 2 );
 
     add_filter( 'manage_edit-product_columns', [ get_called_class(), 'manageColumns' ] );
@@ -154,15 +155,6 @@ class AdminProductList {
     wp_get_current_user(); // Make sure global $current_user is set, if not set it
     if ( user_can( $current_user, 'subscriber' ) ) return;
 
-    
-    if ( isset($_GET['acf'][self::PRODUCT_CATEGORY_ACF_KEY]) ) {
-      $term_id = intval($_GET['acf'][self::PRODUCT_CATEGORY_ACF_KEY]);
-    }
-    
-    if ( ! isset($term_id) || ! term_exists($term_id, 'producttaxonomy') ) {
-      return;
-    }
-
     if ( is_array($_GET['post']) ) {
       $post_ids = array_map('intval', $_GET['post']);
     }
@@ -171,10 +163,46 @@ class AdminProductList {
       return;
     }
 
-    foreach ( $post_ids as $post_id ) {
-      update_field( self::PRODUCT_CATEGORY_ACF_KEY, $term_id, $post_id );
+    if ( isset($_GET['acf'][self::PRODUCT_CATEGORY_ACF_KEY]) ) {
+      $term_id = intval($_GET['acf'][self::PRODUCT_CATEGORY_ACF_KEY]);
+    }
+    
+    if ( ! isset($term_id) || ! term_exists($term_id, 'producttaxonomy') ) {
+      $term_id = false;
     }
 
+    $wholesaler_ids = [];
+    foreach ( $post_ids as $post_id ) {
+      if ( $term_id ) {
+        update_field( self::PRODUCT_CATEGORY_ACF_KEY, $term_id, $post_id );
+      }
+      if ( $related_wholesaler_id = get_post_meta( $post_id, 'related_wholesaler', true ) ) {
+        $wholesaler_ids[] = intval($related_wholesaler_id);
+      }
+    }
+
+    $wholesaler_ids = array_unique( $wholesaler_ids );
+    foreach ( $wholesaler_ids as $wholesaler_id ) {
+      TermSyncer::enqueueWholesaler( $wholesaler_id );
+    }
+
+  }
+
+  static function handleQuickEdit () {
+    global $current_user;
+    wp_get_current_user(); // Make sure global $current_user is set, if not set it
+    if ( ! user_can( $current_user, 'administrator' ) ) return;
+    
+    if ( ! isset($_POST['post_ID']) ) {
+      return;
+    }
+
+    $post_id = intval($_POST['post_ID']);
+
+    if ( $related_wholesaler_id = get_post_meta( $post_id, 'related_wholesaler', true ) ) {
+      $related_wholesaler_id = intval($related_wholesaler_id);
+      TermSyncer::enqueueWholesaler( $related_wholesaler_id );
+    }
   }
 
   static function renderBulkEdit ( $column_name, $post_type ) {
