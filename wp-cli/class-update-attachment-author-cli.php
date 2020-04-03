@@ -9,6 +9,9 @@ class Update_Attachment_Author_Command {
 
       start_bulk_operation();
 
+      // Prevent infinite loop
+      remove_action( 'edit_attachment', 'Shoptet\Attachment::handle_author' );
+
       // If --dry-run is not set, then it will default to true.
       // Must set --dry-run explicitly to false to run this command.
       if ( isset( $assoc_args['dry-run'] ) ) {
