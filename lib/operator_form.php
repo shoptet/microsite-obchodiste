@@ -2,9 +2,12 @@
 
 function check_if_external_company_exists( $external_company_token ) {
   global $wpdb;
-  $result = $wpdb->get_var('
-    SELECT 1 FROM external_companies WHERE registration_token = "' . $external_company_token . '"
-  ');
+  $result = $wpdb->get_var(
+    $wpdb->prepare(
+      'SELECT 1 FROM external_companies WHERE registration_token = "%s"',
+      $external_company_token
+    )
+  );  
   return ( $result === '1' );
 }
 
@@ -43,9 +46,12 @@ function get_external_company_value_by_field_name( $external_company_token, $fie
   ];
   if ( ! array_key_exists( $field_name, $column_names_by_field_name ) ) return false;
   $column_name = $column_names_by_field_name[ $field_name ];
-  $result = $wpdb->get_var('
-    SELECT ' . $column_name . ' FROM external_companies WHERE registration_token = "' . $external_company_token . '"
-  ');
+  $result = $wpdb->get_var(
+    $wpdb->prepare(
+      'SELECT ' . $column_name . ' FROM external_companies WHERE registration_token = "%s"',
+      $external_company_token
+    )
+  );
 
   switch ( $field_name ) {
     case 'region':
@@ -181,9 +187,12 @@ function notify_contact_person ( $post_id, $external_company_token ) {
 
 function set_wholesaler_logo ( $post_id, $external_company_token ) {
   global $wpdb;
-  $logo_url = $wpdb->get_var('
-    SELECT logo_url FROM external_companies WHERE registration_token = "' . $external_company_token . '"
-  ');
+  $logo_url = $wpdb->get_var(
+    $wpdb->prepare(
+      'SELECT logo_url FROM external_companies WHERE registration_token = "%s"',
+      $external_company_token
+    )
+  );
   if ( empty( $logo_url) ) return;
   $image_id = insert_image_from_url( $logo_url, $post_id );
   if ( ! $image_id ) return;
