@@ -36,7 +36,7 @@ class Update_Attachment_Author_Command {
         WP_CLI::log( 'We\'re doing it live!' );
       }
 
-      $posts_per_page = 350;
+      $posts_per_page = 100;
       $paged = 1;
       $updated_attachs = 0;
 
@@ -45,8 +45,6 @@ class Update_Attachment_Author_Command {
         'post_status' => 'any',
         'fields' => 'ids',
         'posts_per_page' => $posts_per_page,
-        'update_post_meta_cache' => false,
-        'update_post_term_cache' => false,
       ];
 
       $query = new WP_Query( $args );
@@ -55,8 +53,6 @@ class Update_Attachment_Author_Command {
         sprintf( 'Processing %d attachments', $query->found_posts ),
         $query->found_posts
       );
-
-      $i = $j = 0;
 
       do {
         $args['paged'] = $paged;
