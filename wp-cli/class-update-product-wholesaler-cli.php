@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * CLI command that updates all products' wholesaler meta to their author's owned wholesaler.
+ */
+
 class Update_Product_Wholesaler_Command {
     public function __invoke( $args, $assoc_args ) {
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * CLI command that updates all products' thumbanil to their ACF thumbnail field value.
+ * CLI command that updates all attachments' post author to their parent post's author.
  */
 
-class Update_Product_Thumbnails_Command {
+class Update_Attachment_Author_Command {
     public function __invoke( $args, $assoc_args ) {
 
       start_bulk_operation();
@@ -35,11 +35,10 @@ class Update_Product_Thumbnails_Command {
 
       $posts_per_page = 350;
       $paged = 1;
-      $count = 0;
-      $updated_wholesalers = [];
+      $updated_attachs = 0;
 
       $args = [
-        'post_type' => 'product',
+        'post_type' => 'attachment',
         'post_status' => 'any',
         'fields' => 'ids',
         'posts_per_page' => $posts_per_page,
@@ -49,22 +48,36 @@ class Update_Product_Thumbnails_Command {
 
       $query = new WP_Query( $args );
 
-      $progress = \WP_CLI\Utils\make_progress_bar( 'Processing products', $query->found_posts );
+      $progress = \WP_CLI\Utils\make_progress_bar(
+        sprintf( 'Processing %d attachments', $query->found_posts ),
+        $query->found_posts
+      );
+
+      $i = $j = 0;
 
       do {
         $args['paged'] = $paged;
         $query = new WP_Query( $args );
 
-        foreach ( $query->posts as $product_id ) {
-          if ( !$dry_run ) {
-            $_thumbnail_id = get_post_meta( $product_id, '_thumbnail_id', true );
-            $thumbnail = get_post_meta( $product_id, 'thumbnail', true );
-            delete_post_meta( $product_id, '_thumbnail_id' );
-            if ( $thumbnail ) {
-              add_post_meta( $product_id, '_thumbnail_id', $thumbnail );
-            }
+        foreach ( $query->posts as $attach_id ) {
+          $attach = get_post($attach_id);
+
+          $parent = get_post($attach->post_parent);
+          if ( !$parent ) {
+            // Parent post not exists
+            continue;
           }
-          $count++;
+
+          if ( $parent->post_author && $attach->post_author != $parent->post_author ) {
+            if ( !$dry_run ) {
+              wp_update_post([
+                'ID' => $attach_id,
+                'post_author' => $parent->post_author,
+              ]);
+            }
+            $updated_attachs++;
+          }
+
         }
 
         // Free up memory.
@@ -80,12 +93,12 @@ class Update_Product_Thumbnails_Command {
       end_bulk_operation();
 
       if ( $dry_run ) {
-        WP_CLI::success( sprintf( '%d products will be updated', $count ) );
+        WP_CLI::success( sprintf( '%d attachments will be updated', $updated_attachs ) );
       } else {
-        WP_CLI::success( sprintf( '%d products have been updated', $count ) );
+        WP_CLI::success( sprintf( '%d attachments has been updated', $updated_attachs ) );
       }
 
     }
 }
 
-WP_CLI::add_command( 'update-product-thumbnails', 'Update_Product_Thumbnails_Command' );
+WP_CLI::add_command( 'update-attachment-author', 'Update_Attachment_Author_Command' );
