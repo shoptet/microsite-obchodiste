@@ -33,6 +33,9 @@ class ElasticPressSettings {
       $mapping['settings']['analysis']['analyzer'] = [];
       $mapping['settings']['analysis']['analyzer']['default'] = [
         'tokenizer' => 'standard',
+        'char_filter' => [
+          'dot_replace',
+        ],
         'filter' => [
           'czech_stop',
           'czech_stemmer',
@@ -63,6 +66,13 @@ class ElasticPressSettings {
       $mapping['settings']['analysis']['filter']['unique_on_same_position'] = [
         'type' => 'unique',
         'only_on_same_position' => true,
+      ];
+      // Enable search in project title domain name without tld
+      // Replace a dot followed by non-space character ("example.com" replace to "example com")
+      $mapping['settings']['analysis']['char_filter']['dot_replace'] = [
+        'type' => 'pattern_replace',
+        'pattern' => '\\.(?=\S)',
+        'replacement' => ' ',
       ];
     }
     return $mapping;
