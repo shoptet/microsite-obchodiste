@@ -18,6 +18,7 @@ $includes = [
 	'src/lib/AdminProductList.php',
 	'src/lib/attachment.php',
 	'src/lib/Importer.php',
+	'src/lib/ImporterStore.php',
 	'src/lib/AdminProductList.php',
 	'src/lib/ShoptetStats.php',
 	'src/lib/LoginScreen.php',

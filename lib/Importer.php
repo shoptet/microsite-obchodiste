@@ -5,16 +5,22 @@ namespace Shoptet;
 class Importer {
 
   public static function init() {
-    add_action( 'importer/insert_product', [ get_called_class(), 'insertProduct' ], 10, 4 );
+    add_action( 'importer/insert_product', [ get_called_class(), 'insertProduct' ] );
     add_action( 'importer/upload_product_image', [ get_called_class(), 'uploadProductImage' ], 10, 4 );
   }
 
   public static function enqueueProduct( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) {
-    as_enqueue_async_action(
+    
+    $args = [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ];
+    $args_id = ImporterStore::insert($args);
+
+    $action_id = as_enqueue_async_action(
       'importer/insert_product',
-      [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ],
+      [ $args_id ],
       'importer_insert_product_' . $related_wholesaler_id
     );
+
+    ImporterStore::update_action_id( $args_id, $action_id );
   }
 
   public static function enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
@@ -71,7 +77,10 @@ class Importer {
     return count( $actions );
   }
 
-  public static function insertProduct( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id = false ) {
+  public static function insertProduct( $args_id ) {
+
+    $args = ImporterStore::get($args_id);
+    list( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) = $args;
 
     $is_related_wholesaler_publish = ( 'publish' === get_post_status( $related_wholesaler_id ) );
     $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
