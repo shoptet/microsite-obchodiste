@@ -60,21 +60,28 @@ add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
 
   foreach ( $menu_items_data as $post_type => $data ) {
 
+    $terms = get_terms( [
+      'taxonomy' => $data['taxonomy'],
+      'parent' => 0,
+      'hide_empty' => true,
+      'hierarchical_force' => true,
+    ] );
+
     $menu_items_html .= '
-      <li class="shp_menu-item has-dropdown">
+      <li class="shp_menu-item shp_navigation-submenu-wide has-dropdown">
         <a class="shp_menu-item-link" href="' . get_post_type_archive_link( $post_type ) . '">
         ' . $data['title'] . '
         </a>
         <span class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
         <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right">
           <li class="shp_menu-item">
-            <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( $post_type ) . '">
+            <a class="shp_menu-item-link dropdown-item" href="' . get_post_type_archive_link( $post_type ) . '">
             ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
             </a>
           </li>
     ';
 
-    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'], 'parent' => 0 ] ) as $term ) {
+    foreach ( $terms as $term ) {
       $menu_items_html .= '
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">

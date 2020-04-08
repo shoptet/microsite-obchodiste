@@ -15,11 +15,14 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "../../scaffolding/vendor/bs/scss/modal";
 
 @import '../../scaffolding/vendor/fa/scss/variables';
+@import '../../scaffolding/vendor/fa/scss/mixins';
 @import '../../scaffolding/vendor/fa/scss/core';
 @import '../../scaffolding/vendor/fa/scss/list';
 @import '../../scaffolding/vendor/fa/scss/icons';
-@import '../../scaffolding/vendor/fa/scss/fa-brands';
-@import '../../scaffolding/vendor/fa/scss/fa-regular';
+@import '../../scaffolding/vendor/fa/scss/brands';
+@import '../../scaffolding/vendor/fa/scss/regular';
+
+@import "../../scaffolding/shoptet/dropdown";
 
 @import "variables";
 @import "mixins";
