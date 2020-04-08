@@ -6,7 +6,7 @@
 add_action( 'init', function() {
   register_post_type( 'custom', get_cpt_wholesaler_args() );
   register_taxonomy( 'customtaxonomy', 'custom', get_cpt_wholesaler_taxonomy_args() );
-  register_post_type( 'special_offer', get_cpt_special_offer_args() );
+  //register_post_type( 'special_offer', get_cpt_special_offer_args() );
   register_post_type( 'product', get_cpt_product_args() );
   register_taxonomy( 'producttaxonomy', 'product', get_cpt_product_taxonomy_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
