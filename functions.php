@@ -20,7 +20,6 @@ $includes = [
 	'src/lib/Importer.php',
 	'src/lib/ImporterStore.php',
 	'src/lib/AdminProductList.php',
-	'src/lib/ShoptetStats.php',
 	'src/lib/LoginScreen.php',
 	'src/lib/setup.php',
 	'src/lib/cpt.php',
