@@ -290,7 +290,10 @@ add_action('pre_get_posts', function( $wp_query ) {
 	if ( $meta_query == '' ) {
     $meta_query = [];
   }
-  
+  // Set related post type if taxonomy is being queried
+  if ( $wp_query->get( 'post_type' ) != 'custom' ) {
+    $wp_query->set( 'post_type', 'custom' );
+  }
   $wp_query->set( 'ep_integrate', true );
   $wp_query->set( 'search_fields', [
     'post_title',
@@ -522,6 +525,10 @@ add_action('pre_get_posts', function( $wp_query ) {
 		$meta_query = [];
   }
 
+  // Set related post type if taxonomy is being queried
+  if ( $wp_query->get( 'post_type' ) != 'product' ) {
+    $wp_query->set( 'post_type', 'product' );
+  }
   $wp_query->set( 'ep_integrate', true );
   $wp_query->set( 'search_fields', [
     'post_title',
