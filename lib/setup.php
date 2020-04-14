@@ -26,28 +26,6 @@ add_action( 'init', function() {
 } );
 
 /**
- * Manage image sizes
- */
-add_action( 'init', function() {
-  $image_sizes = get_intermediate_image_sizes();
-  $built_in_sizes = [
-    'thumbnail',
-    'medium',
-    'medium_large',
-    'large',
-  ];
-  // Remove redundant image sizes
-  foreach( $image_sizes as $image_size ) {
-    if( !in_array( $image_size, $built_in_sizes ) ) {
-      remove_image_size( $image_size );
-    } 
-  }
-
-  // Add new image sizes
-  add_image_size( 'wholesaler-logo-thumb', 150, 150 );
-} );
-
-/**
  * Pass data to javascript
  */
 add_action( 'wp_head', function() {

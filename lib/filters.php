@@ -3,13 +3,6 @@
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
 /**
- * Raduce uploaded image quality
- */
-add_filter( 'jpeg_quality', function() {
-  return 80;
-} );
-
-/**
  * Remove Yoast page analysis columns from post lists
  */
 add_filter( 'manage_edit-product_columns', 'remove_yoast_columns' );
