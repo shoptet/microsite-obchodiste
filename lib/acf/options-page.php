@@ -36,24 +36,4 @@ if( function_exists('acf_add_options_page') ) {
 		'parent_slug' => 'theme-settings',
 	]);
 
-	acf_add_options_sub_page([
-		'page_title' 	=> __( 'Import produktů přes CSV', 'shp-obchodiste' ),
-		'menu_title' 	=> __( 'Import CSV', 'shp-obchodiste' ),
-		'parent_slug' => 'edit.php?post_type=product',
-		'menu_slug'   => 'product-import',
-		'capability' => 'product_import',
-		'update_button'		=> __( 'Importovat', 'shp-obchodiste' ),
-		'updated_message'	=> __( 'Produkty úspešně importovány', 'shp-obchodiste' ),
-	]);
-
-	// acf_add_options_sub_page([
-	// 	'page_title' 	=> __( 'Import produktů přes XML', 'shp-obchodiste' ),
-	// 	'menu_title' 	=> __( 'Import XML', 'shp-obchodiste' ),
-	// 	'parent_slug' => 'edit.php?post_type=product',
-	// 	'menu_slug'   => 'product-import-xml',
-	// 	'capability' => 'product_import',
-	// 	'update_button'		=> __( 'Importovat', 'shp-obchodiste' ),
-	// 	'updated_message'	=> __( 'Produkty úspešně importovány', 'shp-obchodiste' ),
-	// ]);
-
 }

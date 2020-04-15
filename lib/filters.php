@@ -154,80 +154,6 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
 }, 10, 3 );
 
 /**
- * Validate product import CSV file
- */
-add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $value ) {
-  // bail early if value is already invalid
-  if( ! $valid ) return $valid;
-
-  $file_path = get_attached_file( $value );
-  $fp = fopen( $file_path, 'r' );
-
-  if ( ! $fp ) {
-    $valid =  __( 'Soubor nelze otevřít', 'shp-obchodiste' );
-    return $valid;
-  }
-
-  $header = fgetcsv( $fp, 0, ';' );
-  $mandatory = [
-    'name',
-    'shortDescription',
-    'description',
-    'image',
-  ];
-
-  // Check for mandatory fields in header
-  $header_mandatory = array_intersect( $mandatory, $header );
-  $mandatory_cols_missing = array_diff( $mandatory, $header_mandatory );
-  if ( ! empty( $mandatory_cols_missing ) ) {
-    $valid = sprintf(
-      __( 'Hlavička souboru neobsahuje tyto povinné položky: <strong>%s</strong>', 'shp-obchodiste' ),
-      implode( ', ', $mandatory_cols_missing )
-    );
-    return $valid;
-  }
-
-  $col_num = count( $header );
-  
-  $row_number = 1;
-  $valid_array = [];
-  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
-    $row_number++;
-
-    // Check the number of fields in a row to be equal to the number of fields in the header
-    if ( count( $row ) !== $col_num ) {
-      $valid_array[] = sprintf (
-        __( '<strong>Chyba na řádku %d</strong>: Jiný počet položek v řádku <strong>(%d)</strong> než počet položek v hlavičce <strong>(%d)</strong>', 'shp-obchodiste' ),
-        $row_number,
-        count( $row ),
-        $col_num
-      );
-      continue;
-    }
-
-    // Check the mandatory fields in row
-    $row = array_combine( $header, $row );
-    foreach ( $mandatory as $m ) {
-      if ( empty( $row[ $m ] ) ) {
-        $valid_array[] = sprintf (
-          __( '<strong>Chyba na řádku %d</strong>: Chybí povinná položka: <strong>%s</strong>', 'shp-obchodiste' ),
-          $row_number,
-          $m
-        );
-      }
-    }
-  }
-
-  if ( ! empty( $valid_array ) ) {
-    $valid = implode( '<br>', $valid_array );
-  }
-
-  fclose( $fp );
-  
-  return $valid;
-}, 10, 2 );
-
-/**
  * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
@@ -735,19 +661,6 @@ add_filter( 'cron_schedules', function ( $schedules ) {
   ];
 	return $schedules;
 } );
-
-/**
- * Fix large CSV file upload
- */
-add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename, $mimes ) {
-  $wp_filetype = wp_check_filetype( $filename, $mimes );
-
-  $ext = $wp_filetype['ext'];
-  $type = $wp_filetype['type'];
-  $proper_filename = $data['proper_filename'];
-
-  return compact( 'ext', 'type', 'proper_filename' );
-}, 10, 4 );
 
 /**
  * Make the first capital letter only if the entire product name is capitalized
