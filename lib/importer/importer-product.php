@@ -17,7 +17,7 @@ class ImporterProduct {
   protected $price;
   protected $minimal_order;
   protected $ean;
-  protected $images;
+  protected $images = [];
 
   function __construct( array $data_array = [] ) {
     foreach( $data_array as $key => $value ) {
@@ -123,50 +123,52 @@ class ImporterProduct {
     return $this->images;
   }
 
-  public function import_xml_collection( $product_collection ) {
-    if ( $name = $product_collection->get('NAME') ) {
+  public function import_xml_collection( Collection $product_collection ) {
+    if ( $name = $product_collection->get('NAME') )
       $this->name = $name;
-    }
-
-    if ( $short_description = $product_collection->get('SHORT_DESCRIPTION') ) {
+    if ( $short_description = $product_collection->get('SHORT_DESCRIPTION') ) 
       $this->short_description = $short_description;
-    }
-
-    if ( $description = $product_collection->get('DESCRIPTION') ) {
+    if ( $description = $product_collection->get('DESCRIPTION') ) 
       $this->description = $description;
-    }
-
-    if ( $price = $product_collection->get('PRICE') ) {
+    if ( $price = $product_collection->get('PRICE') )
       $this->price = floatval($price);
-    }
-
-    if ( $ean = $product_collection->get('EAN') ) {
+    if ( $ean = $product_collection->get('EAN') )
       $this->ean = $ean;
-    }
-
-    if ( $category_google = $product_collection->get('GOOGLE_CATEGORY_ID') ) {
-      $this->category_google = $category_google;
-    }
-
+    if ( $category_google = $product_collection->get('GOOGLE_CATEGORY_ID') )
+      $this->category_google = intval($category_google);
     if ( $stock = $product_collection->get('STOCK') ) {
       $stock = $stock->toArray();
-      if ( isset($stock[2]) && !empty($stock[2][0]) ) {
+      if ( !empty($stock[2][0]) )
         $this->minimal_order = intval($stock[2][0]);
-      }
     }
-
     if ( $images = $product_collection->get('IMAGES') ) {
       $images = $images->toArray();
       foreach( $images as $img ) {
-        if ( !empty($img['IMAGE']) ) {
-          $this->images[] = filter_var($img['IMAGE'], FILTER_SANITIZE_URL);
-        }
+        if ( empty($img['IMAGE']) ) continue;
+        $this->images[] = filter_var($img['IMAGE'], FILTER_SANITIZE_URL);
       }
     }
-    
   }
 
-  public function import_csv_collection( $csv_collection ) {
+  public function import_csv_array( array $product_array ) {
+    if ( isset($product_array['name']) )
+      $this->name = $product_array['name'];
+    if ( isset($product_array['shortDescription']) )
+      $this->short_description = $product_array['shortDescription'];
+    if ( isset($product_array['description']) )
+      $this->description = $product_array['description'];
+    if ( isset($product_array['price']) )
+      $this->price = floatval($product_array['price']);
+    if ( isset($product_array['ean']) )
+      $this->ean = $product_array['ean'];
+    if ( isset($product_array['minimumAmount']) )
+      $this->minimal_order = intval($product_array['minimumAmount']);
+    if ( isset($product_array['googleCategoryId']) )
+      $this->minimal_order = intval($product_array['googleCategoryId']);
+    foreach ( [ 'image', 'image2', 'image3', 'image4', 'image5' ] as $img_key ) {
+      if ( empty($product_array[$img_key]) ) continue;
+      $this->images[] = filter_var($product_array[$img_key], FILTER_SANITIZE_URL);
+    }
   }
 
   public function to_array() {

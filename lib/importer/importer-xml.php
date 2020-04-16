@@ -51,9 +51,6 @@ class ImporterXML {
     if ( user_can( $current_user, 'subscriber' ) ) {
       $related_wholesaler = get_user_wholesaler( $current_user );
       $related_wholesaler_id = $related_wholesaler->ID;
-    }
-
-    if ( user_can( $current_user, 'subscriber' ) ) {
       $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
       $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
     }

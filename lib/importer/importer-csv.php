@@ -53,11 +53,6 @@ class ImporterCSV {
       }
     }
   
-    if ( user_can( $current_user, 'subscriber' ) ) {
-      $related_wholesaler = get_user_wholesaler( $current_user );
-      $related_wholesaler_id = $related_wholesaler->ID;
-    }
-  
     if ( ! isset( $file_path ) ) return;
   
     $fp = fopen( $file_path, 'r' );
@@ -75,15 +70,22 @@ class ImporterCSV {
     }
   
     fclose( $fp );
-  
+
     if ( user_can( $current_user, 'subscriber' ) ) {
+      $related_wholesaler = get_user_wholesaler( $current_user );
+      $related_wholesaler_id = $related_wholesaler->ID;
       $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
       $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
     }
   
-    // Proccess data
+    $product_base = new ImporterProduct([
+      'wholesaler' => $related_wholesaler_id,
+      'category_bulk' => $product_category_id,
+      'pending_status' => $set_pending_status,
+    ]);
+  
     $products_imported = 0;
-    foreach ( $data as $data_item ) {
+    foreach ( $data as $product_array ) {
   
       // break importing for subscriber if number of products exceeded
       if (
@@ -91,7 +93,10 @@ class ImporterCSV {
         ( $products_left - $products_imported ) <= 0
       ) break;
   
-      Importer::enqueueProduct( $data_item, $related_wholesaler_id, $set_pending_status, $product_category_id );
+      $product = clone $product_base;
+      $product->import_csv_array( $product_array );
+
+      Importer::enqueueProduct($product);
   
       $products_imported++;
     }
@@ -199,7 +204,7 @@ class ImporterCSV {
     $screen = get_current_screen();
     
     if ( ! user_can( $current_user, 'subscriber' ) ) return;
-    if (self::ACF_OPTION_PAGE_NAME !== $screen->base ) return;
+    if ( self::ACF_OPTION_PAGE_NAME !== $screen->base ) return;
     if ( get_user_wholesaler( $current_user ) ) return;
     echo '<script>document.getElementById("publish").disabled = true;</script>';
   }
