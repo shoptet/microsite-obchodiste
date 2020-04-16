@@ -5,24 +5,22 @@ namespace Shoptet;
 use Rodenastyle\StreamParser\StreamParser;
 use Tightenco\Collect\Support\Collection;
 
-class ImporterXML {
+class ImporterFormXML extends ImporterForm {
 
   const ACF_OPTION_PAGE_NAME = 'product_page_product-import-xml';
   const ACF_XML_FEED_URL_FIELD = 'product_xml_feed_url';
 
-  static function init() {
-    add_action( 'acf/init', [ get_called_class(), 'add_field_group' ] );
-    add_action( 'acf/init', [ get_called_class(), 'add_options_page' ] );
+  function __construct() {
+    add_action( 'acf/save_post', [ $this, 'form_submit' ], 1 );
 
-    add_action( 'acf/save_post', [ get_called_class(), 'form_submit' ], 1 );
+    parent::__construct();
   }
 
-  static function form_submit() {
+  function form_submit() {
     global $current_user;
     wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    $screen = get_current_screen();
   
-    if ( ! $screen || self::ACF_OPTION_PAGE_NAME !== $screen->base ) return;
+    if ( ! $this->is_import_page() ) return;
   
     // bail early if no ACF data
     if( empty( $_POST['acf'] ) ) return;
@@ -34,7 +32,7 @@ class ImporterXML {
       $field = acf_get_field( $key );
       switch ( $field['name'] ) {
         case 'related_wholesaler':
-        $related_wholesaler_id = $value;
+        $this->related_wholesaler_id = $value;
         break;
         case 'product_category':
         $product_category_id = intval( $value );
@@ -50,24 +48,23 @@ class ImporterXML {
   
     if ( user_can( $current_user, 'subscriber' ) ) {
       $related_wholesaler = get_user_wholesaler( $current_user );
-      $related_wholesaler_id = $related_wholesaler->ID;
-      $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
-      $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
+      $this->related_wholesaler_id = $related_wholesaler->ID;
+      $wholesaler_author_id = get_post_field( 'post_author', $this->related_wholesaler_id );
+      $this->products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
     }
 
     $product_base = new ImporterProduct([
-      'wholesaler' => $related_wholesaler_id,
+      'wholesaler' => $this->related_wholesaler_id,
       'category_bulk' => $product_category_id,
       'pending_status' => $set_pending_status,
     ]);
   
-    $products_imported = 0;
-    StreamParser::xml($xml_feed_url)->each(function(Collection $product_collection) use ( &$current_user, &$products_imported, &$products_left, &$product_base ) {
+    StreamParser::xml($xml_feed_url)->each(function(Collection $product_collection) use ( &$current_user, &$product_base ) {
 
       // break importing for subscriber if number of products exceeded
       if (
         user_can( $current_user, 'subscriber' ) &&
-        ( $products_left - $products_imported ) <= 0
+        ( $this->products_left - $this->products_imported ) <= 0
       ) return;
 
       $product = clone $product_base;
@@ -75,23 +72,17 @@ class ImporterXML {
 
       Importer::enqueueProduct($product);
       
-      $products_imported++;
+      $this->products_imported++;
     });
   
-    $_POST['acf'] = []; // Do not save any data
-  
-    TermSyncer::enqueueWholesaler( $related_wholesaler_id );
-  
-    as_run_queue();
-  
-    // Add query param to url for admin notice
-    wp_redirect( add_query_arg( [
-      'products_imported' => $products_imported,
-    ] ) );
-    exit;
+    $this->after_import();
   }
 
-  static function add_options_page() {
+  function get_option_page_name() {
+    return self::ACF_OPTION_PAGE_NAME;
+  }
+
+  function add_options_page() {
     if( function_exists('acf_add_options_page') ) {
       acf_add_options_sub_page([
         'page_title' 	=> __( 'Import produktů přes XML', 'shp-obchodiste' ),
@@ -105,7 +96,7 @@ class ImporterXML {
     }
   }
 
-  static function add_field_group() {
+  function add_field_group() {
     if( function_exists('acf_add_local_field_group') ) {
       acf_add_local_field_group(array(
         'key' => 'group_5e970c7743e04',
@@ -215,4 +206,4 @@ class ImporterXML {
 
 }
 
-ImporterXML::init();
+new ImporterFormXML();

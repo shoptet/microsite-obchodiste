@@ -1196,32 +1196,6 @@ add_action( 'admin_notices', function() {
 } );
 
 /**
- * Add admin notices for subscribers
- */
-add_action( 'admin_notices', function() {
-  if ( isset( $_GET['products_imported'] ) ) {
-    $products_imported = intval( $_GET['products_imported'] );
-    
-    // Remove query param from url
-    ?>
-    <script>
-      var newUrl = window.location.href.replace('&products_imported=<?php echo $products_imported; ?>','');
-      history.pushState({}, null, newUrl);
-    </script>
-    <?php 
-    if ( $products_imported > 0 ): ?>
-      <div class="notice notice-success">
-        <p><?php printf( __( 'Produkty přidány do fronty ke zpracování. Celkem přidáno produktů: %d', 'shp-obchodiste' ), $products_imported ); ?></p>
-      </div>
-    <?php else: ?>
-      <div class="notice notice-error">
-        <p><?php _e( 'Nebyl importován žádný produkt', 'shp-obchodiste' ); ?></p>
-      </div>
-    <?php endif;
-  }
-} );
-
-/**
  * Disable "Add new item" button at page title action
  */
 add_action( 'admin_head', function() {

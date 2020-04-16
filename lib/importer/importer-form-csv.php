@@ -2,32 +2,28 @@
 
 namespace Shoptet;
 
-class ImporterCSV {
+class ImporterFormCSV extends ImporterForm {
 
   const ACF_OPTION_PAGE_NAME = 'product_page_product-import';
   const ACF_CSV_FILE_FIELD = 'product_import_file';
 
-  static function init() {
-    add_action( 'acf/init', [ get_called_class(), 'add_field_group' ] );
-    add_action( 'acf/init', [ get_called_class(), 'add_options_page' ] );
-
-    add_action( 'acf/save_post', [ get_called_class(), 'form_submit' ], 1 );
-    add_filter( 'acf/validate_value/name=' . self::ACF_CSV_FILE_FIELD, [ get_called_class(), 'form_validate' ], 10, 2 );
-    
-    add_action( 'admin_footer', [ get_called_class(), 'disable_import_button' ] );
-    add_filter( 'wp_check_filetype_and_ext', [ get_called_class(), 'fix_large_csv_file_upload' ], 10, 4 );
+  function __construct() {
+    add_action( 'acf/save_post', [ $this, 'form_submit' ], 1 );
+    add_filter( 'acf/validate_value/name=' . self::ACF_CSV_FILE_FIELD, [ $this, 'form_validate' ], 10, 2 );
+    add_filter( 'wp_check_filetype_and_ext', [ $this, 'fix_large_csv_file_upload' ], 10, 4 );
 
     // Via: https://github.com/Hube2/acf-filters-and-functions/blob/master/customized-options-page.php
-    add_action( self::ACF_OPTION_PAGE_NAME, [ get_called_class(), 'form_description_start' ], 1 );
-    add_action( self::ACF_OPTION_PAGE_NAME, [ get_called_class(), 'form_description_end' ], 20 );
+    add_action( self::ACF_OPTION_PAGE_NAME, [ $this, 'form_description_start' ], 1 );
+    add_action( self::ACF_OPTION_PAGE_NAME, [ $this, 'form_description_end' ], 20 );
+
+    parent::__construct();
   }
 
-  static function form_submit() {
+  function form_submit() {
     global $current_user;
     wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    $screen = get_current_screen();
   
-    if ( ! $screen || self::ACF_OPTION_PAGE_NAME !== $screen->base ) return;
+    if ( ! $this->is_import_page() ) return;
   
     // bail early if no ACF data
     if( empty( $_POST['acf'] ) ) return;
@@ -39,7 +35,7 @@ class ImporterCSV {
       $field = acf_get_field( $key );
       switch ( $field['name'] ) {
         case 'related_wholesaler':
-        $related_wholesaler_id = $value;
+        $this->related_wholesaler_id = $value;
         break;
         case 'product_category':
         $product_category_id = intval( $value );
@@ -73,24 +69,23 @@ class ImporterCSV {
 
     if ( user_can( $current_user, 'subscriber' ) ) {
       $related_wholesaler = get_user_wholesaler( $current_user );
-      $related_wholesaler_id = $related_wholesaler->ID;
-      $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
-      $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
+      $this->related_wholesaler_id = $related_wholesaler->ID;
+      $wholesaler_author_id = get_post_field( 'post_author', $this->related_wholesaler_id );
+      $this->products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
     }
   
     $product_base = new ImporterProduct([
-      'wholesaler' => $related_wholesaler_id,
+      'wholesaler' => $this->related_wholesaler_id,
       'category_bulk' => $product_category_id,
       'pending_status' => $set_pending_status,
     ]);
   
-    $products_imported = 0;
     foreach ( $data as $product_array ) {
   
       // break importing for subscriber if number of products exceeded
       if (
         user_can( $current_user, 'subscriber' ) &&
-        ( $products_left - $products_imported ) <= 0
+        ( $this->products_left - $this->products_imported ) <= 0
       ) break;
   
       $product = clone $product_base;
@@ -98,23 +93,17 @@ class ImporterCSV {
 
       Importer::enqueueProduct($product);
   
-      $products_imported++;
+      $this->products_imported++;
     }
   
-    $_POST['acf'] = []; // Do not save any data
-  
-    TermSyncer::enqueueWholesaler( $related_wholesaler_id );
-  
-    as_run_queue();
-  
-    // Add query param to url for admin notice
-    wp_redirect( add_query_arg( [
-      'products_imported' => $products_imported,
-    ] ) );
-    exit;
+    $this->after_import();
   }
 
-  static function form_validate( $valid, $value ) {
+  function get_option_page_name() {
+    return self::ACF_OPTION_PAGE_NAME;
+  }
+
+  function form_validate( $valid, $value ) {
     // bail early if value is already invalid
     if( ! $valid ) return $valid;
   
@@ -185,7 +174,7 @@ class ImporterCSV {
     return $valid;
   }
 
-  static function fix_large_csv_file_upload( $data, $file, $filename, $mimes ) {
+  function fix_large_csv_file_upload( $data, $file, $filename, $mimes ) {
     $wp_filetype = wp_check_filetype( $filename, $mimes );
   
     $ext = $wp_filetype['ext'];
@@ -195,25 +184,11 @@ class ImporterCSV {
     return compact( 'ext', 'type', 'proper_filename' );
   }
 
-  /**
-   * Disable import products csv when no own wholesaler is created
-   */
-  static function disable_import_button() {
-    global $current_user;
-    wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    $screen = get_current_screen();
-    
-    if ( ! user_can( $current_user, 'subscriber' ) ) return;
-    if ( self::ACF_OPTION_PAGE_NAME !== $screen->base ) return;
-    if ( get_user_wholesaler( $current_user ) ) return;
-    echo '<script>document.getElementById("publish").disabled = true;</script>';
-  }
-
-  static function form_description_start () {
+  function form_description_start () {
     ob_start();
   }
 
-  static function form_description_end () {
+  function form_description_end () {
     $content = ob_get_clean();
     $options = get_fields( 'options' );
     
@@ -240,7 +215,7 @@ class ImporterCSV {
     echo $content;
   }
 
-  static function add_options_page() {
+  function add_options_page() {
     if( function_exists('acf_add_options_page') ) {
       acf_add_options_sub_page([
         'page_title' 	=> __( 'Import produktů přes CSV', 'shp-obchodiste' ),
@@ -254,7 +229,7 @@ class ImporterCSV {
     }
   }
 
-  static function add_field_group() {
+  function add_field_group() {
     if( function_exists('acf_add_local_field_group') ) {
       acf_add_local_field_group(array(
         'key' => 'group_5cd41ee6a3708',
@@ -367,4 +342,4 @@ class ImporterCSV {
 
 }
 
-ImporterCSV::init();
+new ImporterFormCSV();
