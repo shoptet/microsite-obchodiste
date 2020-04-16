@@ -5,11 +5,11 @@ namespace Shoptet;
 class Importer {
 
   public static function init() {
-    add_action( 'importer/insert_product', [ get_called_class(), 'insertProduct' ] );
-    add_action( 'importer/upload_product_image', [ get_called_class(), 'uploadProductImage' ], 10, 4 );
+    add_action( 'importer/insert_product', [ get_called_class(), 'insert_product' ] );
+    add_action( 'importer/upload_product_image', [ get_called_class(), 'upload_product_image' ], 10, 4 );
   }
 
-  public static function enqueueProduct( ImporterProduct $product ) {
+  public static function enqueue_product( ImporterProduct $product ) {
     
     $product_array = $product->to_array();
     $args_id = ImporterStore::insert($product_array);
@@ -23,7 +23,7 @@ class Importer {
     ImporterStore::update_action_id( $args_id, $action_id );
   }
 
-  public static function enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
+  public static function enqueue_product_image_upload( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
     as_enqueue_async_action(
       'importer/upload_product_image',
       [ $post_product_id, $image_url, $is_thumbnail, $attemps ],
@@ -31,7 +31,7 @@ class Importer {
     );
   }
 
-  public static function getProductsCount( $related_wholesaler_id = NULL, $status = NULL ) {
+  public static function get_products_count( $related_wholesaler_id = NULL, $status = NULL ) {
     $args = [
       'hook' => 'importer/insert_product',
       'per_page' => -1,
@@ -54,7 +54,7 @@ class Importer {
     return count( $actions );
   }
 
-  public static function getProductImagesCount( $post_product_id = NULL, $status = NULL ) {
+  public static function get_product_images_count( $post_product_id = NULL, $status = NULL ) {
     $args = [
       'per_page' => -1,
       'hook' => 'importer/upload_product_image',
@@ -77,7 +77,7 @@ class Importer {
     return count( $actions );
   }
 
-  public static function insertProduct( $args_id ) {
+  public static function insert_product( $args_id ) {
 
     $args = ImporterStore::get($args_id);
     $product = new ImporterProduct($args);
@@ -116,7 +116,7 @@ class Importer {
 
     $is_thumbnail = true;
     foreach ( $product->get_images() as $image_url ) {
-      self::enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, 1 );
+      self::enqueue_product_image_upload( $post_product_id, $image_url, $is_thumbnail, 1 );
       $is_thumbnail = false;
     }
 
@@ -138,7 +138,7 @@ class Importer {
     error_log(sprintf('Product (%s) inserted', $post_product_id));
   }
 
-  public static function uploadProductImage( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
+  public static function upload_product_image( $post_product_id, $image_url, $is_thumbnail, $attemps ) {
     
     $image_id = insert_image_from_url( $image_url, $post_product_id );
 
@@ -157,7 +157,7 @@ class Importer {
       error_log(sprintf('Image (%s) uploaded', $post_product_id));
     } else {
       if ( $attemps < 2 ) {
-        self::enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, $attemps + 1 );
+        self::enqueue_product_image_upload( $post_product_id, $image_url, $is_thumbnail, $attemps + 1 );
       } else {
         $errors = intval( get_post_meta( $post_product_id, 'sync_errors', true ) );
         update_post_meta( $post_product_id, 'sync_errors', $errors + 1 );

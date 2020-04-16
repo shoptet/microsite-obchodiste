@@ -37,8 +37,8 @@ class AdminProductList {
       $related_wholesaler_id = NULL;
     }
 
-    $pending_products_count = Importer::getProductsCount( $related_wholesaler_id, 'pending' );
-    $pending_products_count += Importer::getProductsCount( $related_wholesaler_id, 'running' );
+    $pending_products_count = Importer::get_products_count( $related_wholesaler_id, 'pending' );
+    $pending_products_count += Importer::get_products_count( $related_wholesaler_id, 'running' );
 
     if ( $pending_products_count > 0 ) : ?>
       <div class="notice notice-warning">
@@ -64,8 +64,8 @@ class AdminProductList {
       return;
     }
 
-    $pending_product_images_count = Importer::getProductImagesCount( NULL, 'pending' );
-    $pending_product_images_count += Importer::getProductImagesCount( NULL, 'running' );
+    $pending_product_images_count = Importer::get_product_images_count( NULL, 'pending' );
+    $pending_product_images_count += Importer::get_product_images_count( NULL, 'running' );
 
     if ( $pending_product_images_count > 0 ) : ?>
       <div class="notice notice-warning">
@@ -109,13 +109,13 @@ class AdminProductList {
         }
       break;
       case 'sync_state':
-        $all_product_images_count = Importer::getProductImagesCount( $post_id );
+        $all_product_images_count = Importer::get_product_images_count( $post_id );
         if ( $all_product_images_count == 0 ) {
           echo '–';
           break;
         }
-        $pending_product_images_count = Importer::getProductImagesCount( $post_id, 'pending' );
-        $pending_product_images_count += Importer::getProductImagesCount( $post_id, 'running' );
+        $pending_product_images_count = Importer::get_product_images_count( $post_id, 'pending' );
+        $pending_product_images_count += Importer::get_product_images_count( $post_id, 'running' );
         if ( $pending_product_images_count == 0 ) {
           echo '<strong>' . __( 'Synchronizace obrázků dokončena', 'shp-obchodiste' ) . '</strong>';
         } else {

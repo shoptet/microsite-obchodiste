@@ -1156,13 +1156,13 @@ add_action( 'admin_notices', function() {
   global $pagenow, $post;
   if ( 'post.php' !== $pagenow || 'product' !== $post->post_type ) return;
 
-  $all_product_images_count = Shoptet\Importer::getProductImagesCount( $post->ID );
+  $all_product_images_count = Shoptet\Importer::get_product_images_count( $post->ID );
   if ( $all_product_images_count == 0 ) {
     return;
   }
   
-  $pending_product_images_count = Shoptet\Importer::getProductImagesCount( $post->ID, 'pending' );
-  $pending_product_images_count += Shoptet\Importer::getProductImagesCount( $post->ID, 'running' );
+  $pending_product_images_count = Shoptet\Importer::get_product_images_count( $post->ID, 'pending' );
+  $pending_product_images_count += Shoptet\Importer::get_product_images_count( $post->ID, 'running' );
 
   $errors = intval( get_post_meta( $post->ID, 'sync_errors', true ) );
 

@@ -7,6 +7,8 @@ class ImporterFormCSV extends ImporterForm {
   const ACF_OPTION_PAGE_NAME = 'product_page_product-import';
   const ACF_CSV_FILE_FIELD = 'product_import_file';
 
+  protected $file_path;
+
   function __construct() {
     add_action( 'acf/save_post', [ $this, 'form_submit' ], 1 );
     add_filter( 'acf/validate_value/name=' . self::ACF_CSV_FILE_FIELD, [ $this, 'form_validate' ], 10, 2 );
@@ -25,78 +27,43 @@ class ImporterFormCSV extends ImporterForm {
   
     if ( ! $this->is_import_page() ) return;
   
-    // bail early if no ACF data
     if( empty( $_POST['acf'] ) ) return;
   
     $fields = $_POST['acf'];
-    $product_category_id = false;
-    $set_pending_status = false;
     foreach( $fields as $key => $value ) {
       $field = acf_get_field( $key );
       switch ( $field['name'] ) {
         case 'related_wholesaler':
-        $this->related_wholesaler_id = $value;
+          $wholesaler = $value;
         break;
         case 'product_category':
-        $product_category_id = intval( $value );
+          $default_category = intval( $value );
         break;
         case self::ACF_CSV_FILE_FIELD:
-        $file_path = get_attached_file( $value );
+          $file_path = get_attached_file( $value );
         break;
         case 'set_pending_status':
-        $set_pending_status = boolval( intval( $value ) );
+          $set_pending_status = boolval( intval( $value ) );
         break;
       }
     }
   
-    if ( ! isset( $file_path ) ) return;
-  
-    $fp = fopen( $file_path, 'r' );
-  
-    if ( ! $fp ) return null;
-  
-    $header = fgetcsv( $fp, 0, ';' );
-  
-    $data = [];
-    while ( $row = fgetcsv( $fp, 0, ';' ) ) {
-      foreach ( $row as $key => $value ) {
-        $row[$key] = iconv( 'CP1250', 'UTF-8', $value );
-      }
-      $data[] = array_combine( $header, $row );
-    }
-  
-    fclose( $fp );
+    $parser_csv = new ImporterParserCSV(
+      $file_path,
+      $wholesaler,
+      $default_category,
+      $set_pending_status
+    );
+    $products_imported = $parser_csv->import();
 
-    if ( user_can( $current_user, 'subscriber' ) ) {
-      $related_wholesaler = get_user_wholesaler( $current_user );
-      $this->related_wholesaler_id = $related_wholesaler->ID;
-      $wholesaler_author_id = get_post_field( 'post_author', $this->related_wholesaler_id );
-      $this->products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
-    }
-  
-    $product_base = new ImporterProduct([
-      'wholesaler' => $this->related_wholesaler_id,
-      'category_bulk' => $product_category_id,
-      'pending_status' => $set_pending_status,
-    ]);
-  
-    foreach ( $data as $product_array ) {
-  
-      // break importing for subscriber if number of products exceeded
-      if (
-        user_can( $current_user, 'subscriber' ) &&
-        ( $this->products_left - $this->products_imported ) <= 0
-      ) break;
-  
-      $product = clone $product_base;
-      $product->import_csv_array( $product_array );
+    $_POST['acf'] = []; // Do not save any data
 
-      Importer::enqueueProduct($product);
-  
-      $this->products_imported++;
-    }
-  
-    $this->after_import();
+    // Add query param to url for admin notice
+    wp_redirect( add_query_arg( [
+      'products_imported' => $products_imported,
+    ] ) );
+
+    exit;
   }
 
   function get_option_page_name() {

@@ -22,60 +22,44 @@ class ImporterFormXML extends ImporterForm {
   
     if ( ! $this->is_import_page() ) return;
   
-    // bail early if no ACF data
     if( empty( $_POST['acf'] ) ) return;
   
     $fields = $_POST['acf'];
-    $product_category_id = false;
-    $set_pending_status = false;
     foreach( $fields as $key => $value ) {
-      $field = acf_get_field( $key );
+      $field = acf_get_field($key);
       switch ( $field['name'] ) {
         case 'related_wholesaler':
-        $this->related_wholesaler_id = $value;
+          $wholesaler = intval($value);
         break;
         case 'product_category':
-        $product_category_id = intval( $value );
+          $default_category = intval($value);
         break;
         case self::ACF_XML_FEED_URL_FIELD:
-        $xml_feed_url = filter_var($value, FILTER_SANITIZE_URL);
+          $xml_feed_url = filter_var($value, FILTER_SANITIZE_URL);
         break;
         case 'set_pending_status':
-        $set_pending_status = boolval( intval( $value ) );
+          $set_pending_status = boolval(intval($value));
         break;
       }
     }
-  
-    if ( user_can( $current_user, 'subscriber' ) ) {
-      $related_wholesaler = get_user_wholesaler( $current_user );
-      $this->related_wholesaler_id = $related_wholesaler->ID;
-      $wholesaler_author_id = get_post_field( 'post_author', $this->related_wholesaler_id );
-      $this->products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
-    }
 
-    $product_base = new ImporterProduct([
-      'wholesaler' => $this->related_wholesaler_id,
-      'category_bulk' => $product_category_id,
-      'pending_status' => $set_pending_status,
-    ]);
-  
-    StreamParser::xml($xml_feed_url)->each(function(Collection $product_collection) use ( &$current_user, &$product_base ) {
+    $parser_xml = new ImporterParserXML(
+      $xml_feed_url,
+      $wholesaler,
+      $default_category,
+      $set_pending_status
+    );
+    $products_imported = $parser_xml->import();
 
-      // break importing for subscriber if number of products exceeded
-      if (
-        user_can( $current_user, 'subscriber' ) &&
-        ( $this->products_left - $this->products_imported ) <= 0
-      ) return;
+    $_POST['acf'] = []; // Do not save any data
 
-      $product = clone $product_base;
-      $product->import_xml_collection( $product_collection );
+    // Add query param to url for admin notice
+    wp_redirect( add_query_arg( [
+      'products_imported' => $products_imported,
+    ] ) );
 
-      Importer::enqueueProduct($product);
-      
-      $this->products_imported++;
-    });
-  
-    $this->after_import();
+    exit;
+
   }
 
   function get_option_page_name() {

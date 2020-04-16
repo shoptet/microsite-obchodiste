@@ -4,9 +4,6 @@ namespace Shoptet;
 
 abstract class ImporterForm {
 
-  protected $related_wholesaler_id;
-  protected $products_imported = 0;
-
   function __construct() {
     add_action( 'acf/init', [ $this, 'add_field_group' ] );
     add_action( 'acf/init', [ $this, 'add_options_page' ] );
@@ -34,24 +31,9 @@ abstract class ImporterForm {
     echo '<script>document.getElementById("publish").disabled = true;</script>';
   }
 
-  function after_import() {
-    $_POST['acf'] = []; // Do not save any data
-  
-    TermSyncer::enqueueWholesaler( $this->related_wholesaler_id );
-  
-    as_run_queue();
-  
-    // Add query param to url for admin notice
-    wp_redirect( add_query_arg( [
-      'products_imported' => $this->products_imported,
-    ] ) );
-
-    exit;
-  }
-
   function show_notices() {
     if ( ! $this->is_import_page() ) return;
-    if ( isset($_GET['products_imported']) ) {
+    if ( isset($_GET['products_imported']) ):
       $products_imported = intval($_GET['products_imported']);
       
       // Remove query param from url
@@ -69,6 +51,6 @@ abstract class ImporterForm {
           <p><?php _e( 'Nebyl importován žádný produkt', 'shp-obchodiste' ); ?></p>
         </div>
       <?php endif;
-    }
+    endif;
   }
 }

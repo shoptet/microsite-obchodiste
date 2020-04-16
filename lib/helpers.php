@@ -295,8 +295,8 @@ function products_left_to_exceed( $post_type, $user_id = NULL ): int
   $user = get_user_by( 'ID', $user_id );
   if ( $related_wholesaler = get_user_wholesaler( $user ) ) {
     $related_wholesaler_id = $related_wholesaler->ID;
-    $products_total += Shoptet\Importer::getProductsCount( $related_wholesaler_id, 'pending' );
-    $products_total += Shoptet\Importer::getProductsCount( $related_wholesaler_id, 'running' );
+    $products_total += Shoptet\Importer::get_products_count( $related_wholesaler_id, 'pending' );
+    $products_total += Shoptet\Importer::get_products_count( $related_wholesaler_id, 'running' );
   }
 
   $options = get_fields( 'options' );
