@@ -3,6 +3,7 @@
 namespace Shoptet;
 
 use Rodenastyle\StreamParser\StreamParser;
+use Tightenco\Collect\Support\Collection;
 
 class ImporterXML {
 
@@ -57,13 +58,14 @@ class ImporterXML {
       $products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
     }
 
-    $product_base = new ImportProduct();
-    $product_base->set_wholesaler($related_wholesaler_id);
-    $product_base->set_category($product_category_id);
-    $product_base->set_pending_status($set_pending_status);
+    $product_base = new ImporterProduct([
+      'wholesaler' => $related_wholesaler_id,
+      'category_bulk' => $product_category_id,
+      'pending_status' => $set_pending_status,
+    ]);
   
     $products_imported = 0;
-    StreamParser::xml($xml_feed_url)->each(function($product_array) use ( &$current_user, &$products_imported, &$products_left, &$product_base ) {
+    StreamParser::xml($xml_feed_url)->each(function(Collection $product_collection) use ( &$current_user, &$products_imported, &$products_left, &$product_base ) {
 
       // break importing for subscriber if number of products exceeded
       if (
@@ -72,11 +74,10 @@ class ImporterXML {
       ) return;
 
       $product = clone $product_base;
-
-      $product->set_data_xml($product_array);
+      $product->import_xml_collection( $product_collection );
 
       Importer::enqueueProduct($product);
-
+      
       $products_imported++;
     });
   
@@ -157,7 +158,7 @@ class ImporterXML {
             'label' => 'Kategorie',
             'name' => 'product_category',
             'type' => 'taxonomy',
-            'instructions' => 'Vyberte kategorii, do které chcete hromadně zařadit produkty. Toto nastavení bude ignorováno pokud, má produkt vyplněnou položku <code>category</code>',
+            'instructions' => 'Vyberte výchozí kategorii, do které chcete zařadit produkty bez vyplněné kategorie.',
             'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => array(
@@ -179,7 +180,7 @@ class ImporterXML {
             'label' => 'Odeslat ke schválení importované produkty',
             'name' => 'set_pending_status',
             'type' => 'true_false',
-            'instructions' => 'Ke schválení se odešlou produkty, které mají vyplněny položky: <code>name</code>, <code>description</code>, <code>shortDescription</code>, <code>image</code> a <code>category</code>. Ostatní produkty budou uloženy jako koncept. Položka <code>category</code> nemusí být vyplněna, pokud je vybrána hromadná kategorie.',
+            'instructions' => 'Ke schválení se odešlou produkty, které mají jméno, popis, krátký popis, kategorii a alespoň jeden obrázek.',
             'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => array(

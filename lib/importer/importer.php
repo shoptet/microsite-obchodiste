@@ -9,15 +9,15 @@ class Importer {
     add_action( 'importer/upload_product_image', [ get_called_class(), 'uploadProductImage' ], 10, 4 );
   }
 
-  public static function enqueueProduct( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) {
+  public static function enqueueProduct( ImporterProduct $product ) {
     
-    $args = [ $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ];
-    $args_id = ImporterStore::insert($args);
+    $product_array = $product->to_array();
+    $args_id = ImporterStore::insert($product_array);
 
     $action_id = as_enqueue_async_action(
       'importer/insert_product',
       [ $args_id ],
-      'importer_insert_product_' . $related_wholesaler_id
+      'importer_insert_product_' . $product->get_wholesaler()
     );
 
     ImporterStore::update_action_id( $args_id, $action_id );
@@ -80,22 +80,22 @@ class Importer {
   public static function insertProduct( $args_id ) {
 
     $args = ImporterStore::get($args_id);
-    list( $product_arr, $related_wholesaler_id, $set_pending_status, $product_category_id ) = $args;
+    $product = new ImporterProduct($args);
 
-    $is_related_wholesaler_publish = ( 'publish' === get_post_status( $related_wholesaler_id ) );
-    $wholesaler_author_id = get_post_field( 'post_author', $related_wholesaler_id );
+    $is_related_wholesaler_publish = ( 'publish' === get_post_status( $product->get_wholesaler() ) );
+    $wholesaler_author_id = get_post_field( 'post_author', $product->get_wholesaler() );
 
     $meta_input = [
-      'short_description' => isset( $product_arr['shortDescription'] ) ? $product_arr['shortDescription'] : '',
-      'description' => isset( $product_arr['description'] ) ? $product_arr['description'] : '',
-      'price' => isset( $product_arr['price'] ) ? floatval( $product_arr['price'] ) : '',
-      'minimal_order' => isset( $product_arr['minimumAmount'] ) ? $product_arr['minimumAmount'] : '',
-      'ean' => isset( $product_arr['ean'] ) ? $product_arr['ean'] : '',
-      'related_wholesaler' => $related_wholesaler_id,
+      'short_description' => $product->get_short_description(),
+      'description' => $product->get_description(),
+      'price' => $product->get_price(),
+      'minimal_order' => $product->get_minimal_order(),
+      'ean' => $product->get_ean(),
+      'related_wholesaler' => $product->get_wholesaler(),
       '_related_wholesaler' => 'field_5c7d1fbf2e01c',
     ];
 
-    $title = $product_arr['name'];
+    $title = $product->get_name();
     $title = apply_filters( 'product_title_import', $title );
 
     $postarr = [
@@ -107,29 +107,27 @@ class Importer {
     ];
     $post_product_id = wp_insert_post( $postarr );
 
-    $product_category_id = ( $product_category_id ?: self::getProductCategoryID( $product_arr ) );
+    $category = $product->get_category();
 
-    if ( $product_category_id ) {
-      wp_set_post_terms( $post_product_id, [ $product_category_id ], 'producttaxonomy' );
-      update_field( 'field_5cc6fbe565ff6', $product_category_id, $post_product_id ); // update product category field
+    if ( $category ) {
+      wp_set_post_terms( $post_product_id, [ $category ], 'producttaxonomy' );
+      update_field( 'field_5cc6fbe565ff6', $category, $post_product_id ); // update product category field
     }
 
-    $image_items = [ 'image', 'image2', 'image3', 'image4', 'image5' ];
-    foreach ( $image_items as $image_key ) {
-      if ( empty( $product_arr[$image_key] ) ) continue;
-      $image_url = $product_arr[$image_key];
-      $is_thumbnail = ( 'image' == $image_key );
+    $is_thumbnail = true;
+    foreach ( $product->get_images() as $image_url ) {
       self::enqueueProductImageUpload( $post_product_id, $image_url, $is_thumbnail, 1 );
+      $is_thumbnail = false;
     }
 
     // Set to pending status
     if (
-      $set_pending_status &&
-      $product_category_id &&
+      $product->get_pending_status() &&
+      $category &&
       $is_related_wholesaler_publish &&
-      ! empty( $product_arr['image'] ) &&
-      ! empty( $product_arr['shortDescription'] ) &&
-      ! empty( $product_arr['description'] )
+      ! empty( $product->get_images() ) &&
+      ! empty( $product->get_short_description() ) &&
+      ! empty( $product->get_description() )
     ) {
       wp_update_post( [
         'ID' => $post_product_id,
@@ -167,30 +165,6 @@ class Importer {
       error_log(sprintf('Image (%s) failed', $post_product_id));
     }
 
-  }
-
-  public static function getProductCategoryID( $product_arr ) {
-    $product_category_id = false;
-
-    if ( ! empty( $product_arr['googleCategoryId'] ) ) {
-      $term_query = new \WP_Term_Query( [
-        'taxonomy' => 'producttaxonomy',
-        'fields' => 'ids',
-        'hide_empty' => false,
-        'meta_key' => 'shoptet_category_id',
-        'meta_value' => $product_arr['googleCategoryId'],
-      ] );
-      if ( ! empty($term_query->terms) ) {
-        $product_category_id = $term_query->terms[0];
-      }
-    } else if ( ! empty( $product_arr['category'] ) ) {
-      $category_id = intval( $product_arr['category'] );
-      if ( term_exists( $category_id, 'producttaxonomy' ) ) {
-        $product_category_id = $category_id;
-      }
-    }
-
-    return $product_category_id;
   }
 
 }
