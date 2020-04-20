@@ -5,8 +5,24 @@ namespace Shoptet;
 class Importer {
 
   public static function init() {
+    add_action( 'importer/import_xml', [ get_called_class(), 'import_xml' ], 10, 4 );
+    add_action( 'importer/import_csv', [ get_called_class(), 'import_csv' ], 10, 4 );
     add_action( 'importer/insert_product', [ get_called_class(), 'insert_product' ] );
     add_action( 'importer/upload_product_image', [ get_called_class(), 'upload_product_image' ], 10, 4 );
+  }
+
+  public static function enqueue_import( $source_type, $source, $wholesaler, $default_category, $set_pending_status ) {
+    $args = [
+      $source,
+      $wholesaler,
+      $default_category,
+      $set_pending_status
+    ];
+    as_enqueue_async_action(
+      'importer/import_' . $source_type,
+      $args,
+      'importer_import_' . $source_type . '_' . $wholesaler
+    );
   }
 
   public static function enqueue_product( ImporterProduct $product ) {
@@ -29,6 +45,29 @@ class Importer {
       [ $post_product_id, $image_url, $is_thumbnail, $attemps ],
       'importer_upload_product_image_' . $post_product_id
     );
+  }
+
+  public static function get_import_count( $source_type, $related_wholesaler_id = NULL, $status = NULL ) {
+    $args = [
+      'hook' => 'importer/import_' . $source_type, 
+      'per_page' => -1,
+    ];
+    if ( $related_wholesaler_id ) {
+      $args['group'] = 'importer_import_'. $source_type . '_' . $related_wholesaler_id;
+    }
+    switch ( $status ) {
+      case 'pending';
+        $args['status'] = \ActionScheduler_Store::STATUS_PENDING;
+      break;
+      case 'running';
+        $args['status'] = \ActionScheduler_Store::STATUS_RUNNING;
+      break;
+      case 'complete';
+        $args['status'] = \ActionScheduler_Store::STATUS_COMPLETE;
+      break;
+    }
+    $actions = as_get_scheduled_actions( $args, 'ids' );
+    return count( $actions );
   }
 
   public static function get_products_count( $related_wholesaler_id = NULL, $status = NULL ) {
@@ -75,6 +114,24 @@ class Importer {
     }
     $actions = as_get_scheduled_actions( $args, 'ids' );
     return count( $actions );
+  }
+
+  public static function import_xml( $xml_feed_url, $wholesaler, $default_category, $set_pending_status ) {
+    (new ImporterParserXML(
+      $xml_feed_url,
+      $wholesaler,
+      $default_category,
+      $set_pending_status
+    ))->import();
+  }
+
+  public static function import_csv( $file_path, $wholesaler, $default_category, $set_pending_status ) {
+    (new ImporterParserCSV(
+      $file_path,
+      $wholesaler,
+      $default_category,
+      $set_pending_status
+    ))->import();
   }
 
   public static function insert_product( $args_id ) {

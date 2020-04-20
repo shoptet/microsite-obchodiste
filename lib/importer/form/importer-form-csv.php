@@ -47,22 +47,18 @@ class ImporterFormCSV extends ImporterForm {
         break;
       }
     }
+
+    // Create temporary duplication of CSV file
+    $tmp_file_path = $file_path . '.tmp.' . uniqid();
+    copy($file_path, $tmp_file_path);
   
-    $parser_csv = new ImporterParserCSV(
-      $file_path,
-      $wholesaler,
-      $default_category,
-      $set_pending_status
-    );
-    $products_imported = $parser_csv->import();
+    Importer::enqueue_import( 'csv', $tmp_file_path, $wholesaler, $default_category, $set_pending_status );
 
     $_POST['acf'] = []; // Do not save any data
 
-    // Add query param to url for admin notice
     wp_redirect( add_query_arg( [
-      'products_imported' => $products_imported,
+      'import_enqueued' => 1,
     ] ) );
-
     exit;
   }
 

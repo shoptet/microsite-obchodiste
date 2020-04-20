@@ -29,6 +29,9 @@ class ImporterParserCSV extends ImporterParser {
     }
   
     fclose($fp);
+
+    // Delete temporary duplication of CSV file
+    unlink($this->source);
   }
 
 }

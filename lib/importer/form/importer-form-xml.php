@@ -43,23 +43,14 @@ class ImporterFormXML extends ImporterForm {
       }
     }
 
-    $parser_xml = new ImporterParserXML(
-      $xml_feed_url,
-      $wholesaler,
-      $default_category,
-      $set_pending_status
-    );
-    $products_imported = $parser_xml->import();
+    Importer::enqueue_import( 'xml', $xml_feed_url, $wholesaler, $default_category, $set_pending_status );
 
     $_POST['acf'] = []; // Do not save any data
 
-    // Add query param to url for admin notice
     wp_redirect( add_query_arg( [
-      'products_imported' => $products_imported,
+      'import_enqueued' => 1,
     ] ) );
-
     exit;
-
   }
 
   function get_option_page_name() {

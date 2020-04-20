@@ -33,10 +33,6 @@ abstract class ImporterParser {
     $this->parse();
       
     TermSyncer::enqueueWholesaler( $this->wholesaler );
-  
-    as_run_queue();
-
-    return $this->products_imported;
   }
 
   function get_product_base() {

@@ -9,6 +9,7 @@ class AdminProductList {
   private static $isBulkEditRendered = false;
 
   static function init () {
+    add_action( 'admin_notices', [ get_called_class(), 'renderPendingImportNotices' ] );
     add_action( 'admin_notices', [ get_called_class(), 'renderPendingProductsNotices' ] );
     add_action( 'admin_notices', [ get_called_class(), 'renderPendingProductImagesNotices' ] );
     add_action( 'manage_posts_custom_column', [ get_called_class(), 'manageColumnContent' ], 10, 2 );
@@ -19,6 +20,41 @@ class AdminProductList {
 
     add_filter( 'manage_edit-product_columns', [ get_called_class(), 'manageColumns' ] );
     add_filter( 'acf/load_field/key=' . self::PRODUCT_CATEGORY_ACF_KEY, [ get_called_class(), 'loadBulkEditCategoryField' ] );
+  }
+
+  static function renderPendingImportNotices () {
+    if ( !self::isAdminProductList() ) return;
+
+    global $current_user;
+    wp_get_current_user();
+
+    if ( user_can( $current_user, 'subscriber' ) ) {
+      if ( $related_wholesaler = get_user_wholesaler( $current_user ) ) {
+        $related_wholesaler_id = $related_wholesaler->ID;
+      } else {
+        return;
+      }
+    } else {
+      $related_wholesaler_id = NULL;
+    }
+
+    $pending_import_count = Importer::get_import_count( 'xml', $related_wholesaler_id, 'pending' );
+    $pending_import_count += Importer::get_import_count( 'xml', $related_wholesaler_id, 'running' );
+    $pending_import_count += Importer::get_import_count( 'csv', $related_wholesaler_id, 'pending' );
+    $pending_import_count += Importer::get_import_count( 'csv', $related_wholesaler_id, 'running' );
+
+    if ( $pending_import_count > 0 ) : ?>
+      <div class="notice notice-warning">
+        <p>
+          <?php
+          printf(
+            __( '<strong>Importy (%d)</strong> čekají ve frontě na zpracování&hellip;', 'shp-obchodiste' ),
+            $pending_import_count
+          );
+          ?>
+        </p>
+      </div>
+    <?php endif;
   }
 
   static function renderPendingProductsNotices () {
@@ -45,7 +81,7 @@ class AdminProductList {
         <p>
           <?php
           printf(
-            __( '<strong>%d produktů</strong> ve frontě čeká na vytvoření&hellip;', 'shp-obchodiste' ),
+            __( '<strong>%d produktů</strong> čeká ve frontě na vytvoření&hellip;', 'shp-obchodiste' ),
             $pending_products_count
           );
           ?>
@@ -72,7 +108,7 @@ class AdminProductList {
         <p>
           <?php
           printf(
-            __( '<strong>%d obrázků</strong> ve frontě čeká na stažení&hellip;', 'shp-obchodiste' ),
+            __( '<strong>%d obrázků</strong> čeká ve frontě na stažení&hellip;', 'shp-obchodiste' ),
             $pending_product_images_count
           );
           ?>
