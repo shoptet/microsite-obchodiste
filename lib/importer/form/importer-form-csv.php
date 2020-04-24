@@ -52,7 +52,8 @@ class ImporterFormCSV extends ImporterForm {
     $tmp_file_path = $file_path . '.tmp.' . uniqid();
     copy($file_path, $tmp_file_path);
   
-    Importer::enqueue_import( 'csv', $tmp_file_path, $wholesaler, $default_category, $set_pending_status );
+    $user_id = get_current_user_id();
+    Importer::enqueue_import( 'csv', $tmp_file_path, $wholesaler, $default_category, $set_pending_status, $user_id );
 
     $_POST['acf'] = []; // Do not save any data
 

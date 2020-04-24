@@ -168,8 +168,10 @@ add_action( 'admin_footer', function() {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it  
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
   if ( ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) || 'product' !== $post->post_type  ) return;
-  if ( get_user_wholesaler( $current_user, 'publish' ) ) return;
-  echo '<script>document.getElementById("publish").disabled = true;</script>';
+  
+  if ( ! get_user_wholesaler( $current_user, 'publish' ) ) {
+    echo '<script>document.getElementById("publish").disabled = true;</script>';
+  }
 } );
 
 /**
@@ -1103,7 +1105,10 @@ add_action( 'admin_notices', function() {
   
   if ( ! user_can( $current_user, 'subscriber' ) ) return;
 
-  if ( 'product_page_product-import' === $screen->base ) {
+  if ( in_array($screen->base, [
+    Shoptet\ImporterFormCSV::ACF_OPTION_PAGE_NAME,
+    Shoptet\ImporterFormXML::ACF_OPTION_PAGE_NAME,
+  ]) ) {
     $post_type = 'product';
   } else {
     if ( 'edit.php' !== $pagenow && 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) return;

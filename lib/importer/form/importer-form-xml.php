@@ -43,7 +43,8 @@ class ImporterFormXML extends ImporterForm {
       }
     }
 
-    Importer::enqueue_import( 'xml', $xml_feed_url, $wholesaler, $default_category, $set_pending_status );
+    $user_id = get_current_user_id();
+    Importer::enqueue_import( 'xml', $xml_feed_url, $wholesaler, $default_category, $set_pending_status, $user_id );
 
     $_POST['acf'] = []; // Do not save any data
 

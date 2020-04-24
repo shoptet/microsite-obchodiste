@@ -5,18 +5,19 @@ namespace Shoptet;
 class Importer {
 
   public static function init() {
-    add_action( 'importer/import_xml', [ get_called_class(), 'import_xml' ], 10, 4 );
-    add_action( 'importer/import_csv', [ get_called_class(), 'import_csv' ], 10, 4 );
+    add_action( 'importer/import_xml', [ get_called_class(), 'import_xml' ], 10, 5 );
+    add_action( 'importer/import_csv', [ get_called_class(), 'import_csv' ], 10, 5 );
     add_action( 'importer/insert_product', [ get_called_class(), 'insert_product' ] );
     add_action( 'importer/upload_product_image', [ get_called_class(), 'upload_product_image' ], 10, 4 );
   }
 
-  public static function enqueue_import( $source_type, $source, $wholesaler, $default_category, $set_pending_status ) {
+  public static function enqueue_import( $source_type, $source, $wholesaler, $default_category, $set_pending_status, $user_id ) {
     $args = [
       $source,
       $wholesaler,
       $default_category,
-      $set_pending_status
+      $set_pending_status,
+      $user_id
     ];
     as_enqueue_async_action(
       'importer/import_' . $source_type,
@@ -116,21 +117,23 @@ class Importer {
     return count( $actions );
   }
 
-  public static function import_xml( $xml_feed_url, $wholesaler, $default_category, $set_pending_status ) {
+  public static function import_xml( $xml_feed_url, $wholesaler, $default_category, $set_pending_status, $user_id ) {
     (new ImporterParserXML(
       $xml_feed_url,
       $wholesaler,
       $default_category,
-      $set_pending_status
+      $set_pending_status,
+      $user_id
     ))->import();
   }
 
-  public static function import_csv( $file_path, $wholesaler, $default_category, $set_pending_status ) {
+  public static function import_csv( $file_path, $wholesaler, $default_category, $set_pending_status, $user_id ) {
     (new ImporterParserCSV(
       $file_path,
       $wholesaler,
       $default_category,
-      $set_pending_status
+      $set_pending_status,
+      $user_id
     ))->import();
   }
 

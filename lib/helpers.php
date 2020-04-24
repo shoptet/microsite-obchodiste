@@ -287,7 +287,8 @@ function products_left_to_exceed( $post_type, $user_id = NULL ): int
 
   $wp_query = new WP_Query( [
     'post_type' => $post_type,
-    'posts_per_page' => -1,
+    'fields' => 'ids',
+    'post_status' => 'any',
     'author' => $user_id,
   ] );
   $products_total = $wp_query->found_posts;

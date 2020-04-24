@@ -27,8 +27,13 @@ abstract class ImporterForm {
     wp_get_current_user(); // Make sure global $current_user is set, if not set it
     if ( ! user_can( $current_user, 'subscriber' ) ) return;
     if ( ! $this->is_import_page() ) return;
-    if ( get_user_wholesaler( $current_user ) ) return;
-    echo '<script>document.getElementById("publish").disabled = true;</script>';
+
+    if (
+      ! get_user_wholesaler( $current_user ) ||
+      0 >= products_left_to_exceed( 'product', $current_user->ID )
+    ) {
+      echo '<script>document.getElementById("publish").disabled = true;</script>';
+    }
   }
 
   function show_notices() {

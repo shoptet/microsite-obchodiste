@@ -8,23 +8,23 @@ abstract class ImporterParser {
   protected $wholesaler;
   protected $default_category;
   protected $set_pending_status;
+  protected $user_id;
   protected $products_left;
   protected $products_imported = 0;
 
-  function __construct( $source, $wholesaler, $default_category = null, $set_pending_status = false ) {
+  function __construct( $source, $wholesaler, $default_category = null, $set_pending_status = false, $user_id = 0 ) {
     $this->source = $source;
     $this->wholesaler = $wholesaler;
     $this->default_category = $default_category;
     $this->set_pending_status = $set_pending_status;
+    $this->user_id = $user_id;
   }
 
   abstract function parse();
 
   function import() {
-    global $current_user;
-    wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    if ( user_can( $current_user, 'subscriber' ) ) {
-      $wholesaler = get_user_wholesaler( $current_user );
+    if ( user_can( $this->user_id, 'subscriber' ) ) {
+      $wholesaler = get_user_wholesaler( $this->user_id );
       $this->wholesaler = $wholesaler->ID;
       $wholesaler_author_id = get_post_field( 'post_author', $this->wholesaler );
       $this->products_left = products_left_to_exceed( 'product', $wholesaler_author_id );
@@ -44,15 +44,10 @@ abstract class ImporterParser {
   }
 
   function is_exceed() {
-    global $current_user;
-    wp_get_current_user(); // Make sure global $current_user is set, if not set it
-
-    $is_exceed = (
-      user_can( $current_user, 'subscriber' ) &&
+    return (
+      user_can( $this->user_id, 'subscriber' ) &&
       ( $this->products_left - $this->products_imported ) <= 0
     );
-
-    return $is_exceed;
   }
 
 }
