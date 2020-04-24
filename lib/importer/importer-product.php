@@ -17,6 +17,7 @@ class ImporterProduct {
   protected $price;
   protected $minimal_order;
   protected $ean;
+  protected $code;
   protected $images = [];
 
   function __construct( array $data_array = [] ) {
@@ -54,6 +55,9 @@ class ImporterProduct {
         break;
         case 'ean':
           $this->ean = $value;
+        break;
+        case 'code':
+          $this->code = $value;
         break;
         case 'images':
           $this->images = $value;
@@ -119,6 +123,10 @@ class ImporterProduct {
     return $this->ean;
   }
 
+  public function get_code() {
+    return $this->code;
+  }
+
   public function get_images() {
     return $this->images;
   }
@@ -134,6 +142,8 @@ class ImporterProduct {
       $this->price = floatval($price);
     if ( $ean = $product_collection->get('EAN') )
       $this->ean = $ean;
+    if ( $code = $product_collection->get('CODE') )
+      $this->code = $code;
     if ( $category_google = $product_collection->get('GOOGLE_CATEGORY_ID') )
       $this->category_google = intval($category_google);
     if ( $stock = $product_collection->get('STOCK') ) {
@@ -161,6 +171,8 @@ class ImporterProduct {
       $this->price = floatval($product_array['price']);
     if ( isset($product_array['ean']) )
       $this->ean = $product_array['ean'];
+    if ( isset($product_array['code']) )
+      $this->code = $product_array['code'];
     if ( isset($product_array['minimumAmount']) )
       $this->minimal_order = intval($product_array['minimumAmount']);
     if ( isset($product_array['googleCategoryId']) )
@@ -195,6 +207,8 @@ class ImporterProduct {
       $export['minimal_order'] = $this->minimal_order;
     if ( isset($this->ean) )
       $export['ean'] = $this->ean;
+    if ( isset($this->code) )
+      $export['code'] = $this->code;
     if ( isset($this->images) )
       $export['images'] = $this->images;
     return $export;

@@ -151,6 +151,7 @@ class Importer {
       'price' => $product->get_price(),
       'minimal_order' => $product->get_minimal_order(),
       'ean' => $product->get_ean(),
+      'code' => $product->get_code(),
       'related_wholesaler' => $product->get_wholesaler(),
       '_related_wholesaler' => 'field_5c7d1fbf2e01c',
     ];
