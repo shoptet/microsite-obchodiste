@@ -39,5 +39,6 @@
     "_js/main.js"
   ],
   "loginScreenJS": "_js/login-screen.js",
+  "wholesalerAutofillJS": "_js/wholesaler-autofill.js",
   "dependencies": {}
 }

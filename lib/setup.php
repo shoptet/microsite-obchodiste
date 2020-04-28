@@ -1575,8 +1575,6 @@ ElasticPressSettings::init();
 
 CounterCache::init();
 
-LoginScreen::init();
-
 /**
  * Remove related products when a wholesaler is deleted
  */
