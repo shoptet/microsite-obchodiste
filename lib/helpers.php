@@ -755,7 +755,6 @@ function start_bulk_operation(){
 }
 
 /**
- * Re-enable PushPress
  * Re-enable Term counting and trigger a term counting operation to update all term counts
  * Re-enable Elasticsearch indexing and trigger a bulk re-index of the site
  */
