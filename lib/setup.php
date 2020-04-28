@@ -24,9 +24,6 @@ add_action( 'init', function() {
   remove_action( 'after_password_reset', 'wp_password_change_notification' );
 } );
 
-/**
- * Pass data to javascript
- */
 add_action( 'wp_head', function() {
   // Add noindex, follow to paged (../page/2/, .../page/3/)
   // via https://blog.bloxxter.cz/jak-spravne-na-strankovani-z-pohledu-seo/ Solution #3
@@ -714,14 +711,6 @@ add_action( 'save_post', function( $post_id ) {
 } );
 
 /**
- * Add instructions above custom post title
- */
-add_action( 'edit_form_top', function( $post ) {
-  if ( 'custom' !== $post->post_type  ) return;
-  echo '<p class="description" style="margin: 1rem 0 0 0;">' . __( 'Zadejte oficiální název firmy dle IČ. Např. „Shoptet s.r.o.“', 'shp-obchodiste' ) . '</p>';
-});
-
-/**
  * Add instructions above product post title
  */
 add_action( 'edit_form_top', function( $post ) {
@@ -859,28 +848,6 @@ add_action( 'admin_head', function() {
   }
 </style>
   ';
-} );
-
-/**
- * Disable wholesaler title, slug and status editing for publish wholesaler post
- */
-add_action( 'admin_head', function() {
-  global $post, $pagenow, $current_user;
-	wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( 'post.php' === $pagenow && 'custom' === $post->post_type && 'publish' === $post->post_status && user_can( $current_user, 'subscriber' ) ) {
-    echo '
-<style>
-  #edit-slug-buttons,
-  .edit-post-status {
-    display: none;
-  }
-  #titlediv #title {
-    pointer-events: none;
-    background-color: transparent;
-  }
-</style>
-    ';
-  }
 } );
 
 /**
