@@ -67,7 +67,7 @@ class AdminDetailWholesaler extends AdminDetail {
     wp_localize_script( 'wholesaler-autofill', 'local', [
       'button_label' => __( 'Předvyplnit údaje podle IČO', 'shp-obchodiste' ),
       'error' => __( 'Něco se pokazilo. Zkuste prosím vyplnit údaje ručně.', 'shp-obchodiste' ),
-      'success' => __( 'Údaje úspěšně předvyplněny', 'shp-obchodiste' ),
+      'success' => __( 'Údaje úspěšně předvyplněny ↓', 'shp-obchodiste' ),
       'loading' => __( 'Načítám&hellip;', 'shp-obchodiste' ),
     ]);
   }
