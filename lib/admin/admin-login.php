@@ -1,6 +1,6 @@
 <?php
 
-class LoginScreen {
+class AdminLogin {
 
   static function init() {
     add_action( 'login_enqueue_scripts', [ get_called_class(), 'enqueueScriptsAndStyles' ] );
@@ -233,3 +233,5 @@ class LoginScreen {
   }
 
 }
+
+AdminLogin::init();

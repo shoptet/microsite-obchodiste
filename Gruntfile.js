@@ -47,7 +47,8 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'dist/js/build.js': pkg.jsFiles,
-                    'dist/js/login-screen.js': pkg.loginScreenJS
+                    'dist/js/login-screen.js': pkg.loginScreenJS,
+                    'dist/js/wholesaler-autofill.js': pkg.wholesalerAutofillJS
                 }
             }
         }
