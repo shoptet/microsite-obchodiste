@@ -23,16 +23,16 @@ class IdentificationNumberApiAjax {
       wp_send_json_error();
     }
 
-    // check and validate the in
+    // check the in
     if ( empty($data['in']) ) {
       wp_send_json_error();
     }
-    if ( ! preg_match('/^[0-9]+$/', $data['in'] ) ) {
-      wp_send_json_error( __( 'Zadejte prosím IČO ve správném formátu', 'shp-obchodiste' ) );
+    
+    $in_api = new IdentificationNumberApiCz($data['in']);
+    if ( ! $in_api->is_valid() ) {
+      wp_send_json_error( __( 'Zadejte IČO ve správném formátu', 'shp-obchodiste' ) );
     }
-
-    $in_api = new IdentificationNumberApiCz();
-    $company = $in_api->get_company($data['in']);
+    $company = $in_api->get_company();
 
     if ( $company != false ) {
       wp_send_json_success( $company );

@@ -6,16 +6,20 @@ class IdentificationNumberApiCz extends IdentificationNumberApi {
 
   const URL_BASE = 'http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi';
 
-  function get_company( string $in ) {
+  function is_valid() {
+    return preg_match('/^[0-9]+$/', $this->in );
+  }
 
-    $api_url = self::URL_BASE . "?ico=" . $in;
+  function get_company() {
+
+    $api_url = self::URL_BASE . "?ico=" . $this->in;
     $xml = $this->create_request($api_url);
 
     $ns = $xml->getDocNamespaces();
     $data = $xml->children($ns['are']);
     $el = $data->children($ns['D'])->VBAS;
 
-    if (strval($el->ICO) == $in) {
+    if (strval($el->ICO) == $this->in) {
       return [
         'in' => (string) $el->ICO,
         'tin' => (string) $el->DIC,

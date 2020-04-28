@@ -4,7 +4,15 @@ namespace Shoptet;
 
 abstract class IdentificationNumberApi {
 
-  abstract function get_company( string $in );
+  protected $in;
+
+  function __construct( $in ) {
+    $this->in = $in;
+  }
+
+  abstract function is_valid();
+
+  abstract function get_company();
 
   protected function create_request( string $url ) {
     $curl = curl_init($url);

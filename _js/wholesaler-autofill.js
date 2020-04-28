@@ -9,10 +9,11 @@
   function init() {
     $button = $('<input class="button button-primary button-large" type="button">')
       .attr('value', local.button_label)
-      .css('margin-top', '1rem');
-    $message = $('<div></div>')
-      .css('margin-top', '0.5rem');
+      .css('vertical-align', 'baseline');
+    $message = $('<span></span>')
+      .css('margin-left', '.5rem');
     $autofill = $('<div></div>')
+      .css('margin-top', '1rem')
       .append($button)
       .append($message);
     $autofillContainer = $('[data-key=field_5b5ecaf4052fb] .acf-input');
@@ -37,8 +38,19 @@
     if (typeof message !== 'string' || message.length == 0) {
       message = local[type];
     }
-    var color = (type == 'success' ? '#46b450' : '#dc3232');
-    $message.html('<div style="color:' + color + '">' + message + '</div>');
+    var color;
+    switch(type) {
+      case 'success':
+        color = '#46b450';
+      break;
+      case 'error':
+        color = '#dc3232';
+      break;
+      case 'default':
+        color = 'inherit';
+      break;
+    }
+    $message.html('<span style="color:' + color + '">' + message + '</span>');
   }
 
   function clearMessage() {
@@ -46,7 +58,7 @@
   }
 
   function handleAutofill() {
-    clearMessage();
+    showMessage('default', local.loading);
     $button.attr('disabled', true);
 
     var data = {

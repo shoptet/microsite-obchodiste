@@ -68,6 +68,7 @@ class AdminDetailWholesaler extends AdminDetail {
       'button_label' => __( 'Předvyplnit údaje podle IČO', 'shp-obchodiste' ),
       'error' => __( 'Něco se pokazilo. Zkuste prosím vyplnit údaje ručně.', 'shp-obchodiste' ),
       'success' => __( 'Údaje úspěšně předvyplněny', 'shp-obchodiste' ),
+      'loading' => __( 'Načítám&hellip;', 'shp-obchodiste' ),
     ]);
   }
 
