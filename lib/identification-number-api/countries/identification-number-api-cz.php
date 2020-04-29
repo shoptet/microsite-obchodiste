@@ -25,7 +25,7 @@ class IdentificationNumberApiCz extends IdentificationNumberApi {
         'tin' => (string) $el->DIC,
         'name' => (string) $el->OF,
         'street' => (string) ($el->AA->NU ?: $el->AA->N) . ' ' . (($el->AA->CO == '') ? $el->AA->CD : $el->AA->CD . '/' . $el->AA->CO),
-        'city' => (string) $el->AA->N,
+        'city' => (string) $el->AA->N . (($el->AA->NCO && strval($el->AA->NCO) != strval($el->AA->N)) ? (' – ' . $el->AA->NCO) : '' ),
         'zip' => (string) $el->AA->PSC,
         'region' => $this->convert_region_code((string) $el->AA->AU->children($ns['U'])->KK),
       ];
