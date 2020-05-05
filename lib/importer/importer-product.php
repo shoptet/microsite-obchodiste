@@ -161,22 +161,22 @@ class ImporterProduct {
   }
 
   public function import_csv_array( array $product_array ) {
-    if ( isset($product_array['name']) )
+    if ( ! empty($product_array['name']) )
       $this->name = $product_array['name'];
-    if ( isset($product_array['shortDescription']) )
+    if ( ! empty($product_array['shortDescription']) )
       $this->short_description = $product_array['shortDescription'];
-    if ( isset($product_array['description']) )
+    if ( ! empty($product_array['description']) )
       $this->description = $product_array['description'];
-    if ( isset($product_array['price']) )
+    if ( ! empty($product_array['price']) )
       $this->price = floatval($product_array['price']);
-    if ( isset($product_array['ean']) )
+    if ( ! empty($product_array['ean']) )
       $this->ean = $product_array['ean'];
-    if ( isset($product_array['code']) )
+    if ( ! empty($product_array['code']) )
       $this->code = $product_array['code'];
-    if ( isset($product_array['minimumAmount']) )
+    if ( ! empty($product_array['minimumAmount']) )
       $this->minimal_order = intval($product_array['minimumAmount']);
-    if ( isset($product_array['googleCategoryId']) )
-      $this->minimal_order = intval($product_array['googleCategoryId']);
+    if ( ! empty($product_array['googleCategoryId']) )
+      $this->category_google = intval($product_array['googleCategoryId']);
     foreach ( [ 'image', 'image2', 'image3', 'image4', 'image5' ] as $img_key ) {
       if ( empty($product_array[$img_key]) ) continue;
       $this->images[] = filter_var($product_array[$img_key], FILTER_SANITIZE_URL);

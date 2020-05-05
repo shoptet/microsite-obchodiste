@@ -146,16 +146,23 @@ class Importer {
     $wholesaler_author_id = get_post_field( 'post_author', $product->get_wholesaler() );
 
     $meta_input = [
-      'short_description' => $product->get_short_description(),
-      'description' => $product->get_description(),
-      'price' => $product->get_price(),
-      'minimal_order' => $product->get_minimal_order(),
-      'ean' => $product->get_ean(),
-      'code' => $product->get_code(),
       'related_wholesaler' => $product->get_wholesaler(),
       '_related_wholesaler' => 'field_5c7d1fbf2e01c',
     ];
 
+    if ( ! empty($product->get_short_description()) )
+      $meta_input['short_description'] = $product->get_short_description();
+    if ( ! empty($product->get_description()) )
+      $meta_input['description'] = $product->get_description();
+    if ( ! empty($product->get_ean()) )
+      $meta_input['ean'] = $product->get_ean();
+    if ( ! empty($product->get_code()) )
+      $meta_input['code'] = $product->get_code();
+    if ( ! empty( $product->get_price() ) )
+      $meta_input['price'] = $product->get_price();
+    if ( ! empty( $product->get_minimal_order() ) )
+      $meta_input['minimal_order'] = $product->get_minimal_order();
+    
     $title = $product->get_name();
     $title = apply_filters( 'product_title_import', $title );
 
