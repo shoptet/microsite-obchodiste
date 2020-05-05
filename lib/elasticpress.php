@@ -7,6 +7,8 @@ class ElasticPressSettings {
     add_filter( 'ep_post_mapping', [ get_called_class(), 'add_analysis_default_analyzer' ] );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'add_analysis_filter' ] );
     add_filter( 'ep_formatted_args', [ get_called_class(), 'unlimit_track_total_hits' ] );
+    add_filter( 'ep_prepare_meta_excluded_public_keys', [ get_called_class(), 'exclude_meta_public_keys' ], 10, 2 );
+    add_filter( 'ep_prepared_post_meta', [ get_called_class(), 'html_trim_meta' ] );
   }
 
   /**
@@ -76,6 +78,50 @@ class ElasticPressSettings {
   static function unlimit_track_total_hits( $formatted_args ) {
     $formatted_args['track_total_hits'] = true;
     return $formatted_args;
+  }
+
+  static function exclude_meta_public_keys( $excluded_meta, $post ) {
+    switch ( $post->post_type ) {
+      case 'product':
+        $excluded_meta = [
+          'minimal_order',
+          'code',
+          'thumbnail',
+          'sync_success',
+          'gallery',
+          'category',
+        ];
+      break;
+      case 'custom':
+        $excluded_meta = [
+          'contact_count',
+          'website',
+          'facebook',
+          'twitter',
+          'instagram',
+          'logo',
+          'contact_photo',
+          'category',
+          'minor_category_1',
+          'minor_category_2',
+          'gallery',
+          'video',
+          'location',
+        ];
+      break;
+    }
+    return $excluded_meta;
+  }
+
+  static function html_trim_meta( $meta ) {
+    foreach ( $meta as $key => $value ) {
+      if ( isset($value[0]) ) {
+        $trimmed = strip_tags($value[0]);
+        $trimmed = preg_replace( '#[\n\r]+#s', ' ', $trimmed );
+        $meta[$key][0] = $trimmed;
+      }
+    }
+    return $meta;
   }
 
 }
