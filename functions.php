@@ -7,6 +7,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once 'wp-cli/class-update-product-wholesaler-cli.php';
 	require_once 'wp-cli/class-update-attachment-author-cli.php';
 	require_once 'wp-cli/class-update-product-thumbnails-cli.php';
+	require_once 'wp-cli/class-clean-postmeta-cli.php';
 }
 
 $includes = [
