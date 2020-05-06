@@ -158,6 +158,7 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
   if ( is_singular( 'custom' ) ) {
+
     // Add only homepage and current page
     $crumbs_copy = [];
     for ( $i = 0, $len = count($crumbs); $i < $len; $i++ ) {
@@ -166,21 +167,43 @@ add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
       }
     }
     $crumbs = $crumbs_copy;
+
     // Add main category in the middle
-    $term_crumb = [ 'term' => get_field( 'category' ) ];
+    $term = get_term( get_field( 'category' ) );
+    if ( is_wp_error( $term ) ) {
+      return $crumbs;
+    }
+    $term_crumb = [
+      'url'  => get_term_link($term),
+      'text' => $term->name,
+    ];
+
     array_splice( $crumbs, 1, 0, [ $term_crumb ] );
 
   } else if ( is_singular( 'product' ) ) {
-    array_splice( $crumbs, 1, 1 ); // Remove product archive link from breadcrumbs
+    // Remove product archive link from breadcrumbs
+    array_splice( $crumbs, 1, 1 );
+
     if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
-      $post_crumb = [ 'id' => $related_wholesaler->ID ];
-      array_splice( $crumbs, 1, 0, [ $post_crumb ] ); // Add related wholesaler link to breadcrumbs
+      // Add related wholesaler link to breadcrumbs
+      $post_crumb = [
+        'url'  => get_permalink($related_wholesaler),
+        'text' => $related_wholesaler->post_title,
+      ];
+      array_splice( $crumbs, 1, 0, [ $post_crumb ] );
+
+      // Add related wholesaler main category link to breadcrumbs
       $term_crumb = [ 'term' => get_field( 'category', $related_wholesaler->ID ) ];
-      array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add related wholesaler main category link to breadcrumbs
+      $term = get_term( get_field( 'category', $related_wholesaler->ID ) );
+      if ( is_wp_error( $term ) ) {
+        return $crumbs;
+      }
+      $term_crumb = [
+        'url'  => get_term_link($term),
+        'text' => $term->name,
+      ];
+      array_splice( $crumbs, 1, 0, [ $term_crumb ] );
     }
-  }
-  if (is_paged()) {
-    array_pop($crumbs); // Remove page number item from archives
   }
   return $crumbs;
 } );
