@@ -10,7 +10,7 @@ add_filter( 'action_scheduler_queue_runner_batch_size', function() {
 
 add_filter( 'action_scheduler_retention_period', function() {
   $day_in_seconds = 86400;
-  return ( 14 * $day_in_seconds );
+  return ( 60 * $day_in_seconds );
 } );
 
 
