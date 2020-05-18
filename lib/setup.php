@@ -1177,42 +1177,6 @@ add_action( 'restrict_manage_posts', function ( $post_type ) {
 } );
 
 /**
- * Add filtering by wholesaler to admin post list
- * TODO: optimize number of wholesalers in select
- */
-// add_action( 'restrict_manage_posts', function ( $post_type ) {
-//   global $current_user;
-//   wp_get_current_user(); // Make sure global $current_user is set, if not set it
-//   if ( user_can( $current_user, 'subscriber' ) ) return;
-
-//   if ( ! in_array( $post_type, [ 'product' ] ) ) return;
-  
-//   $selected = '';
-//   $request_attr = 'wholesaler';
-//   if ( isset($_REQUEST[$request_attr]) ) {
-//     $selected = $_REQUEST[$request_attr];
-//   }
-
-//   $wp_query = new WP_Query( [
-//     'post_type' => 'custom',
-//     'post_status' => 'any',
-//     'posts_per_page' => -1,
-//     'orderby' => 'title',
-//     'order' => 'ASC',
-//   ] );
-//   $wholesalers = $wp_query->posts;
-
-//   echo '<select id="wholesaler" name="wholesaler">';
-//   echo '<option value="0">' . __( '— Velkoobchod —', 'shp-obchodiste' ) . ' </option>';
-//   foreach( $wholesalers as $wholesaler ){
-//     $select = ( $wholesaler->ID == $selected ) ? ' selected="selected"' : '' ;
-//     echo '<option value="' . $wholesaler->ID . '"' . $select . '>' . $wholesaler->post_title . ' </option>';
-//   }
-//   echo '</select>';
-
-// } );
-
-/**
  * Filter products by wholesalers in admin
  */
 add_action( 'pre_get_posts', function( $wp_query ) {
@@ -1488,5 +1452,5 @@ add_action( 'move_post_to_trash_job', function( $post_id ) {
  * Enable custom part of header
  */
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
-define( "CUSTOM_SEARCH_ACTION", TRUE );
-define( "CUSTOM_SEARCH_HEADER", TRUE );
+define( 'CUSTOM_SEARCH_ACTION', TRUE );
+define( 'CUSTOM_SEARCH_HEADER', TRUE );

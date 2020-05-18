@@ -15,7 +15,6 @@ $includes = [
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
 	'src/lib/term-syncer.php',
-	'src/lib/google_product_categories/google_product_categories.php',
 	'src/lib/AdminProductList.php',
 	'src/lib/attachment.php',
 	'src/lib/importer/importer.php',
@@ -37,7 +36,6 @@ $includes = [
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
 	'src/lib/csv_feed.php',
-	'src/lib/shoptet_categories_map/ShoptetCategoriesMap.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {
