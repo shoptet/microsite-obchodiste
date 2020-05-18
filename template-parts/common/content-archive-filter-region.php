@@ -1,6 +1,6 @@
 <?php
 $region_count = function ( $region ) use ( &$post_type ) {
-  if ( in_array( $post_type, [ 'special_offer', 'product' ] ) )
+  if ( in_array( $post_type, [ 'product' ] ) )
     return count( get_posts_by_region( $post_type, $region[ 'id' ] ) );
   return get_post_count_by_meta( 'region', $region[ 'id' ], $post_type );
 };

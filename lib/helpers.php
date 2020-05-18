@@ -60,10 +60,10 @@ function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = 
 function get_posts_by_related_wholesalers( $post_type, $wholesalers ): array
 {
   $posts_by_wholesalers = [];
-  foreach ( get_all_posts( $post_type ) as $special_offer ) {
-    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
+  foreach ( get_all_posts( $post_type ) as $p ) {
+    $related_wholesaler_id = get_field( 'related_wholesaler', $p )->ID;
     if ( ! in_array( $related_wholesaler_id, $wholesalers ) ) continue;
-    $posts_by_wholesalers[] = $special_offer;
+    $posts_by_wholesalers[] = $p;
   }
   return $posts_by_wholesalers;
 }
@@ -313,7 +313,7 @@ function products_left_to_exceed( $post_type, $user_id = NULL ): int
  */
 function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
 {
-  if ( ! in_array( $post_type, [ 'special_offer', 'product' ] ) ) {
+  if ( ! in_array( $post_type, [ 'product' ] ) ) {
     return false;
   }
   $posts_left = products_left_to_exceed( $post_type, $user_id );

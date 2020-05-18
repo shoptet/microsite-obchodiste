@@ -257,7 +257,7 @@ add_filter( 'posts_distinct', function( $where ) {
 });
 
 /**
- * Remove wholesaler, special offer and product list views for subscriber
+ * Remove wholesaler and product list views for subscriber
  */
 function remove_list_view_for_subscribers($views) {
   global $current_user;
@@ -266,7 +266,6 @@ function remove_list_view_for_subscribers($views) {
   return $views;
 }
 add_filter( 'views_edit-custom', 'remove_list_view_for_subscribers', 11);
-add_filter( 'views_edit-special_offer', 'remove_list_view_for_subscribers', 11);
 add_filter( 'views_edit-product', 'remove_list_view_for_subscribers', 11);
 
 /**
@@ -311,20 +310,18 @@ add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
 }, 10, 2);
 
 /**
- * Remove wholesaler, special offer and product quick edit action for subscribers
+ * Remove wholesaler and product quick edit action for subscribers
  */
 add_filter( 'post_row_actions', function( $actions, $post ) {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return $actions;
   unset( $actions['inline hide-if-no-js'] );
-  if ( $post->post_type != 'special_offer' ) return $actions;
-  unset( $actions['view'] );
   return $actions;
 }, 10, 2 );
 
 /**
- * Remove wholesaler, special offer and product bulk actions for subscribers
+ * Remove wholesaler and product bulk actions for subscribers
  */
 function remove_bulk_actions_for_subscribers( $actions ) {
   global $current_user;
@@ -333,11 +330,10 @@ function remove_bulk_actions_for_subscribers( $actions ) {
   return $actions;
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
-add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-product', 'remove_bulk_actions_for_subscribers' );
 
 /**
- * Show only publish owner wholesalers in special offer edit page
+ * Show only publish owner wholesalers in product edit page
  */
 add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $args ) {
   global $current_user;
@@ -550,7 +546,7 @@ add_filter( 'wpseo_opengraph_type', function ( $type ) {
  * Change archive file path
  */
 add_filter( 'archive_template', function ( $archive_template ) {
-  if ( is_post_type_archive( [ 'custom', 'special_offer', 'product' ] ) )
+  if ( is_post_type_archive( [ 'custom', 'product' ] ) )
     return get_template_directory() . '/src/archive.php';
   return $archive_template;
 } ) ;

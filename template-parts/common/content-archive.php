@@ -9,12 +9,6 @@ $archive_text = [
     'empty_title' => __( 'Nemůžeme najít žádné velkoobchody s těmito požadavky', 'shp-obchodiste' ),
     'action_button_label' => __( 'Přidat velkoobchod', 'shp-obchodiste' ),
   ],
-  'special_offer' => [
-    'title' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'description' => $options[ 'archive_special_offer_description' ],
-    'empty_title' => __( 'Nemůžeme najít žádné akční nabídky s těmito požadavky', 'shp-obchodiste' ),
-    'action_button_label' => __( 'Přidat nabídku', 'shp-obchodiste' ),
-  ],
   'product' => [
     'title' => __( 'Produkty', 'shp-obchodiste' ),
     'description' => $options[ 'archive_product_description' ],
@@ -92,19 +86,6 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
             <?php endif; ?>
 
             <?php $loop_index++; ?>
-
-          <?php endwhile; ?>
-        </div>
-        <?php elseif ($post_type === 'special_offer'): ?>
-        <?php get_template_part( 'src/template-parts/common/content', 'archive-sort' ); ?>
-
-        <div class="row row-bordered row-bordered-2-columns no-gutters">
-          <?php while ( have_posts() ) : the_post(); ?>
-            <div class="col-12 col-lg-6">
-
-              <?php get_template_part( 'src/template-parts/special_offer/content', 'tease' ); ?>
-
-            </div>
 
           <?php endwhile; ?>
         </div>
