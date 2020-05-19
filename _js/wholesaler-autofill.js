@@ -26,7 +26,9 @@
   }
 
   function fillForm(data) {
-    //$('#title').val(data.name);
+    $('#title')
+      .val(data.name)
+      .trigger('input'); // Input event is binded to hide title label
     $('#acf-field_5b5ecc9d052fc').val(data.tin);
     $('#acf-field_5b5ec9b4052f8').val(data.street);
     $('#acf-field_5b5eca63052f9').val(data.city);
