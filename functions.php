@@ -15,10 +15,6 @@ $includes = [
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
 	'src/lib/term-syncer.php',
-<<<<<<< HEAD
-	'src/lib/AdminProductList.php',
-=======
-	'src/lib/google_product_categories/google_product_categories.php',
 	'src/lib/identification-number-api/identification-number-api.php',
 	'src/lib/identification-number-api/identification-number-api-ajax.php',
 	'src/lib/identification-number-api/countries/identification-number-api-cz.php',
@@ -26,7 +22,6 @@ $includes = [
 	'src/lib/admin/admin-product-list.php',
 	'src/lib/admin/admin-detail.php',
 	'src/lib/admin/admin-detail-wholesaler.php',
->>>>>>> Add wholesaler form autofill functionality
 	'src/lib/attachment.php',
 	'src/lib/importer/importer.php',
 	'src/lib/importer/importer-product.php',
