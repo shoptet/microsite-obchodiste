@@ -144,8 +144,11 @@ class ImporterProduct {
       $this->ean = $ean;
     if ( $code = $product_collection->get('CODE') )
       $this->code = $code;
-    if ( $category_google = $product_collection->get('GOOGLE_CATEGORY_ID') )
-      $this->category_google = intval($category_google);
+    if ( $categories = $product_collection->get('CATEGORIES') ) {
+      $categories = $categories->where('DEFAULT_CATEGORY')->where('google-id');
+      if ( $category = $categories->first() )
+        $this->category_google = intval($category->get('google-id'));
+    }
     if ( $stock = $product_collection->get('STOCK') ) {
       $stock = $stock->toArray();
       if ( !empty($stock[2][0]) )
