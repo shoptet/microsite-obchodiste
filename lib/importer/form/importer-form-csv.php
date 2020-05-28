@@ -148,12 +148,7 @@ class ImporterFormCSV extends ImporterForm {
     return compact( 'ext', 'type', 'proper_filename' );
   }
 
-  function form_description_start () {
-    ob_start();
-  }
-
-  function form_description_end () {
-    $content = ob_get_clean();
+  function form_description () {
     $options = get_fields( 'options' );
     
     $product_taxonomy_terms = get_terms(  [ 'taxonomy' => 'producttaxonomy', 'parent' => 0, 'hide_empty' => false ] );
@@ -168,15 +163,12 @@ class ImporterFormCSV extends ImporterForm {
     }
     $terms_by_id_html .= '</p>';
 
-    $content = str_replace(
-      '<div id="normal-sortables"',
-      $options[ 'product_import_description' ] .
-      $terms_by_id_html .
-      '<div id="normal-sortables"',
-      $content
-    );
+    $description = $terms_by_id_html;
+    if( ! empty( $options[ 'product_import_xml_description' ] ) ) {
+      $description = $options[ 'product_import_description' ] . $description;
+    }
 
-    echo $content;
+    return $description;
   }
 
   function add_options_page() {
@@ -297,6 +289,48 @@ class ImporterFormCSV extends ImporterForm {
         'style' => 'default',
         'label_placement' => 'left',
         'instruction_placement' => 'field',
+        'hide_on_screen' => '',
+        'active' => true,
+        'description' => '',
+      ));
+      acf_add_local_field_group(array(
+        'key' => 'group_5ecfdd8dbf619',
+        'title' => 'Nastavení stránky CSV importu',
+        'fields' => array(
+          array(
+            'key' => 'field_5cd43b5f6c588',
+            'label' => 'Popis stránky pro CSV import produktů',
+            'name' => 'product_import_description',
+            'type' => 'wysiwyg',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+              'width' => '',
+              'class' => '',
+              'id' => '',
+            ),
+            'default_value' => '',
+            'tabs' => 'all',
+            'toolbar' => 'full',
+            'media_upload' => 1,
+            'delay' => 0,
+          ),
+        ),
+        'location' => array(
+          array(
+            array(
+              'param' => 'options_page',
+              'operator' => '==',
+              'value' => 'acf-options-obecne',
+            ),
+          ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'seamless',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
         'hide_on_screen' => '',
         'active' => true,
         'description' => '',

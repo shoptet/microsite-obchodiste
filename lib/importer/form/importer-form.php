@@ -17,6 +17,8 @@ abstract class ImporterForm {
 
   abstract function get_option_page_name();
 
+  abstract function form_description();
+
   function is_import_page() {
     $screen = get_current_screen();
     return ( $screen && $this->get_option_page_name() == $screen->base );
@@ -50,5 +52,23 @@ abstract class ImporterForm {
         <p><?php _e( 'Import zařazen do fronty ke zpracování', 'shp-obchodiste' ); ?></p>
       </div>
     <?php endif;
+  }
+
+  function form_description_start () {
+    ob_start();
+  }
+
+  function form_description_end () {
+    $content = ob_get_clean();
+    $options = get_fields( 'options' );
+      
+    $content = str_replace(
+      '<div id="normal-sortables"',
+      $this->form_description() .
+      '<div id="normal-sortables"',
+      $content
+    );
+
+    echo $content;
   }
 }

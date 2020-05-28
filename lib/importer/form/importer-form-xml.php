@@ -13,6 +13,10 @@ class ImporterFormXML extends ImporterForm {
   function __construct() {
     add_action( 'acf/save_post', [ $this, 'form_submit' ], 1 );
 
+    // Via: https://github.com/Hube2/acf-filters-and-functions/blob/master/customized-options-page.php
+    add_action( self::ACF_OPTION_PAGE_NAME, [ $this, 'form_description_start' ], 1 );
+    add_action( self::ACF_OPTION_PAGE_NAME, [ $this, 'form_description_end' ], 20 );
+
     parent::__construct();
   }
 
@@ -56,6 +60,15 @@ class ImporterFormXML extends ImporterForm {
 
   function get_option_page_name() {
     return self::ACF_OPTION_PAGE_NAME;
+  }
+
+  function form_description () {
+    $options = get_fields( 'options' );
+    $description = '';
+    if( ! empty( $options[ 'product_import_xml_description' ] ) ) {
+      $description = $options[ 'product_import_xml_description' ];
+    }
+    return $description;
   }
 
   function add_options_page() {
@@ -173,6 +186,48 @@ class ImporterFormXML extends ImporterForm {
         'style' => 'default',
         'label_placement' => 'left',
         'instruction_placement' => 'field',
+        'hide_on_screen' => '',
+        'active' => true,
+        'description' => '',
+      ));
+      acf_add_local_field_group(array(
+        'key' => 'group_5ecfdd82dce61',
+        'title' => 'Nastavení stránky XML importu',
+        'fields' => array(
+          array(
+            'key' => 'field_5ecfd8cce9a7a',
+            'label' => 'Popis stránky pro XML import produktů',
+            'name' => 'product_import_xml_description',
+            'type' => 'wysiwyg',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+              'width' => '',
+              'class' => '',
+              'id' => '',
+            ),
+            'default_value' => '',
+            'tabs' => 'all',
+            'toolbar' => 'full',
+            'media_upload' => 1,
+            'delay' => 0,
+          ),
+        ),
+        'location' => array(
+          array(
+            array(
+              'param' => 'options_page',
+              'operator' => '==',
+              'value' => 'acf-options-obecne',
+            ),
+          ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'seamless',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
         'hide_on_screen' => '',
         'active' => true,
         'description' => '',
