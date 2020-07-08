@@ -137,6 +137,6 @@ add_action( 'wp' , function () {
 
 // Set caching cron
 if ( ! wp_next_scheduled( 'cache_all_csv_feeds' ) ) {
-  wp_schedule_event( time(), 'hourly', 'cache_all_csv_feeds' );
+  // wp_schedule_event( time(), 'hourly', 'cache_all_csv_feeds' );
 }
 add_action( 'cache_all_csv_feeds', 'cache_all_csv_feeds' );
