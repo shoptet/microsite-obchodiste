@@ -2,9 +2,9 @@
 
 namespace Shoptet;
 
-class CsvFeed {
+class ExporterGoogle {
 
-  const ACTION_HOOK = 'csv_feed/cache_all_csv_feeds';
+  const ACTION_HOOK = 'exporter_google/cache_csv';
   const RECURRENCE = 'daily';
 
   static function init() {
@@ -168,4 +168,4 @@ class CsvFeed {
 
 }
 
-CsvFeed::init();
+ExporterGoogle::init();
