@@ -39,7 +39,7 @@ $includes = [
 	'src/lib/filters.php',
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
-	'src/lib/csv_feed.php',
+	'src/lib/csv-feed.php',
 ];
 foreach ($includes as $file) {
   if (!$filepath = locate_template($file)) {
