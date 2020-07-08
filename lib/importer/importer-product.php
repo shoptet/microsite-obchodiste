@@ -15,6 +15,7 @@ class ImporterProduct {
   protected $short_description;
   protected $description;
   protected $price;
+  protected $vat_included;
   protected $minimal_order;
   protected $ean;
   protected $code;
@@ -49,6 +50,9 @@ class ImporterProduct {
         break;
         case 'price':
           $this->price = $value;
+        break;
+        case 'vat_included':
+          $this->vat_included = $value;
         break;
         case 'minimal_order':
           $this->minimal_order = $value;
@@ -115,6 +119,10 @@ class ImporterProduct {
     return $this->price;
   }
 
+  public function get_vat_included() {
+    return $this->vat_included;
+  }
+
   public function get_minimal_order() {
     return $this->minimal_order;
   }
@@ -140,6 +148,10 @@ class ImporterProduct {
       $this->description = $description;
     if ( $price = $product_collection->get('PRICE') )
       $this->price = floatval($price);
+    elseif ( $price_vat = $product_collection->get('PRICE_VAT') ) {
+      $this->price = floatval($price_vat);
+      $this->vat_included = 1;
+    }
     if ( $ean = $product_collection->get('EAN') )
       $this->ean = $ean;
     if ( $code = $product_collection->get('CODE') )
@@ -206,6 +218,8 @@ class ImporterProduct {
       $export['description'] = $this->description;
     if ( isset($this->price) )
       $export['price'] = $this->price;
+    if ( isset($this->vat_included) )
+      $export['vat_included'] = $this->vat_included;
     if ( isset($this->minimal_order) )
       $export['minimal_order'] = $this->minimal_order;
     if ( isset($this->ean) )

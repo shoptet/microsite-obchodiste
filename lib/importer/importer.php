@@ -160,6 +160,8 @@ class Importer {
       $meta_input['code'] = $product->get_code();
     if ( ! empty( $product->get_price() ) )
       $meta_input['price'] = $product->get_price();
+    if ( ! empty( $product->get_vat_included() ) )
+      $meta_input['vat_included'] = $product->get_vat_included();
     if ( ! empty( $product->get_minimal_order() ) )
       $meta_input['minimal_order'] = $product->get_minimal_order();
     
