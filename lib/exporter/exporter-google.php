@@ -112,7 +112,7 @@ class ExporterGoogle {
   }
   
   static function get_cached_csv_feed_file_name( $file_name_postfix ) {
-    $temp_dir = __DIR__ . '/../../tmp';
+    $temp_dir = __DIR__ . '/../../../tmp';
     return sprintf( '%s/feed-%s.csv', $temp_dir, $file_name_postfix );
   }
   
