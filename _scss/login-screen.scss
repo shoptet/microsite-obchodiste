@@ -1,0 +1,52 @@
+@import "../../scaffolding/vendor/bs/scss/functions";
+@import "../../scaffolding/vendor/bs/scss/variables";
+@import "../../scaffolding/vendor/bs/scss/mixins";
+@import "../../scaffolding/vendor/bs/scss/utilities";
+
+@import "../../scaffolding/vendor/bs/scss/grid";
+
+#login {
+  padding-bottom: 4rem;
+
+  @include media-breakpoint-only(xs) {
+    width: 320px !important;
+  }
+
+  .message-bottom {
+    margin-top: 20px;
+  }
+
+  // Hide default message on registration page
+  .message.register {
+    display: none;
+  }
+
+  // Hide WP logo
+  > h1:first-child {
+    display: none;
+  } 
+}
+
+#nav {
+  display: none;
+}
+
+#registerform {
+  > p:first-child {
+    display: none;
+  }
+}
+
+#reg_passmail {
+  display: none;
+}
+
+.row {
+  &, * {
+    box-sizing: border-box;
+  }
+}
+
+.login-footer {
+  background-color: #fff;
+}

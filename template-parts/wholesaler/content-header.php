@@ -3,7 +3,7 @@
   <h1 class="mt-1 mb-1" itemprop="name">
     <?php echo esc_html( get_the_title() ); ?>
     <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
-      <span class="text-muted">(<?php echo esc_html( $project_title ); ?>)</span>
+      <span class="text-muted">(<?php echo esc_html(  $project_title ); ?>)</span>
     <?php endif;  ?>
   </h1>
 
@@ -26,14 +26,6 @@
   </div>
 
 </div>
-
-<?php if ( get_field( "website" ) ): ?>
-<p class="mb-2">
-  <a href="<?php the_field( "website" ); ?>" target="_blank" itemprop="url">
-    <?php echo display_url( get_field( "website" ) ); ?>
-  </a>
-</p>
-<?php endif; ?>
 
 <dl class="dl-inline">
   <dt class="text-muted mr-1">

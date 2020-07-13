@@ -1,5 +1,7 @@
 <?php
 
+add_filter('acf/settings/show_admin', '__return_false');
+
 if( function_exists('acf_add_options_page') ) {
 
 	acf_add_options_page([
@@ -29,13 +31,9 @@ if( function_exists('acf_add_options_page') ) {
 	]);
 
 	acf_add_options_sub_page([
-		'page_title' 	=> __( 'Import produktů', 'shp-obchodiste' ),
-		'menu_title' 	=> __( 'Import', 'shp-obchodiste' ),
-		'parent_slug' => 'edit.php?post_type=product',
-		'menu_slug'   => 'product-import',
-		'capability' => 'product_import',
-		'update_button'		=> __( 'Importovat', 'shp-obchodiste' ),
-		'updated_message'	=> __( 'Produkty úspešně importovány', 'shp-obchodiste' ),
+		'page_title' 	=> __( 'Nastavení stránky přihlášení', 'shp-obchodiste' ),
+		'menu_title' 	=> __( 'Přihlášení', 'shp-obchodiste' ),
+		'parent_slug' => 'theme-settings',
 	]);
 
 }

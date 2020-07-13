@@ -2,9 +2,32 @@
 
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
+/**
+ * Remove Yoast page analysis columns from post lists
+ */
+add_filter( 'manage_edit-product_columns', 'remove_yoast_columns' );
+add_filter( 'manage_edit-custom_columns', 'remove_yoast_columns' );
+function remove_yoast_columns ($columns) {
+  unset($columns['wpseo-score']);
+  unset($columns['wpseo-score-readability']);
+  unset($columns['wpseo-title']);
+  unset($columns['wpseo-metadesc']);
+  unset($columns['wpseo-focuskw']);
+  unset($columns['wpseo-links']);
+  unset($columns['wpseo-linked']);
+  return $columns;
+}
+
 add_filter( 'get_terms_args', function( $args, $taxonomies ) {
-  if ( in_array( 'producttaxonomy', $taxonomies ) ) {
+  if (
+    in_array( 'producttaxonomy', $taxonomies ) ||
+    in_array( 'customtaxonomy', $taxonomies )
+  ) {
     $args['hierarchical'] = false;
+  }
+  // Force rewrite default filter
+  if ( isset( $args['hierarchical_force'] ) ) {
+    $args['hierarchical'] = $args['hierarchical_force'];
   }
   return $args;
 }, 10, 2 );
@@ -30,21 +53,28 @@ add_filter( 'wp_nav_menu_items', function( $items_html, $args ) {
 
   foreach ( $menu_items_data as $post_type => $data ) {
 
+    $terms = get_terms( [
+      'taxonomy' => $data['taxonomy'],
+      'parent' => 0,
+      'hide_empty' => true,
+      'hierarchical_force' => true,
+    ] );
+
     $menu_items_html .= '
-      <li class="shp_menu-item has-dropdown">
+      <li class="shp_menu-item shp_navigation-submenu-wide has-dropdown">
         <a class="shp_menu-item-link" href="' . get_post_type_archive_link( $post_type ) . '">
         ' . $data['title'] . '
         </a>
         <span class="caret dropdown-toggle" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
         <ul class="shp_navigation-submenu dropdown-menu dropdown-menu-right">
           <li class="shp_menu-item">
-            <a class="shp_menu-item-link dropdown-item first" href="' . get_post_type_archive_link( $post_type ) . '">
+            <a class="shp_menu-item-link dropdown-item" href="' . get_post_type_archive_link( $post_type ) . '">
             ' . __( 'Všechny kategorie', 'shp-obchodiste' ) . '
             </a>
           </li>
     ';
 
-    foreach ( get_terms( [ 'taxonomy' => $data['taxonomy'], 'parent' => 0 ] ) as $term ) {
+    foreach ( $terms as $term ) {
       $menu_items_html .= '
         <li class="shp_menu-item">
           <a class="shp_menu-item-link dropdown-item" href="' . get_term_link( $term ) . '">
@@ -99,7 +129,10 @@ add_filter( 'acf/update_value/name=logo', function( $value, $post_id, $field ) {
   // Skip empty value
   if ( $value != ''  ) {
     // Add the value which is the image ID to the _thumbnail_id meta data for the current post
-    add_post_meta( $post_id, '_thumbnail_id', $value );
+    set_post_thumbnail( $post_id, $value );
+    remove_placeholder_logo( $post_id );
+  } else {
+    generate_placeholder_logo( $post_id );
   }
   return $value;
 }, 10, 3 );
@@ -115,104 +148,62 @@ add_filter( 'acf/update_value/name=thumbnail', function( $value, $post_id, $fiel
   // Skip empty value
   if ( $value != ''  ) {
     // Add the value which is the image ID to the _thumbnail_id meta data for the current post
-    add_post_meta( $post_id, '_thumbnail_id', $value );
+    set_post_thumbnail( $post_id, $value );
   }
   return $value;
 }, 10, 3 );
-
-/**
- * Validate product import CSV file
- */
-add_filter( 'acf/validate_value/name=product_import_file', function( $valid, $value ) {
-  // bail early if value is already invalid
-  if( ! $valid ) return $valid;
-
-  $file_path = get_attached_file( $value );
-  $fp = fopen( $file_path, 'r' );
-
-  if ( ! $fp ) {
-    $valid =  __( 'Soubor nelze otevřít', 'shp-obchodiste' );
-    return $valid;
-  }
-
-  $header = fgetcsv( $fp, 0, ';' );
-  $mandatory = [
-    'name',
-    'shortDescription',
-    'description',
-    'image',
-  ];
-
-  // Check for mandatory fields in header
-  $header_mandatory = array_intersect( $mandatory, $header );
-  $mandatory_cols_missing = array_diff( $mandatory, $header_mandatory );
-  if ( ! empty( $mandatory_cols_missing ) ) {
-    $valid = sprintf(
-      __( 'Hlavička souboru neobsahuje tyto povinné položky: <strong>%s</strong>', 'shp-obchodiste' ),
-      implode( ', ', $mandatory_cols_missing )
-    );
-    return $valid;
-  }
-
-  $col_num = count( $header );
-  
-  $row_number = 1;
-  $valid_array = [];
-  while ( $row = fgetcsv( $fp, 0, ';' ) ) {
-    $row_number++;
-
-    // Check the number of fields in a row to be equal to the number of fields in the header
-    if ( count( $row ) !== $col_num ) {
-      $valid_array[] = sprintf (
-        __( '<strong>Chyba na řádku %d</strong>: Jiný počet položek v řádku <strong>(%d)</strong> než počet položek v hlavičce <strong>(%d)</strong>', 'shp-obchodiste' ),
-        $row_number,
-        count( $row ),
-        $col_num
-      );
-      continue;
-    }
-
-    // Check the mandatory fields in row
-    $row = array_combine( $header, $row );
-    foreach ( $mandatory as $m ) {
-      if ( empty( $row[ $m ] ) ) {
-        $valid_array[] = sprintf (
-          __( '<strong>Chyba na řádku %d</strong>: Chybí povinná položka: <strong>%s</strong>', 'shp-obchodiste' ),
-          $row_number,
-          $m
-        );
-      }
-    }
-  }
-
-  if ( ! empty( $valid_array ) ) {
-    $valid = implode( '<br>', $valid_array );
-  }
-
-  fclose( $fp );
-  
-  return $valid;
-}, 10, 2 );
 
 /**
  * Update wholesaler breadcrumb items
  */
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs ) {
   if ( is_singular( 'custom' ) ) {
-    array_splice( $crumbs, 1, 2 ); // Remove wholesaler archive and wholesaler category link from breadcrumbs
-    $term_crumb = [ 'term' => get_field( 'category' ) ];
-    array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add main category link to breadcrumbs
-  } else if ( is_singular( 'product' ) ) {
-    array_splice( $crumbs, 1, 1 ); // Remove product archive link from breadcrumbs
-    if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
-      $post_crumb = [ 'id' => $related_wholesaler->ID ];
-      array_splice( $crumbs, 1, 0, [ $post_crumb ] ); // Add related wholesaler link to breadcrumbs
-      $term_crumb = [ 'term' => get_field( 'category', $related_wholesaler->ID ) ];
-      array_splice( $crumbs, 1, 0, [ $term_crumb ] ); // Add related wholesaler main category link to breadcrumbs
+
+    // Add only homepage and current page
+    $crumbs_copy = [];
+    for ( $i = 0, $len = count($crumbs); $i < $len; $i++ ) {
+      if ( $i == 0 || $i == ($len-1) ) {
+        $crumbs_copy[] = $crumbs[$i];
+      }
     }
-  }
-  if (is_paged()) {
-    array_pop($crumbs); // Remove page number item from archives
+    $crumbs = $crumbs_copy;
+
+    // Add main category in the middle
+    $term = get_term( get_field( 'category' ) );
+    if ( is_wp_error( $term ) ) {
+      return $crumbs;
+    }
+    $term_crumb = [
+      'url'  => get_term_link($term),
+      'text' => $term->name,
+    ];
+
+    array_splice( $crumbs, 1, 0, [ $term_crumb ] );
+
+  } else if ( is_singular( 'product' ) ) {
+    // Remove product archive link from breadcrumbs
+    array_splice( $crumbs, 1, 1 );
+
+    if ( $related_wholesaler = get_field( 'related_wholesaler' ) ) {
+      // Add related wholesaler link to breadcrumbs
+      $post_crumb = [
+        'url'  => get_permalink($related_wholesaler),
+        'text' => $related_wholesaler->post_title,
+      ];
+      array_splice( $crumbs, 1, 0, [ $post_crumb ] );
+
+      // Add related wholesaler main category link to breadcrumbs
+      $term_crumb = [ 'term' => get_field( 'category', $related_wholesaler->ID ) ];
+      $term = get_term( get_field( 'category', $related_wholesaler->ID ) );
+      if ( is_wp_error( $term ) ) {
+        return $crumbs;
+      }
+      $term_crumb = [
+        'url'  => get_term_link($term),
+        'text' => $term->name,
+      ];
+      array_splice( $crumbs, 1, 0, [ $term_crumb ] );
+    }
   }
   return $crumbs;
 } );
@@ -266,7 +257,7 @@ add_filter( 'posts_distinct', function( $where ) {
 });
 
 /**
- * Remove wholesaler, special offer and product list views for subscriber
+ * Remove wholesaler and product list views for subscriber
  */
 function remove_list_view_for_subscribers($views) {
   global $current_user;
@@ -275,70 +266,7 @@ function remove_list_view_for_subscribers($views) {
   return $views;
 }
 add_filter( 'views_edit-custom', 'remove_list_view_for_subscribers', 11);
-add_filter( 'views_edit-special_offer', 'remove_list_view_for_subscribers', 11);
 add_filter( 'views_edit-product', 'remove_list_view_for_subscribers', 11);
-
-/**
- * Update login header
- */
-add_filter( 'login_message', function( $message ) {
-
-  $custom_logo_id = get_theme_mod( 'custom_logo' );
-  $logo = wp_get_attachment_image_src( $custom_logo_id , 'full' );
-  $custom_logo_url = '';
-  if ( has_custom_logo() ) $custom_logo_url = esc_url( $logo[ 0 ] );
-
-  $new_message = '
-    <a href="' . get_home_url() . '">
-      <img
-        src="' . $custom_logo_url . '"
-        style="
-          display: block;
-          margin: 0 auto 15px auto;
-          max-width: 230px;
-        "
-      >
-    </a>
-  ';
-  $new_message .= '<p style="margin-bottom:40px;text-align:center;">';
-  $new_message .= __( 'Nabídněte svoje produkty maloobchodním prodejcům. Služba Obchodistě je zcela zdarma, bez jakýchkoliv přímých nebo nepřímých poplatků.', 'shp-obchodiste' );
-  $new_message .= '</p>';
-
-  // Add title to login pages
-  if ( ! isset( $_REQUEST[ 'action' ] ) )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Přihlášení', 'shp-obchodiste' ) . '</h1>';
-  else if ( $_REQUEST[ 'action' ] === 'register' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Registrace', 'shp-obchodiste' ) . '</h1>';
-  else if ( $_REQUEST[ 'action' ] === 'lostpassword' )
-    $new_message .= '<h1 style="margin-bottom:20px">' . __( 'Zapomenuté heslo', 'shp-obchodiste' ) . '</h1>';
-
-  // Add messages to login pages
-  if ( ! isset( $_REQUEST[ 'action' ] ) )
-    $new_message .= '
-      <p class="message">
-        ' . sprintf(
-          __( 'Nemáte-li vytvořený účet, nejprve se <a href="%s">registrujte</a>', 'shp-obchodiste' ),
-          wp_registration_url()
-        ) . '
-      </p>
-    ';
-  else if ( $_REQUEST[ 'action' ] === 'register' )
-    $new_message .= '
-      <p class="message">
-        ' . __( 'Zvolte si uživatelské jméno a vložte svůj e-mail', 'shp-obchodiste' ) . '
-      </p>
-      <p class="message">
-        ' . sprintf(
-          __( 'Pokud již máte vytvořený účet, <a href="%s">přihlašte se</a>', 'shp-obchodiste' ),
-          wp_login_url()
-        ) . '
-      </p>
-    ';
-  else
-    $new_message .= $message;
-
-  return $new_message;
-});
 
 /**
  * Redirect subscriber to admin wholesaler list after login
@@ -382,20 +310,18 @@ add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
 }, 10, 2);
 
 /**
- * Remove wholesaler, special offer and product quick edit action for subscribers
+ * Remove wholesaler and product quick edit action for subscribers
  */
 add_filter( 'post_row_actions', function( $actions, $post ) {
   global $current_user;
 	wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! user_can( $current_user, 'subscriber' ) ) return $actions;
   unset( $actions['inline hide-if-no-js'] );
-  if ( $post->post_type != 'special_offer' ) return $actions;
-  unset( $actions['view'] );
   return $actions;
 }, 10, 2 );
 
 /**
- * Remove wholesaler, special offer and product bulk actions for subscribers
+ * Remove wholesaler and product bulk actions for subscribers
  */
 function remove_bulk_actions_for_subscribers( $actions ) {
   global $current_user;
@@ -404,11 +330,10 @@ function remove_bulk_actions_for_subscribers( $actions ) {
   return $actions;
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
-add_filter( 'bulk_actions-edit-special_offer', 'remove_bulk_actions_for_subscribers' );
 add_filter( 'bulk_actions-edit-product', 'remove_bulk_actions_for_subscribers' );
 
 /**
- * Show only publish owner wholesalers in special offer edit page
+ * Show only publish owner wholesalers in product edit page
  */
 add_filter( 'acf/fields/post_object/query/name=related_wholesaler', function( $args ) {
   global $current_user;
@@ -441,7 +366,7 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
   wp_get_current_user(); // Make sure global $current_user is set, if not set it
   if ( ! is_admin() ) return $value;
   $screen = get_current_screen();
-  if ( 'product_page_product-import' !== $screen->base ) return $value;
+  if ( ! isset( $screen->base ) || 'product_page_product-import' !== $screen->base ) return $value;
   if ( ! user_can( $current_user, 'subscriber' ) ) return NULL;
   if ( $related_wholesaler = get_user_wholesaler( $current_user ) )
     return $related_wholesaler->ID;
@@ -464,6 +389,20 @@ function handle_product_category_acf_field ( $title, $term, $field, $post_id ) {
   $title = sprintf( '<span style="opacity:.5">%s</span><strong>%s</strong>', $parent_terms, $term->name );
   return $title;
 };
+
+/**
+ * Show only parent categories in wholesaler taxonomy ACF field
+ */
+add_filter( 'acf/fields/taxonomy/query', function ( $args, $field ) {
+  if (
+    in_array( $field['name'], [ 'category', 'minor_category_1', 'minor_category_2' ] ) &&
+    'customtaxonomy' == $args['taxonomy']
+  ) {
+    $args['parent'] = 0;
+  }
+  return $args;
+}, 10, 2 );
+
 
 /**
  * Set related wholesaler to product
@@ -557,6 +496,9 @@ add_filter( 'acf/validate_value/name=website', function( $valid, $value, $field,
   // bail early if value is already invalid
   if( ! $valid ) return $valid;
 
+  // do not validate empty value
+  if ( empty( $value ) ) return $valid;
+
   if ( ! preg_match('/^(https?:\/\/)?([a-zA-Z0-9]([a-zA-ZäöüÄÖÜ0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}.*/', $value ) ) {
     $valid = __( 'Zadejte prosím URL ve správném formátu', 'shp-obchodiste' );
   }
@@ -604,7 +546,7 @@ add_filter( 'wpseo_opengraph_type', function ( $type ) {
  * Change archive file path
  */
 add_filter( 'archive_template', function ( $archive_template ) {
-  if ( is_post_type_archive( [ 'custom', 'special_offer', 'product' ] ) )
+  if ( is_post_type_archive( [ 'custom', 'product' ] ) )
     return get_template_directory() . '/src/archive.php';
   return $archive_template;
 } ) ;
@@ -637,23 +579,6 @@ add_filter( 'single_template', function ( $single_template ) {
  */
 add_filter( 'wpseo_metabox_prio', function () {
   return 'low';
-} );
-
-/**
- * Add related wholesaler column to post list in admin
- */
-add_filter( 'manage_edit-product_columns', function ( $columns ) {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  $custom_columns = [];
-  if ( ! user_can( $current_user, 'subscriber' ) ) {
-    $custom_columns['related_wholesaler'] = __( 'Velkoobchod', 'shp-obchodiste' );
-  }
-  $custom_columns['sync_state'] = __( 'Stav synchronizace', 'shp-obchodiste' );
-	return
-		array_slice( $columns, 0, 3, true ) +
-		$custom_columns +
-		array_slice( $columns, 3, 4, true );
 } );
 
 /**
@@ -738,24 +663,6 @@ add_filter( 'mce_buttons', function ( $buttons ) {
 } );
 
 /**
- * Add post status to admin list
- */
-add_filter( 'display_post_states', function ( $states, $post ) {
-  switch ( $post->post_status ) {
-    case 'waiting':
-    $states[] = __( 'Čeká na zpracování...', 'shp-obchodiste' );
-    break;
-    case 'done':
-    $states[] = __( 'Hotovo', 'shp-obchodiste' );
-    break;
-    case 'error':
-    $states[] = __( 'Chyba', 'shp-obchodiste' );
-    break;
-  }
-  return $states;
-}, 10, 2 );
-
-/**
  * Add cron schedule interval options
  */
 add_filter( 'cron_schedules', function ( $schedules ) {
@@ -775,19 +682,6 @@ add_filter( 'cron_schedules', function ( $schedules ) {
 } );
 
 /**
- * Fix large CSV file upload
- */
-add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename, $mimes ) {
-  $wp_filetype = wp_check_filetype( $filename, $mimes );
-
-  $ext = $wp_filetype['ext'];
-  $type = $wp_filetype['type'];
-  $proper_filename = $data['proper_filename'];
-
-  return compact( 'ext', 'type', 'proper_filename' );
-}, 10, 4 );
-
-/**
  * Make the first capital letter only if the entire product name is capitalized
  */
 add_filter( 'product_title_import', function ( $product_title ) {
@@ -797,7 +691,7 @@ add_filter( 'product_title_import', function ( $product_title ) {
   return $product_title;
 } );
 
-/*
+/**
  * Append project title to wholesaler meta title
  */
 add_filter( 'wpseo_title', function ( $title ) {
@@ -807,4 +701,16 @@ add_filter( 'wpseo_title', function ( $title ) {
     $title = sprintf( '%s (%s) &ndash; %s', $post_title, $project_title, $site_name );
   }
   return $title;
+} );
+
+/**
+ * Post Count API Plugin: Increase leads count of fake message number
+ */
+add_filter( 'post-count-api-items', function ( $items ) {
+  if ( isset( $items['obchodisteLeadsCount'] ) ) {
+    $options = get_fields( 'options' );
+    $fake_message_number = ( isset( $options[ 'fake_message_number' ] ) ) ? intval( $options[ 'fake_message_number' ] ) : 0;
+    $items['obchodisteLeadsCount'] = intval( $items['obchodisteLeadsCount'] ) + $fake_message_number;
+  }
+  return $items;
 } );

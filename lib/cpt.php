@@ -58,7 +58,7 @@ function get_cpt_wholesaler_taxonomy_args(): array
     'label' => __( 'Kategorie', 'shp-obchodiste' ),
     'labels' => $labels,
     'public' => true,
-    'hierarchical' => false,
+    'hierarchical' => true,
     'label' => 'Kategorie',
     'show_ui' => true,
     'show_in_menu' => true,
@@ -117,52 +117,6 @@ function get_cpt_wholesaler_message_args(): array
     'query_var' => true,
     'menu_icon' => 'dashicons-testimonial',
     'supports' => [ 'title' ],
-  ];
-  return $args;
-}
-
-/**
- * Returns special offer custom post type arguments
- */
-function get_cpt_special_offer_args(): array
-{
-  $labels = [
-    'name' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'singular_name' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'menu_name' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'all_items' => __( 'Všechny nabídky', 'shp-obchodiste' ),
-    'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
-    'add_new_item' => __( 'Přidat novou nabídku', 'shp-obchodiste' ),
-    'edit_item' => __( 'Upravit nabídku', 'shp-obchodiste' ),
-    'new_item' => __( 'Nová nabídka', 'shp-obchodiste' ),
-    'view_item' => __( 'Zobrazit nabídku', 'shp-obchodiste' ),
-    'view_items' => __( 'Zobrazit nabídku', 'shp-obchodiste' ),
-    'search_items' => __( 'Vyhledat nabídka', 'shp-obchodiste' ),
-    'not_found' => __( 'Nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
-    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná nabídka', 'shp-obchodiste' ),
-    'archives' => __( 'Archiv nabídek', 'shp-obchodiste' ),
-    'items_list' => __( 'Výpis nabídek', 'shp-obchodiste' ),
-  ];
-  $args = [
-    'label' => __( 'Akční nabídka', 'shp-obchodiste' ),
-    'labels' => $labels,
-    'description' => '',
-    'public' => true,
-    'publicly_queryable' => true,
-    'show_ui' => true,
-    'show_in_rest' => false,
-    'rest_base' => '',
-    'has_archive' => 'akcni-nabidka',
-    'show_in_menu' => true,
-    'exclude_from_search' => false,
-    'capability_type' => 'special_offer',
-    'map_meta_cap' => true,
-    'hierarchical' => false,
-    'rewrite' => false,
-    'query_var' => true,
-    'rewrite' => [ 'slug' => 'akcni-nabidka', 'with_front' => true ],
-    'menu_icon' => 'dashicons-megaphone',
-    'supports' => [ 'title', 'author' ],
   ];
   return $args;
 }
@@ -236,54 +190,6 @@ function get_cpt_product_taxonomy_args(): array
     'show_in_rest' => false,
     'rest_base' => '',
     'show_in_quick_edit' => false,
-  ];
-  return $args;
-}
-
-/**
- * Returns wholesaler message custom post type arguments
- */
-function get_cpt_sync_args(): array
-{
-  $labels = [
-    'name' => __( 'Synchronizace', 'shp-obchodiste' ),
-    'singular_name' => __( 'Synchronizace', 'shp-obchodiste' ),
-    'menu_name' => __( 'Synchronizace', 'shp-obchodiste' ),
-    'all_items' => __( 'Všechny položky', 'shp-obchodiste' ),
-    'add_new' => __( 'Přidat novou', 'shp-obchodiste' ),
-    'add_new_item' => __( 'Přidat novou položku', 'shp-obchodiste' ),
-    'edit_item' => __( 'Upravit položku', 'shp-obchodiste' ),
-    'new_item' => __( 'Nová položka', 'shp-obchodiste' ),
-    'view_item' => __( 'Zobrazit položku', 'shp-obchodiste' ),
-    'view_items' => __( 'Zobrazit položky', 'shp-obchodiste' ),
-    'search_items' => __( 'Vyhledat položku', 'shp-obchodiste' ),
-    'not_found' => __( 'Nebyla nalezena žádná položka', 'shp-obchodiste' ),
-    'not_found_in_trash' => __( 'V koši nebyla nalezena žádná položka', 'shp-obchodiste' ),
-    'archives' => __( 'Archiv položek', 'shp-obchodiste' ),
-    'items_list' => __( 'Výpis položek', 'shp-obchodiste' ),
-  ];
-  $args = [
-    'label' => __( 'Synchronizace', 'shp-obchodiste' ),
-    'labels' => $labels,
-    'description' => '',
-    'public' => false,
-    'publicly_queryable' => false,
-    'show_ui' => true,
-    'show_in_rest' => false,
-    'rest_base' => '',
-    'has_archive' => false,
-    'show_in_menu' => true,
-    'exclude_from_search' => true,
-    'capability_type' => 'sync',
-    'capabilities' => [
-      'create_posts' => 'do_not_allow',
-    ],
-    'map_meta_cap' => true,
-    'hierarchical' => false,
-    'rewrite' => false,
-    'query_var' => true,
-    'menu_icon' => 'dashicons-update',
-    'supports' => [ 'title' ],
   ];
   return $args;
 }

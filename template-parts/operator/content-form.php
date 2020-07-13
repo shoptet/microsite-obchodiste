@@ -21,7 +21,7 @@ $acf_form_settings_base = [
 
 $acf_form_settings = [
   'company' => [
-    'fields' => [ 'street', 'city', 'zip', 'country', 'region', 'in', 'website' ],
+    'fields' => [ 'street', 'city', 'zip', 'country', 'field_5b5ed2ca0a22d', 'field_5bbdc19430685', 'in', 'website' ],
     'label_placement' => 'left',
     'instruction_placement' => 'field',
   ],

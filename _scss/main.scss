@@ -15,11 +15,14 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "../../scaffolding/vendor/bs/scss/modal";
 
 @import '../../scaffolding/vendor/fa/scss/variables';
+@import '../../scaffolding/vendor/fa/scss/mixins';
 @import '../../scaffolding/vendor/fa/scss/core';
 @import '../../scaffolding/vendor/fa/scss/list';
 @import '../../scaffolding/vendor/fa/scss/icons';
-@import '../../scaffolding/vendor/fa/scss/fa-brands';
-@import '../../scaffolding/vendor/fa/scss/fa-regular';
+@import '../../scaffolding/vendor/fa/scss/brands';
+@import '../../scaffolding/vendor/fa/scss/regular';
+
+@import "../../scaffolding/shoptet/dropdown";
 
 @import "variables";
 @import "mixins";
@@ -48,9 +51,9 @@ $fa-font-path: "../../../scaffolding/vendor/fa/webfonts";
 @import "modules/section";
 @import "modules/post-banner";
 @import "modules/button";
-@import "modules/special-offer";
 @import "modules/background";
 @import "modules/input-group";
 @import "modules/header";
 @import "modules/block-ellipsis";
 @import "modules/operator-form";
+@import "modules/contact-person";

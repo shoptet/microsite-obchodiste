@@ -60,10 +60,10 @@ function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = 
 function get_posts_by_related_wholesalers( $post_type, $wholesalers ): array
 {
   $posts_by_wholesalers = [];
-  foreach ( get_all_posts( $post_type ) as $special_offer ) {
-    $related_wholesaler_id = get_field( 'related_wholesaler', $special_offer )->ID;
+  foreach ( get_all_posts( $post_type ) as $p ) {
+    $related_wholesaler_id = get_field( 'related_wholesaler', $p )->ID;
     if ( ! in_array( $related_wholesaler_id, $wholesalers ) ) continue;
-    $posts_by_wholesalers[] = $special_offer;
+    $posts_by_wholesalers[] = $p;
   }
   return $posts_by_wholesalers;
 }
@@ -275,9 +275,9 @@ function separate_thousands( $num, $decimals = false ): string
 }
 
 /**
- * Is number of posts exceeded for current user
+ * Get number of left posts to exceed for current user
  */
-function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
+function products_left_to_exceed( $post_type, $user_id = NULL ): int
 {
   if ( ! $user_id ) {
     global $current_user;
@@ -287,14 +287,37 @@ function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
 
   $wp_query = new WP_Query( [
     'post_type' => $post_type,
-    'posts_per_page' => -1,
+    'fields' => 'ids',
+    'post_status' => 'any',
     'author' => $user_id,
   ] );
+  $products_total = $wp_query->found_posts;
+
+  $user = get_user_by( 'ID', $user_id );
+  if ( $related_wholesaler = get_user_wholesaler( $user ) ) {
+    $related_wholesaler_id = $related_wholesaler->ID;
+    $products_total += Shoptet\Importer::get_products_count( $related_wholesaler_id, 'pending' );
+    $products_total += Shoptet\Importer::get_products_count( $related_wholesaler_id, 'running' );
+  }
 
   $options = get_fields( 'options' );
-  $post_type_limit = $options[ $post_type . '_limit' ];
+  $products_limit = intval($options[ $post_type . '_limit' ]);
   
-  return ( $wp_query->found_posts >= $post_type_limit );
+  $products_left = ( $products_limit - $products_total );
+  
+  return $products_left;
+}
+
+/**
+ * Is number of posts exceeded for current user
+ */
+function is_number_of_posts_exceeded( $post_type, $user_id = NULL ): bool
+{
+  if ( ! in_array( $post_type, [ 'product' ] ) ) {
+    return false;
+  }
+  $posts_left = products_left_to_exceed( $post_type, $user_id );
+  return ( $posts_left <= 0 );
 }
 
 /**
@@ -308,10 +331,11 @@ function get_archive_category_link( $post_type, $category ): string
 }
 
 function get_user_wholesaler( $user, $post_status = null ) {
+  $user_id = intval( isset($user->ID) ? $user->ID : $user );
   $args = [
     'post_type' => 'custom',
     'posts_per_page' => 1,
-    'author' => $user->ID,
+    'author' => $user_id,
   ];
   if ( $post_status ) $args['post_status'] = $post_status;
   $wp_query = new WP_Query( $args );
@@ -332,8 +356,15 @@ function get_post_type_in_archive_or_taxonomy () {
 }
 
 function insert_image_from_url( $url, $post_id ) {
-  $timeout_seconds = 5;
-  $tmp_file = download_url( $url, $timeout_seconds );
+
+  // Do not download attachment with no parent post
+  $parent_post = get_post( $post_id );
+  if ( ! $parent_post ) {
+    return false;
+  }
+
+  $timeout = 3;
+  $tmp_file = download_url( $url, $timeout );
 
   if ( is_wp_error( $tmp_file ) ) {
     capture_sentry_message( $tmp_file->get_error_message() );
@@ -346,8 +377,10 @@ function insert_image_from_url( $url, $post_id ) {
     'name' => basename( $matches[0] ),
     'tmp_name' => $tmp_file,
   ];
-
-  $id = media_handle_sideload( $file, $post_id );
+  
+  $args = [];
+  $args['post_author'] = $parent_post->post_author;
+  $id = media_handle_sideload( $file, $post_id, null, $args );
 
   // If error storing permanently, unlink.
   if ( is_wp_error( $id ) ) {
@@ -355,10 +388,6 @@ function insert_image_from_url( $url, $post_id ) {
     @unlink( $tmp_file );
     return false;
   }
-
-  // attach image to post thumbnail
-  $post_meta_id = set_post_thumbnail( $post_id, $id );
-  if ( ! $post_meta_id  ) return false;
 
   return $id;
 }
@@ -376,56 +405,281 @@ function has_query_terms( $terms, $taxonomy ): bool
   return $result;
 }
 
-/**
- * Export wholesaler and number of its products to csv file
- */
-function export_wholesalers(): void
+function count_posts_by_term ( $post_type, $term, $taxonomy ): int
 {
-  $fp = fopen( __DIR__ . '/../export_wholesalers.csv', 'w' );
-  $header = [
-    'company name',
-    'status',
-    'products',
-    'contact person name',
-    'contact person e-mail',
-  ];
-  fputcsv( $fp, $header );
+  $query = new WP_Query( [
+    'post_type' => $post_type,
+    'post_status' => 'publish',
+    'fields' => 'ids',
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+    'tax_query' => [
+      [
+        'taxonomy' => $taxonomy,
+        'terms' => $term->term_id,
+        'include_children' => true,
+      ],
+    ],
+  ] );
+  return $query->found_posts;
+}
 
-  $wp_query = new WP_Query( [
+function hex2RGB( $hex ): array {
+  list( $r, $g, $b ) = sscanf( $hex, '#%02x%02x%02x' );
+  return [ 'r' => $r, 'g' => $g, 'b' => $b ];
+}
+
+function get_placeholder_logo_dir( $indice = 'basedir' ): string
+{
+  $upload_dir = wp_upload_dir();
+  return $upload_dir[ $indice ] . '/wholesaler-logos';
+}
+
+function generate_placeholder_logo( $post_id ): void
+{
+  $image_width = 500;
+  $image_height = $image_width;
+  $color_variants = [
+    [ '#ad0003', '#ff613d' ],
+    [ '#38a85e', '#95d685' ],
+    [ '#130806', '#f6efe4' ],
+    [ '#b35900', '#ffc466' ],
+    [ '#8ccdd9', '#539dc6' ],
+    [ '#97b7c3', '#7c8af3' ],
+    [ '#a6a6a6', '#474747' ],
+    [ '#c6adff', '#9233ff' ],
+  ];
+
+  // Generate color variant form post id
+  $length = count( $color_variants ); // 8
+  $base_modulo = $post_id % ( $length * 2); // 0 - 15
+
+  $color_variant = $color_variants[ $base_modulo % $length ]; // 0 - 7
+  $color_variant_direction = intdiv( $base_modulo, $length ); // 0 - 1
+
+  if ( $color_variant_direction == 1 ) {
+    // switch bg a text colors
+    array_push( $color_variant, array_shift( $color_variant ) );
+  }
+
+  // Generate initials
+  $title = get_the_title( $post_id );
+  $title = trim( $title );
+  $title_words = explode( ' ', $title );
+  $initials = '';
+  $i = 0;
+  $counter = 0;
+  $excluded_words = [ 's.r.o.', 's. r. o.', 'a.s.', 'a. s.', 'spol.', 'a', 'mgr.', 'ing.', 'bc.' ];
+  while( $i < count( $title_words ) && $counter < 2 ) {
+    $word = strtolower( $title_words[$i++] );
+    $first_letter = mb_substr($word, 0, 1);
+    if (
+      in_array( $word, $excluded_words ) || // Skip excluded words
+      '&' == $first_letter // Skip html entities
+    ) continue; 
+    $initials .= $first_letter;
+    $counter++;
+  }
+  $initials = strtoupper( $initials );
+
+  $bg_rgb = hex2RGB( $color_variant[0] );
+  $text_rgb = hex2RGB( $color_variant[1] );
+
+  $im = imagecreate($image_width, $image_height);
+
+  // White background and blue text
+  $bg_color = imagecolorallocate($im, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+  $text_color = imagecolorallocate($im, $text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
+  $font_size = 150;
+  $font = __DIR__ . '/misc/Lato-Black.ttf';
+  $save_dir = get_placeholder_logo_dir();
+  if ( ! file_exists($save_dir) ) {
+    mkdir( $save_dir, 0755, true );
+  }
+  $save_file_path = sprintf( '%s/%s.png', $save_dir, $post_id );
+
+  // Get Bounding Box Size
+  $text_box = imagettfbbox( $font_size, 0, $font, $initials );
+
+  // Get your Text Width and Height
+  $text_width = $text_box[2] - $text_box[0];
+  $text_height = $text_box[7] - $text_box[1];
+
+  // Calculate coordinates of the text
+  $x = ($image_width/2) - ($text_width/2);
+  $y = ($image_height/2) - ($text_height/2);
+
+  imagefill( $im, 0, 0, $bg_color );
+  imagettftext( $im, $font_size, 0, $x, $y, $text_color, $font, $initials );
+
+  imagepng( $im, $save_file_path );
+
+  imagedestroy( $im );
+}
+
+function remove_placeholder_logo( $post_id ): void
+{
+  $placeholder_logo_dir = get_placeholder_logo_dir();
+  $placeholder_logo_path = sprintf( '%s/%s.png', $placeholder_logo_dir, $post_id );
+  if ( file_exists( $placeholder_logo_path ) ) {
+    unlink( $placeholder_logo_path );
+  }
+}
+
+function generate_all_placeholder_logos(): int
+{
+  // Remove all placeholder logos
+  $placeholder_logo_dir = get_placeholder_logo_dir();
+  array_map( 'unlink', glob( $placeholder_logo_dir . '/*' ) );
+
+  $query = new WP_Query( [
     'post_type' => 'custom',
     'posts_per_page' => -1,
     'post_status' => 'any',
-    'no_found_rows' => true,
-    'update_post_term_cache' => false,
+    'fields' => 'ids',
   ] );
-  foreach( $wp_query->posts as $post ) {
-    $row = [];
-    $contact_person_name = get_post_meta( $post->ID, 'contact_full_name', true );
-    $contact_person_email = get_post_meta( $post->ID, 'contact_email', true );
 
-    $wp_query_all_products = new WP_Query( [
-      'post_type' => 'product',
-      'posts_per_page' => -1,
-      'post_status' => 'any',
-      'fields' => 'ids',
-      'update_post_meta_cache' => false,
-      'update_post_term_cache' => false,
-      'meta_query' => [
-        [
-          'key' => 'related_wholesaler',
-          'value' => $post->ID,
-        ],
-      ],
-    ] );
+  $counter = 0;
+  foreach( $query->posts as $post_id ) {
+    if ( ! get_field( 'logo', $post_id ) ) {
+      generate_placeholder_logo( $post_id );
+      $counter++;
+    }
+  }
+  return $counter;
+}
 
-    $row[] = $post->post_title;
-    $row[] = $post->post_status;
-    $row[] = $wp_query_all_products->found_posts;
-    $row[] = $contact_person_name;
-    $row[] = $contact_person_email;
-
-    fputcsv( $fp, $row );
+function get_wholesaler_logo_url( $post_id = NULL ) {
+  
+  if ( ! $post_id ) {
+    global $post;
+    $post_id = $post->ID;
   }
 
-  fclose( $fp );
+  $logo_url = '';
+  if ( has_post_thumbnail( $post_id ) ) {
+    $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'medium' );
+    $logo_url = $image[0];
+  } else {
+    $placeholder_logo_dir = get_placeholder_logo_dir( 'baseurl' );
+    $logo_url = sprintf( '%s/%s.png', $placeholder_logo_dir, $post_id );
+  }
+
+  return $logo_url;
+}
+
+/**
+ * Get unique global id across all posts and terms
+ */
+function get_global_id( $id, $type ) {
+  switch ( $type ) {
+    case 'post':
+    $prefix = 1;
+    break;
+    case 'term':
+    $prefix = 2;
+    break;
+    default:
+    return false;
+    break;
+  }
+  $global_id = $prefix . $id;
+  return $global_id;
+}
+
+function get_product_description_allowed_html() {
+  $allowed_html = [
+    'address' => [],
+    'abbr' => [],
+    'article' => [],
+    'aside' => [],
+    'b' => [],
+    'blockquote' => [
+      'cite' => true,
+    ],
+    'br' => [],
+    'cite' => [],
+    'code' => [],
+    'dd' => [],
+    'div' => [],
+    'dl' => [],
+    'dt' => [],
+    'em' => [],
+    'footer' => [],
+    'h1' => [],
+    'h2' => [],
+    'h3' => [],
+    'h4' => [],
+    'h5' => [],
+    'h6' => [],
+    'header' => [],
+    'hgroup' => [],
+    'hr' => [],
+    'i' => [],
+    'li' => [],
+    'menu' => [],
+    'nav' => [],
+    'p' => [],
+    'span' => [],
+    'section' => [],
+    'small' => [],
+    'strike' => [],
+    'strong' => [],
+    'sub' => [],
+    'sup' => [],
+    'table' => [],
+    'tbody' => [],
+    'td' => [
+      'colspan' => true,
+      'rowspan' => true,
+      'scope' => true,
+    ],
+    'tfood' => [],
+    'thead' => [],
+    'th' => [
+      'colspan' => true,
+      'rowspan' => true,
+    ],
+    'tr' => [],
+    'u' => [],
+    'ul' => [],
+    'ol' => [],
+  ];
+  return $allowed_html;
+}
+function stop_the_insanity () {
+	global $wpdb, $wp_object_cache;
+
+	$wpdb->queries = [];
+
+	if ( is_object( $wp_object_cache ) ) {
+		$wp_object_cache->group_ops      = [];
+		$wp_object_cache->stats          = [];
+		$wp_object_cache->memcache_debug = [];
+		$wp_object_cache->cache          = [];
+
+		if ( method_exists( $wp_object_cache, '__remoteset' ) ) {
+			$wp_object_cache->__remoteset();
+		}
+	}
+}
+
+function start_bulk_operation(){
+	// Disable term count updates for speed
+	wp_defer_term_counting( true );
+	if ( class_exists( 'ES_WP_Indexing_Trigger' ) ){
+		ES_WP_Indexing_Trigger::get_instance()->disable(); //disconnects the wp action hooks that trigger indexing jobs
+	}
+}
+
+/**
+ * Re-enable Term counting and trigger a term counting operation to update all term counts
+ * Re-enable Elasticsearch indexing and trigger a bulk re-index of the site
+ */
+function end_bulk_operation(){
+	wp_defer_term_counting( false ); // This will also trigger a term count.
+	if ( class_exists( 'ES_WP_Indexing_Trigger' ) ){
+		ES_WP_Indexing_Trigger::get_instance()->enable(); //reenable the hooks
+		ES_WP_Indexing_Trigger::get_instance()->trigger_bulk_index( get_current_blog_id(), 'bulk_operation' ); //queues async indexing job to be sent on wp shutdown hook, this will re-index the site inside Elasticsearch
+	}
 }

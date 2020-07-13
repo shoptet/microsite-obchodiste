@@ -1,3 +1,7 @@
+<?php
+$logo_url = get_wholesaler_logo_url();
+?>
+
 <a
   class="wholesaler-tease"
   href="<?php the_permalink(); ?>"
@@ -11,22 +15,27 @@
   <?php endif; ?>
   <div class="d-flex">
 
-    <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! get_field( "logo" ) ) echo "wholesaler-tease-logo-empty" ?>">
-      <?php if ( get_field( "logo" ) ): ?>
+    <div class="wholesaler-tease-logo flex-shrink-0 mr-3 <?php if ( ! $logo_url ) echo "wholesaler-tease-logo-empty" ?>">
+      <?php if ( $logo_url ): ?>
       <img
-        src="<?php echo get_field( "logo" )[ "sizes" ][ "medium" ]; ?>"
-        alt="<?php echo the_title(); ?>"
+        src="<?php echo $logo_url; ?>"
+        alt="<?php the_title(); ?>"
+        loading="lazy"
       >
       <?php endif; ?>
     </div>
 
     <div class="mt-1">
 
-      <h3 class="wholesaler-tease-title h5 mb-2">
+      <h3 class="wholesaler-tease-title h5 mb-0">
         <?php echo esc_html( get_the_title() ); ?>
       </h3>
 
-      <ul class="list-comma fs-90">
+      <?php if ( $project_title = get_field( 'project_title' ) ):  ?>
+        <div class="text-muted">(<?php echo esc_html( $project_title ); ?>)</div>
+      <?php endif;  ?>
+
+      <ul class="list-comma fs-90 mt-2">
         <?php if ( get_field( "category" ) ): ?>
         <li><?php echo get_field( "category" )->name; ?></li>
         <?php endif; ?>

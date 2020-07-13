@@ -4,21 +4,24 @@
   <?php _e( 'Kontaktní osoba', 'shp-obchodiste' ); ?>
 </h2>
 
-<div class="border rounded mb-4">
+<div class="contact-person mb-4">
 
   <?php if ( get_field( "contact_photo" ) ): ?>
-  <img
-    class="float-left rounded-top-left rounded-bottom-left mr-3"
-    src="<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>"
-    <?php if ( get_field( "contact_full_name" ) ): ?>
-      alt="<?php echo esc_html( get_field( "contact_full_name" ) ); ?>"
-    <?php endif; ?>
-    height="105"
-    width="105"
+  <div
+    class="contact-person-image"
+    style="background-image: url(<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>)"
+    loading="lazy"
   >
+    <img
+      src="<?php echo get_field( "contact_photo" )[ "sizes" ][ "thumbnail" ]; ?>"
+      <?php if ( get_field( "contact_full_name" ) ): ?>
+        alt="<?php echo esc_html( get_field( "contact_full_name" ) ); ?>"
+      <?php endif; ?>
+    >
+  </div>
   <?php endif; ?>
 
-  <div class="p-3">
+  <div class="contact-person-body">
 
     <?php if ( get_field( "contact_full_name" ) ): ?>
     <p class="font-weight-bold text-truncate mb-0">

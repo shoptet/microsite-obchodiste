@@ -5,6 +5,7 @@ $the_query = new WP_Query( [
   'post_type' => 'custom',
   'posts_per_page' => 8,
   'post_status' => 'publish',
+  'ep_integrate' => true,
   'tax_query' => [
     [
       'taxonomy' => 'customtaxonomy',

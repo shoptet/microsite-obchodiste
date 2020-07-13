@@ -14,11 +14,13 @@
   <div class="d-flex">
 
     <div class="flex-shrink-0">
-      <?php if ( $thumbnail = get_field( "thumbnail" ) ): ?>
+      <?php if ( has_post_thumbnail() ): ?>
+      <?php $image = wp_get_attachment_image_src( get_post_thumbnail_id(), 'medium' ); ?>
       <div class="product-tease-image d-block">
         <img
-          src="<?php echo $thumbnail[ "sizes" ][ "medium" ]; ?>"
+          src="<?php echo $image[0]; ?>"
           alt="<?php echo the_title(); ?>"
+          loading="lazy"
         >
       </div>
       <?php else: ?>
@@ -41,16 +43,21 @@
         <?php endif; ?>
 
         <meta itemprop="url" content="<?php the_permalink(); ?>">
-        <meta itemprop="image" content="<?php echo $thumbnail[ "sizes" ][ "large" ]; ?>">
+        <?php if ( isset( $image[0] ) ): ?>
+          <meta itemprop="image" content="<?php echo $image[0]; ?>">
+        <?php endif; ?>
 
       </div>
 
       <?php if ( $is_product_tease_in_row && ! $hide_wholesaler_in_product_list ): ?>
       <div class="col-12 col-lg-3 pl-lg-1 pl-xl-2 text-lg-center mt-lg-0 mt-2 fs-90 text-muted">
         <?php if ( $related_wholesaler = get_field( "related_wholesaler" ) ):?>
-        <span class="d-lg-none">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo $related_wholesaler->post_title; ?></span>
+        <span class="d-lg-none">Velkoobchod:</span> <span title="<?php _e( 'Velkoobchod', 'shp-obchodiste' ); ?>"><?php echo esc_html( $related_wholesaler->post_title ); ?></span>
+        <?php if ( $project_title = get_field( 'project_title', $related_wholesaler->ID ) ):  ?>
+        <span class="d-lg-block">(<?php echo esc_html( $project_title ); ?>)</span>
+        <?php endif;  ?>
         <?php endif; ?>
-        </div>
+      </div>
       <?php endif; ?>
 
       <div class="<?php if ( $is_product_tease_in_row ) echo 'col-12 ' . ($hide_wholesaler_in_product_list ? 'col-lg-4' : 'col-lg-3' ) . ' pl-lg-1 pl-xl-2 mt-lg-0 text-lg-right'; ?> mt-1" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
