@@ -25,10 +25,10 @@ lockdir=/tmp/obchodiste-cz-$1.lock
 # Create lockdir
 if mkdir $lockdir 2>/dev/null
 then
+  # Remove lockdir when script finishes
+  trap 'rm -rf "$lockdir"' 0
   # Run ActionScheduler
   $wp --path=$www action-scheduler run --hooks=$hooks >> $outputpath 2>&1
-  # Remove lockdir when action scheduler finishes
-  rm -rf $lockdir
 else
   # Locked
   echo "Already running. Try again later."
