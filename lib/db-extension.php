@@ -23,14 +23,14 @@ class DBX {
 
     add_action( 'init', [ $this, 'action_check_table' ] );
 
-    add_action( 'wp_insert_post', [ $this, 'action_insert_post' ], 0, 3 );
-    add_action( 'delete_post', [ $this, 'action_delete_post' ], 0, 3 );
+    add_action( 'wp_insert_post', [ $this, 'action_insert_post' ], 10, 3 );
+    add_action( 'delete_post', [ $this, 'action_delete_post' ], 10, 3 );
 
-    add_filter( 'update_post_metadata_cache', [ $this, 'filter_update_meta_cache' ], 0, 2 );
+    add_filter( 'update_post_metadata_cache', [ $this, 'filter_update_meta_cache' ], 10, 2 );
 
-    add_filter( 'add_post_metadata', [ $this, 'filter_update_meta' ], 0, 5 );
-    add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 0, 5 );
-    add_filter( 'delete_post_metadata', [ $this, 'filter_delete_meta' ], 0, 5 );
+    add_filter( 'add_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
+    add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
+    add_filter( 'delete_post_metadata', [ $this, 'filter_delete_meta' ], 10, 5 );
   }
 
   public function set_meta_keys( array $meta_keys ) {
