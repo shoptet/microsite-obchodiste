@@ -227,45 +227,6 @@ add_filter('init', function () {
 }, 0);
 
 /**
- * Join posts and postmeta tables for searching
- */
-add_filter( 'posts_join', function( $join ) {
-  global $wpdb;
-  if ( ! is_admin() && is_archive() ) {
-    $join .= ' LEFT JOIN ' . $wpdb->postmeta . ' AS mt0 ON ' . $wpdb->posts . '.ID = mt0.post_id ';
-  }
-  return $join;
-} );
-
-/**
- * Modify the search query with posts_where
- */
-add_filter( 'posts_where', function( $where ) {
-  global $wpdb;
-  if ( ! is_admin() && is_archive() ) {
-    $where = preg_replace(
-      "/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-      "(" . $wpdb->posts . ".post_title LIKE $1)
-      OR (
-				(mt0.meta_key = 'short_about' OR mt0.meta_key = 'about_company' OR mt0.meta_key = 'about_products')
-        AND
-        (mt0.meta_value LIKE $1)
-      )", $where );
-  }
-  return $where;
-});
-
-/**
- * Prevent duplicates in the search
- */
-add_filter( 'posts_distinct', function( $where ) {
-  if ( ! is_admin() && is_archive() ) {
-    $where = 'DISTINCT';
-  }
-  return $where;
-});
-
-/**
  * Remove wholesaler and product list views for subscriber
  */
 function remove_list_view_for_subscribers($views) {
