@@ -13,6 +13,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 $includes = [
+	'src/lib/db-extension.php',
 	'src/lib/action_scheduler.php',
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
