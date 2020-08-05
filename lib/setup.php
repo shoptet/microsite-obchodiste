@@ -1338,31 +1338,6 @@ ElasticPressSettings::init();
 
 CounterCache::init();
 
-$productDBX = new Shoptet\DBX('product');
-$productDBX->set_meta_keys( [
-  'short_description',
-  'price',
-  'minimal_order',
-  'ean',
-  'category',
-  'description',
-  'related_wholesaler',
-  'thumbnail',
-  'gallery',
-] );
-$productDBX->set_static_meta_data( [
-  '_short_description' => 'field_5c7d1d41a01b2',
-  '_price' => 'field_5c7d1d6aa01b3',
-  '_minimal_order' => 'field_5c7d1f09c3f47',
-  '_ean' => 'field_5cbf069f3ae2d',
-  '_category' => 'field_5cc6fbe565ff6',
-  '_description' => 'field_5c7d1db9a01b4',
-  '_related_wholesaler' => 'field_5c7d1fbf2e01c',
-  '_thumbnail' => 'field_5c7d203dd6c7b',
-  '_gallery' => 'field_5c7d1f71c3f48',
-] );
-$productDBX->init();
-
 /**
  * Remove related products when a wholesaler is deleted
  */
@@ -1407,3 +1382,28 @@ add_action( 'move_post_to_trash_job', function( $post_id ) {
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
+
+$productDBX = new Shoptet\DBX('product');
+$productDBX->set_extended_meta_keys( [
+  'short_description',
+  'price',
+  'minimal_order',
+  'ean',
+  'category',
+  'description',
+  'related_wholesaler',
+  'thumbnail',
+  'gallery',
+] );
+$productDBX->set_static_meta_data( [
+  '_short_description' => 'field_5c7d1d41a01b2',
+  '_price' => 'field_5c7d1d6aa01b3',
+  '_minimal_order' => 'field_5c7d1f09c3f47',
+  '_ean' => 'field_5cbf069f3ae2d',
+  '_category' => 'field_5cc6fbe565ff6',
+  '_description' => 'field_5c7d1db9a01b4',
+  '_related_wholesaler' => 'field_5c7d1fbf2e01c',
+  '_thumbnail' => 'field_5c7d203dd6c7b',
+  '_gallery' => 'field_5c7d1f71c3f48',
+] );
+$productDBX->init();
