@@ -30,6 +30,25 @@ class DBXStore {
     return $wpdb->insert( $this->table_name, $data );
   }
 
+  public function create_table() {
+    global $wpdb;
+    
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $this->table_name (
+      post_id bigint(20) UNSIGNED NOT NULL,
+      PRIMARY KEY (post_id)
+    ) $charset_collate;";
+
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
+  }
+
+  public function add_column( $column_name ) {
+    global $wpdb;
+    $wpdb->query( "ALTER TABLE $this->table_name ADD `$column_name` longtext NULL" );
+  }
+
   public function delete_row( $post_id ) {
     global $wpdb;
     $wpdb->delete( $this->table_name, [ 'post_id' => intval($post_id) ] );
@@ -47,14 +66,13 @@ class DBXStore {
   }
 
   public function get_extended_meta_data( $post_id ) {
-    $meta_data = [];
 
     if ( ! $this->row_exists($post_id) ) {
-      return $meta_data;
+      return [];
     }
 
     global $wpdb;
-    $columns = join( ',', $this->columns );
+    $columns = '`' . implode('`,`', $this->columns) . '`';
     $meta_data = $wpdb->get_row( $wpdb->prepare( "SELECT $columns FROM $this->table_name WHERE post_id = %d", $post_id ), ARRAY_A );
 
     // Remove empty values and normalize meta data
@@ -69,10 +87,13 @@ class DBXStore {
   }
 
   public function maybe_insert_row( $post_id ) {
-    if ( ! $this->row_exists($post_id) ) {
-      $original_meta = DBXUtility::get_original_meta_data($post_id);
-      $this->insert_row($post_id, $original_meta);
+
+    if ( $this->row_exists($post_id) ) {
+      return false;
     }
+    
+    $original_meta = DBXUtility::get_original_meta_data($post_id);
+    return $this->insert_row($post_id, $original_meta);
   }
 
 }

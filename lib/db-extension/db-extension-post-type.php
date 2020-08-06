@@ -24,8 +24,6 @@ class DBXPostType {
     add_action( 'wp_insert_post', [ $this, 'action_insert_post' ], 10, 3 );
     add_action( 'delete_post', [ $this, 'action_delete_post' ], 10, 3 );
 
-    add_filter( 'update_post_metadata_cache', [ $this, 'filter_update_meta_cache' ], 10, 2 );
-
     add_filter( 'add_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
     add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
     add_filter( 'delete_post_metadata', [ $this, 'filter_delete_meta' ], 10, 5 );
@@ -47,7 +45,11 @@ class DBXPostType {
     return $this->static_meta_data;
   }
 
-  protected function get_normalized_static_meta_data() {
+  public function get_store() {
+    return $this->store;
+  }
+
+  public function get_normalized_static_meta_data() {
     return array_map( function( $val ) {
       return [ $val ];
     }, $this->static_meta_data );
@@ -76,68 +78,6 @@ class DBXPostType {
     }
 
     $this->store->delete_row($post_id);
-  }
-
-  public function filter_update_meta_cache( $check, array $post_ids ) {
-
-    // This code taken from core WP function update_meta_cache
-
-    global $wpdb;
-
-    $ids = [];
-    $cache = [];
-    foreach ( $post_ids as $id ) {
-      $cached_post = wp_cache_get( $id, 'post_meta' );
-      if ( false === $cached_post ) {
-        $ids[] = $id;
-      } else {
-        $cache[ $id ] = $cached_post;
-      }
-    }
- 
-    if ( empty($ids) ) {
-      return $cache;
-    }
-
-    // Get meta info.
-    $id_list = join( ',', $ids );
-    $table = $wpdb->postmeta;
-    $meta_list = $wpdb->get_results( "SELECT post_id, meta_key, meta_value FROM $table WHERE post_id IN ($id_list) ORDER BY meta_id ASC", ARRAY_A );
-    if ( ! empty( $meta_list ) ) {
-      foreach ( $meta_list as $metarow ) {
-        $mpid = intval( $metarow[ 'post_id' ] );
-        $mkey = $metarow['meta_key'];
-        $mval = $metarow['meta_value'];
-
-        // Force subkeys to be array type.
-        if ( ! isset( $cache[ $mpid ] ) || ! is_array( $cache[ $mpid ] ) ) {
-          $cache[ $mpid ] = [];
-        }
-        if ( ! isset( $cache[ $mpid ][ $mkey ] ) || ! is_array( $cache[ $mpid ][ $mkey ] ) ) {
-          $cache[ $mpid ][ $mkey ] = [];
-        }
-
-        // Add a value to the current pid/key.
-        $cache[ $mpid ][ $mkey ][] = $mval;
-      }
-    }
-
-    foreach ( $ids as $id ) {
-      if ( ! isset( $cache[ $id ] ) ) {
-        $cache[ $id ] = [];
-      }
-
-      // Merge all original meta data with exteded and static ones
-      if ( $this->post_type == get_post_type($id) ) {
-        $meta_data = $this->store->get_extended_meta_data($id);
-        $cache[$id] = array_merge( $cache[$id], $this->get_normalized_static_meta_data() );
-        $cache[$id] = array_merge( $cache[$id], $meta_data );
-      }
-      
-      wp_cache_add( $id, $cache[ $id ], 'post_meta' );
-    }
-
-    return $cache;
   }
   
   public function filter_update_meta( $check, $post_id, $meta_key, $meta_value, $prev_value ) {
