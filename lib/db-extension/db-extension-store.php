@@ -32,7 +32,7 @@ class DBXStore {
 
   public function delete_row( $post_id ) {
     global $wpdb;
-    $wpdb->query( $wpdb->prepare( "DELETE FROM $this->table_name WHERE post_id = %d", $post_id ) );
+    $wpdb->delete( $this->table_name, [ 'post_id' => intval($post_id) ] );
   }
 
   public function update_row( $data, $where ) {

@@ -1383,27 +1383,49 @@ define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
 
-$productDBX = new Shoptet\DBX('product');
-$productDBX->set_extended_meta_keys( [
-  'short_description',
-  'price',
-  'minimal_order',
-  'ean',
-  'category',
-  'description',
-  'related_wholesaler',
-  'thumbnail',
-  'gallery',
-] );
-$productDBX->set_static_meta_data( [
-  '_short_description' => 'field_5c7d1d41a01b2',
-  '_price' => 'field_5c7d1d6aa01b3',
-  '_minimal_order' => 'field_5c7d1f09c3f47',
-  '_ean' => 'field_5cbf069f3ae2d',
-  '_category' => 'field_5cc6fbe565ff6',
-  '_description' => 'field_5c7d1db9a01b4',
-  '_related_wholesaler' => 'field_5c7d1fbf2e01c',
-  '_thumbnail' => 'field_5c7d203dd6c7b',
-  '_gallery' => 'field_5c7d1f71c3f48',
-] );
-$productDBX->init();
+add_action( 'dbx/init', function() {
+  global $dbx;
+  $dbx->add_post_type('wholesaler_message');
+  $dbx->set_extended_meta_keys( 'wholesaler_message', [
+    'email',
+    'message',
+    'wholesaler',
+    'product',
+    'ip',
+    'spam',
+    'sent_message',
+  ] );
+  $dbx->set_static_meta_data( 'wholesaler_message', [
+    '_email' => 'field_5b6c3e6e57fe7',
+    '_message' => 'field_5b6c3e8657fe8',
+    '_wholesaler' => 'field_5b6c3e9f57fe9',
+    '_product' => 'field_5ccd577bb0243',
+    '_ip' => 'field_5c89340ea4520',
+    '_spam' => 'field_5c896e68b2155',
+    '_sent_message' => 'field_5ccd5792b0244',
+  ] );
+  $dbx->add_post_type('product');
+  $dbx->set_extended_meta_keys( 'product', [
+    'short_description',
+    'price',
+    'minimal_order',
+    'ean',
+    'category',
+    'description',
+    'related_wholesaler',
+    'thumbnail',
+    'gallery',
+  ] );
+  $dbx->set_static_meta_data( 'product', [
+    '_short_description' => 'field_5c7d1d41a01b2',
+    '_price' => 'field_5c7d1d6aa01b3',
+    '_minimal_order' => 'field_5c7d1f09c3f47',
+    '_ean' => 'field_5cbf069f3ae2d',
+    '_category' => 'field_5cc6fbe565ff6',
+    '_description' => 'field_5c7d1db9a01b4',
+    '_related_wholesaler' => 'field_5c7d1fbf2e01c',
+    '_thumbnail' => 'field_5c7d203dd6c7b',
+    '_gallery' => 'field_5c7d1f71c3f48',
+  ] );
+  $dbx->init();
+} );

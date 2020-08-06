@@ -8,12 +8,12 @@ class DBXUtility {
 
     global $wpdb;
     
-    $meta_list = $wpdb->get_results( "
+    $meta_list = $wpdb->get_results( $wpdb->prepare( "
       SELECT meta_key, meta_value
       FROM $wpdb->postmeta
-      WHERE post_id = $post_id
+      WHERE post_id = %d
       ORDER BY meta_id ASC
-    ", ARRAY_A );
+    ", $post_id ), ARRAY_A );
     
     $original_meta = [];
     foreach ( $meta_list as $metarow ) {
@@ -25,4 +25,16 @@ class DBXUtility {
     return $original_meta;
   }
 
+  static function delete_original_meta_data( $post_id, array $meta_keys ) {
+
+    global $wpdb;
+    
+    foreach ( $meta_keys as $key ) {
+      $wpdb->query( $wpdb->prepare( "
+        DELETE FROM $wpdb->postmeta
+        WHERE post_id = %d
+        AND meta_key = %s
+      ", $post_id, $key ) );
+    }
+  }
 }

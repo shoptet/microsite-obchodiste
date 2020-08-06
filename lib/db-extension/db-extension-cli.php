@@ -1,0 +1,98 @@
+<?php
+
+namespace Shoptet;
+
+class DBXCli {
+    public function migrate( $args, $assoc_args ) {
+
+      start_bulk_operation();
+
+      wp_cache_flush();
+
+      $dry_run = false;
+      if ( !empty($assoc_args['dry-run']) && 'true' == $assoc-args['dry-run'] ) {
+        $dry_run = true;
+      }
+
+      $remove_original_meta = false;
+      if ( !empty($assoc_args['remove-original']) && 'true' == $assoc_args['remove-original'] ) {
+        $remove_original_meta = true;
+      }
+
+      if ( empty($args[0]) ) {
+        \WP_CLI::error( 'Post type is required!' );
+      }
+      $post_type = $args[0];
+
+      // Let the user know in what mode the command runs.
+      if ( $dry_run ) {
+        \WP_CLI::log( 'Running in dry-run mode.' );
+      } else {
+        \WP_CLI::log( 'We\'re doing it live!' );
+      }
+
+      global $dbx;
+      $extended_meta_keys = $dbx->get_extended_meta_keys($post_type);
+      $static_meta_data = $dbx->get_static_meta_data($post_type);
+
+      $dbxStore = new DBXStore($post_type, $extended_meta_keys);
+
+      $static_meta_keys = [];
+      foreach ( $static_meta_data as $key => $val ) {
+        $static_meta_keys[] = $key;
+      }
+
+      $posts_per_page = 350;
+      $paged = 1;
+      $migrated_posts = 0;
+      
+      $args = [
+        'post_type' => $post_type,
+        'post_status' => 'any',
+        'fields' => 'ids',
+        'posts_per_page' => $posts_per_page,
+        'update_post_meta_cache' => false,
+        'update_post_term_cache' => false,
+      ];
+
+      $query = new \WP_Query( $args );
+
+      $progress = \WP_CLI\Utils\make_progress_bar( 'Migrating posts', $query->found_posts );
+
+      do {
+        $args['paged'] = $paged;
+        $query = new \WP_Query( $args );
+
+        foreach ( $query->posts as $post_id ) {
+          if ( !$dry_run ) {
+            $dbxStore->maybe_insert_row($post_id);
+            if ( $remove_original_meta ) {
+              DBXUtility::delete_original_meta_data($post_id, $extended_meta_keys);
+              DBXUtility::delete_original_meta_data($post_id, $static_meta_keys);
+            } 
+          }
+          $migrated_posts++;
+        }
+
+        // Free up memory.
+        stop_the_insanity();
+
+        $progress->tick( count($query->posts) );
+        $paged++;
+
+      } while ( count($query->posts) );
+
+      $progress->finish();
+
+      end_bulk_operation();
+
+      if ( $dry_run ) {
+        \WP_CLI::success( sprintf( '%d posts will be migrated', $migrated_posts) );
+      } else {
+        \WP_CLI::success( sprintf( '%d posts have been migrated', $migrated_posts) );
+      }
+
+    }
+}
+
+\WP_CLI::add_command( 'dbx', 'Shoptet\DBXCli' );
