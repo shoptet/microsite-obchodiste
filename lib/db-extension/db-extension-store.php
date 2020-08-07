@@ -35,18 +35,19 @@ class DBXStore {
     
     $charset_collate = $wpdb->get_charset_collate();
 
+    $columns_sql = "post_id bigint(20) UNSIGNED NOT NULL,";
+    foreach( $this->columns as $column ) {
+      $columns_sql .= "
+      `$column` longtext NULL,";
+    }
+
     $sql = "CREATE TABLE $this->table_name (
-      post_id bigint(20) UNSIGNED NOT NULL,
+      $columns_sql
       PRIMARY KEY (post_id)
     ) $charset_collate;";
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-    dbDelta( $sql );
-  }
-
-  public function add_column( $column_name ) {
-    global $wpdb;
-    $wpdb->query( "ALTER TABLE $this->table_name ADD `$column_name` longtext NULL" );
+    dbDelta($sql);
   }
 
   public function delete_row( $post_id ) {

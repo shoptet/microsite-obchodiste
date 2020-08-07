@@ -7,13 +7,7 @@ class DBXCli {
   public function synctables( $args, $assoc_args ) {
     global $dbx;
     foreach( $dbx->get_registered_post_types() as $post_type ) {
-      $dbx_post_type = $dbx->get_registered_post_type($post_type);
-      $columns = $dbx_post_type->get_extended_meta_keys($post_type);
-      $dbx_post_type->get_store()->create_table();
-
-      foreach ( $columns as $column ) {
-        $dbx_post_type->get_store()->add_column($column);
-      }
+      $dbx->get_registered_post_type($post_type)->get_store()->create_table();
     }
   }
 
@@ -43,6 +37,12 @@ class DBXCli {
       \WP_CLI::error( 'Post type is not registered!' );
     }
 
+    // TODO: migrate only one meta key
+    $meta_key = '';
+    if ( !empty($assoc_args['meta-key']) && 'true' == $assoc_args['meta-key'] ) {
+      $meta_key = $assoc_args['meta-key'];
+    }
+
     $dbx_post_type = $dbx->get_registered_post_type($post_type);
     $extended_meta_keys = $dbx_post_type->get_extended_meta_keys($post_type);
     $static_meta_data = $dbx_post_type->get_static_meta_data($post_type);
@@ -54,7 +54,7 @@ class DBXCli {
       \WP_CLI::log( 'We\'re doing it live!' );
     }
 
-
+    // Normalize static meta keys
     $static_meta_keys = [];
     foreach ( $static_meta_data as $key => $val ) {
       $static_meta_keys[] = $key;

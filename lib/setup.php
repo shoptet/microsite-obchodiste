@@ -1415,6 +1415,7 @@ add_action( 'dbx/init', function() {
     'related_wholesaler',
     'thumbnail',
     'gallery',
+    'sync_success',
   ] );
   $dbx->set_static_meta_data( 'product', [
     '_short_description' => 'field_5c7d1d41a01b2',
