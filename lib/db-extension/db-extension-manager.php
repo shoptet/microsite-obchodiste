@@ -73,7 +73,7 @@ class DBXManager {
     }
  
     if ( empty($ids) ) {
-      return $cache;
+      return $check;
     }
 
     // Get meta info.
@@ -117,7 +117,7 @@ class DBXManager {
       wp_cache_add( $id, $cache[ $id ], 'post_meta' );
     }
 
-    return $cache;
+    return $check;
   }
 
 }
