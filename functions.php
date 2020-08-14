@@ -9,6 +9,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once 'wp-cli/class-update-product-thumbnails-cli.php';
 	require_once 'wp-cli/class-clean-postmeta-cli.php';
 	require_once 'wp-cli/class-cache-csv-feed-cli.php';
+	require_once 'wp-cli/class-clean-as-logs-cli.php';
 }
 
 $includes = [
