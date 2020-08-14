@@ -56,9 +56,6 @@ class ImporterStore {
     global $wpdb;
     $table_name = self::get_table_name();
     $deleted = $wpdb->delete( $table_name, [ 'action_id' => $action_id ], [ '%d' ] );
-		if ( empty( $deleted ) ) {
-			throw new \InvalidArgumentException( sprintf( __( 'Unidentified action ID %s', 'action-scheduler-long-args' ), $action_id ) );
-		}
   }
 
   static function install_db() {
