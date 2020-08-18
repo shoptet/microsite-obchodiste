@@ -9,7 +9,7 @@ class ImporterStore {
   const DB_VERSION_OPTION = 'importer_store_db_version';
 
   static function init() {
-    add_action( 'init', [ get_called_class(), 'check_db_version' ] );
+    //add_action( 'init', [ get_called_class(), 'check_db_version' ] );
     add_action( 'action_scheduler_deleted_action', [ get_called_class(), 'delete_by_action_id' ] );
   }
 
