@@ -27,6 +27,8 @@ class DBXPostType {
     add_filter( 'add_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
     add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 5 );
     add_filter( 'delete_post_metadata', [ $this, 'filter_delete_meta' ], 10, 5 );
+
+    //add_filter( 'get_meta_sql', [ $this, 'filter_meta_sql' ], 10, 6 );
   }
 
   public function set_extended_meta_keys( array $extended_meta_keys ) {
@@ -147,6 +149,65 @@ class DBXPostType {
     }
 
     return $updated;
+  }
+
+  function filter_meta_sql( $sql, $queries, $type, $primary_table, $primary_id_column, $context ) {
+
+    // Check correct post type
+    $post_type = isset( $context->query['post_type'] ) ? $context->query['post_type'] : false ;
+    if ( $this->post_type != $post_type ) {
+      return $sql;
+    }
+
+    $relation = 'AND';
+    $extended_queries = [];
+    $original_queries = [];
+    $nested_queries = [];
+
+    // Sort queries
+    foreach ( $queries as $key => $query ) {
+      if ( 'relation' === $key ) {
+        $relation = $query;
+      } elseif ( isset($query['key']) ) {
+        if ( in_array( $query['key'], $this->extended_meta_keys ) ) {
+          $extended_queries[] = $query;
+        } else {
+          $original_queries[] = $query;
+        }
+      } else {
+        $nested_queries[] = $query;
+      }
+    }
+
+    if ( count($original_queries) > 0 && count($extended_queries) > 0 ) {
+      error_log('Original and extended meta keys occurred in the meta query!');
+    }
+    if ( count($nested_queries) > 0 && count($extended_queries) > 0 ) {
+      error_log('Nested and extended meta keys occurred in the meta query!');
+    }
+
+    $table_name = $this->store->get_table_name();
+    $join = " INNER JOIN $table_name as dbx ON ( $primary_table.$primary_id_column = dbx.post_id )";
+
+    $where = " AND ( ";
+    for ( $i = 0; $i < count($extended_queries); $i++ ) {
+      $query = $extended_queries[$i];
+      if ( isset($query['value']) ) {
+        $compare = isset( $query['compare'] ) ? $query['compare'] : '=' ;
+        $where .= sprintf( 'dbx.%s %s "%s"', $query['key'], $compare, $query['value'] );
+      } else {
+        $where .= sprintf( 'dbx.%s IS NOT NULL', $query['key'] );
+      }
+      if ( $i < count($extended_queries) - 1 ) {
+        $where .= ' ' . $relation . ' ';
+      }
+    }
+    $where .= " )";
+    
+    $sql['join'] = $join;
+    $sql['where'] = $where;
+
+    return $sql;
   }
 
 }

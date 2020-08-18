@@ -10,6 +10,7 @@ class DBXStore {
   function __construct( $post_type, array $columns ) {
     global $wpdb;
     $this->table_name = $wpdb->postmeta . '_' . $post_type;
+    $this->post_type = $post_type;
     $this->columns = $columns;
   }
 
@@ -30,6 +31,18 @@ class DBXStore {
     return $wpdb->insert( $this->table_name, $data );
   }
 
+  public function get_table_name() {
+    return $this->table_name;
+  }
+
+  protected function get_created_option_name() {
+    return 'dbx_' . $this->post_type . '_created';
+  }
+
+  public function table_exists() {
+    return (bool) get_site_option( $this->get_created_option_name() );
+  }
+
   public function create_table() {
     global $wpdb;
     
@@ -48,6 +61,8 @@ class DBXStore {
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta($sql);
+
+    update_option( $this->get_created_option_name(), true );
   }
 
   public function delete_row( $post_id ) {

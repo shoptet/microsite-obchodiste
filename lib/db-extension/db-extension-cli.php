@@ -4,7 +4,22 @@ namespace Shoptet;
 
 class DBXCli {
 
-  public function synctables( $args, $assoc_args ) {
+  public function synctable( $args, $assoc_args ) {
+
+    if ( empty($args[0]) ) {
+      \WP_CLI::error( 'Post type is required!' );
+    }
+    $post_type = $args[0];
+
+    global $dbx;
+    if ( ! in_array( $post_type, $dbx->get_registered_post_types() ) ) {
+      \WP_CLI::error( 'Post type is not registered!' );
+    }
+
+    $dbx->get_registered_post_type($post_type)->get_store()->create_table();
+  }
+
+  public function syncalltables( $args, $assoc_args ) {
     global $dbx;
     foreach( $dbx->get_registered_post_types() as $post_type ) {
       $dbx->get_registered_post_type($post_type)->get_store()->create_table();
@@ -44,6 +59,10 @@ class DBXCli {
 
     $dbx_post_type = $dbx->get_registered_post_type($post_type);
     $extended_meta_keys = $dbx_post_type->get_extended_meta_keys($post_type);
+
+    if ( ! $dbx_post_type->get_store()->table_exists() ) {
+      \WP_CLI::error( 'Table not exists!' );
+    }
 
     if ( !in_array($meta_key, $extended_meta_keys) ) {
       \WP_CLI::error( 'Meta key is not registered!' );
@@ -152,6 +171,10 @@ class DBXCli {
     $dbx_post_type = $dbx->get_registered_post_type($post_type);
     $extended_meta_keys = $dbx_post_type->get_extended_meta_keys($post_type);
     $static_meta_data = $dbx_post_type->get_static_meta_data($post_type);
+
+    if ( ! $dbx_post_type->get_store()->table_exists() ) {
+      \WP_CLI::error( 'Table not exists!' );
+    }
 
     // Let the user know in what mode the command runs.
     if ( $dry_run ) {
