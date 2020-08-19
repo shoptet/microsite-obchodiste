@@ -60,7 +60,7 @@ class TermSyncer {
         'update_term_meta_cache' => false,
       ] );
       if ( ! is_array( $query->terms ) || empty( $query->terms ) ) {
-        error_log( sprintf( '%d: Product (%d) have no terms', $wholesaler_id, $product_id ) );
+        error_log( sprintf( '%d: Product (%d) has no terms', $wholesaler_id, $product_id ) );
       } else {
         $product_term_slugs = array_unique( array_merge( $product_term_slugs, $query->terms ) );
       }
