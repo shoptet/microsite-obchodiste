@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Disable slow unused queries on single page
+ */
+add_filter( 'get_previous_post_where', 'handle_get_prev_next_post_where' );
+add_filter( 'get_next_post_where', 'handle_get_prev_next_post_where' );
+function handle_get_prev_next_post_where () {
+  return 'WHERE 0';
+}
+
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
 /**
