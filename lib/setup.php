@@ -1383,7 +1383,7 @@ define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
 
-add_action( 'xxxdbx/init', function() {
+add_action( 'dbx/init', function() {
   global $dbx;
   // $dbx->add_post_type('wholesaler_message');
   // $dbx->set_extended_meta_keys( 'wholesaler_message', [
