@@ -3,6 +3,8 @@
 .idea/*
 .sass-cache/
 bin/pullprod.sh
-package-lock.json
 node_modules/
 vendor
+deployment*.ini
+deployment*.phar
+deployment*.log
