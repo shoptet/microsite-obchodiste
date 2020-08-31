@@ -1387,11 +1387,11 @@ define( 'DBX_TEST', TRUE );
 add_action( 'dbx/init', function() {
   global $dbx;
 
-  // $dbx->add_post_type('attachment');
-  // $dbx->set_extended_meta_keys( 'attachment', [
-  //   '_wp_attachment_metadata',
-  //   '_wp_attached_file',
-  // ] );
+  $dbx->add_post_type('attachment');
+  $dbx->set_extended_meta_keys( 'attachment', [
+    '_wp_attachment_metadata',
+    '_wp_attached_file',
+  ] );
   $dbx->add_post_type('product');
   $dbx->set_extended_meta_keys( 'product', [
     'short_description',
