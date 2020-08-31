@@ -1382,27 +1382,15 @@ add_action( 'move_post_to_trash_job', function( $post_id ) {
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
+define( 'DBX_TEST', TRUE );
 
 add_action( 'dbx/init', function() {
   global $dbx;
-  // $dbx->add_post_type('wholesaler_message');
-  // $dbx->set_extended_meta_keys( 'wholesaler_message', [
-  //   'email',
-  //   'message',
-  //   'wholesaler',
-  //   'product',
-  //   'ip',
-  //   'spam',
-  //   'sent_message',
-  // ] );
-  // $dbx->set_static_meta_data( 'wholesaler_message', [
-  //   '_email' => 'field_5b6c3e6e57fe7',
-  //   '_message' => 'field_5b6c3e8657fe8',
-  //   '_wholesaler' => 'field_5b6c3e9f57fe9',
-  //   '_product' => 'field_5ccd577bb0243',
-  //   '_ip' => 'field_5c89340ea4520',
-  //   '_spam' => 'field_5c896e68b2155',
-  //   '_sent_message' => 'field_5ccd5792b0244',
+
+  // $dbx->add_post_type('attachment');
+  // $dbx->set_extended_meta_keys( 'attachment', [
+  //   '_wp_attachment_metadata',
+  //   '_wp_attached_file',
   // ] );
   $dbx->add_post_type('product');
   $dbx->set_extended_meta_keys( 'product', [
@@ -1430,6 +1418,25 @@ add_action( 'dbx/init', function() {
     '_thumbnail' => 'field_5c7d203dd6c7b',
     '_gallery' => 'field_5c7d1f71c3f48',
   ] );
+  // $dbx->add_post_type('wholesaler_message');
+  // $dbx->set_extended_meta_keys( 'wholesaler_message', [
+  //   'email',
+  //   'message',
+  //   'wholesaler',
+  //   'product',
+  //   'ip',
+  //   'spam',
+  //   'sent_message',
+  // ] );
+  // $dbx->set_static_meta_data( 'wholesaler_message', [
+  //   '_email' => 'field_5b6c3e6e57fe7',
+  //   '_message' => 'field_5b6c3e8657fe8',
+  //   '_wholesaler' => 'field_5b6c3e9f57fe9',
+  //   '_product' => 'field_5ccd577bb0243',
+  //   '_ip' => 'field_5c89340ea4520',
+  //   '_spam' => 'field_5c896e68b2155',
+  //   '_sent_message' => 'field_5ccd5792b0244',
+  // ] );
   // $dbx->add_post_type('custom');
   // $dbx->set_extended_meta_keys( 'custom', [
   //   'country',
@@ -1489,10 +1496,5 @@ add_action( 'dbx/init', function() {
   //   '_gallery' => 'field_5b5f0597506c8',
   //   '_video' => 'field_5b5f05c8506c9',
   // ] );
-  $dbx->add_post_type('attachment');
-  $dbx->set_extended_meta_keys( 'attachment', [
-    '_wp_attachment_metadata',
-    '_wp_attached_file',
-  ] );
   $dbx->init();
 } );

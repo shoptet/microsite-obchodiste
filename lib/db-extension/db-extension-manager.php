@@ -57,6 +57,10 @@ class DBXManager {
 
   public function filter_update_meta_cache( $check, array $post_ids ) {
 
+    if ( DBX_TEST ) {
+      return $check;
+    }
+
     // This code taken from core WP function update_meta_cache
 
     global $wpdb;

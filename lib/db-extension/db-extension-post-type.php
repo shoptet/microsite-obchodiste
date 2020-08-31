@@ -96,6 +96,9 @@ class DBXPostType {
 
     // Do not update static meta key
     if ( isset( $this->static_meta_data[$meta_key] ) ) {
+      if ( DBX_TEST ) {
+        return $check;
+      }
       return $this->static_meta_data[$meta_key];
     }
     
@@ -117,6 +120,9 @@ class DBXPostType {
 
     wp_cache_delete( $post_id, 'post_meta' );
 
+    if ( DBX_TEST ) {
+      return $check;
+    }
     return $updated;
   }
 
@@ -148,6 +154,9 @@ class DBXPostType {
       wp_cache_flush(); 
     }
 
+    if ( DBX_TEST ) {
+      return $check;
+    }
     return $updated;
   }
 
