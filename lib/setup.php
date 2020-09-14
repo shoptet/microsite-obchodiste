@@ -1382,7 +1382,7 @@ add_action( 'move_post_to_trash_job', function( $post_id ) {
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
-define( 'DBX_TEST', TRUE );
+define( 'DBX_TEST', FALSE );
 
 add_action( 'dbx/init', function() {
   global $dbx;

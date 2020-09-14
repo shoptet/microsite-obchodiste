@@ -31,10 +31,11 @@ class DBXUtility {
     
     foreach ( $meta_keys as $key ) {
       $wpdb->query( $wpdb->prepare( "
-        DELETE FROM $wpdb->postmeta
+        UPDATE $wpdb->postmeta
+        SET meta_key = %s
         WHERE post_id = %d
         AND meta_key = %s
-      ", $post_id, $key ) );
+      ", $key . '_dbx_deleted', $post_id, $key ) );
     }
   }
 }
