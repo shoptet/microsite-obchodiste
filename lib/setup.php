@@ -9,6 +9,7 @@ add_action( 'init', function() {
   register_post_type( 'product', get_cpt_product_args() );
   register_taxonomy( 'producttaxonomy', 'product', get_cpt_product_taxonomy_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
+  register_post_type( 'ad_banner', get_cpt_ad_banner_args() );
 } );
 
 /**

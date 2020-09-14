@@ -39,6 +39,7 @@ $includes = [
 	'src/lib/cpt/cpt-wholesaler.php',
 	'src/lib/cpt/cpt-product.php',
 	'src/lib/cpt/cpt-message.php',
+	'src/lib/cpt/cpt-ad-banner.php',
 	'src/lib/acf/acf.php',
 	'src/lib/acf/acf-wholesaler.php',
 	'src/lib/acf/acf-product.php',
