@@ -17,10 +17,13 @@ $archive_text = [
   ],
 ];
 
+$banner_post = null;
+
 if ( is_tax() ) {
-  $taxonomy = get_queried_object();
-  $archive_text[$post_type]['title'] = ( $taxonomy ? $taxonomy->name . ' – ' : '' ) . $archive_text[$post_type]['title'];
-  $archive_text[$post_type]['description'] = ( $taxonomy ? nl2p( $taxonomy->description ) : $archive_text[$post_type]['description'] );
+  $term = get_queried_object();
+  $archive_text[$post_type]['title'] = ( $term ? $term->name . ' – ' : '' ) . $archive_text[$post_type]['title'];
+  $archive_text[$post_type]['description'] = ( $term ? nl2p( $term->description ) : $archive_text[$post_type]['description'] );
+  $banner_post = get_ad_banner_by_term( $term->term_id );
 }
 
 if ( is_paged() ) {
@@ -96,10 +99,26 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
           <?php get_template_part( 'src/template-parts/product/content', 'list-header' ); ?>
           
           <?php $GLOBALS[ 'is_product_tease_in_row' ] = true; ?>
+          <?php $loop_index = 0; ?>
           <?php while ( have_posts() ) : the_post(); ?>
             <div class="list-bordered-item">
               <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
             </div>
+
+            <?php if ( $loop_index === 2 && $banner_post ): ?>
+              <div class="list-bordered-item py-3">
+                <?php
+                  global $post;
+                  $post = $banner_post;
+                  setup_postdata($banner_post);
+                  get_template_part( 'src/template-parts/common/content', 'ad-banner' );
+                  wp_reset_postdata();
+                ?>
+              </div>
+            <?php endif; ?>
+
+            <?php $loop_index++; ?>
+
           <?php endwhile; ?>
           <?php unset( $GLOBALS[ 'is_product_tease_in_row' ] ); ?>
         </div>
@@ -120,6 +139,18 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
 
           <?php get_template_part( 'template-parts/utils/content', 'pagination' ); ?>
         </div>
+
+        <?php if ($post_type === 'custom' && $banner_post): ?>
+          <div class="mt-4">
+            <?php
+              global $post;
+              $post = $banner_post;
+              setup_postdata($banner_post);
+              get_template_part( 'src/template-parts/common/content', 'ad-banner' );
+              wp_reset_postdata();
+            ?>
+          </div>
+        <?php endif; ?>
 
         <?php else: ?>
 

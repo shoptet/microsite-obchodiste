@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<div class="mt-4 pt-2 mb-2 text-right small">
+<div class="mt-4 mb-2 text-right small">
   <a
     class="text-muted"
     href="mailto:info@obchodiste.cz?subject=<?php _e( 'Hlašení nelegálního obsahu', 'shp-obchodiste' ); ?>&body=<?php echo get_permalink(); ?>"
@@ -47,3 +47,21 @@
     <?php _e( 'Myslíte si, že tento produkt je v rozporu se zákonem?', 'shp-obchodiste' ); ?>
   </a>
 </div>
+
+<?php 
+  $banner_post = null;
+  if ( $term = get_field('category') ) {
+    $banner_post = get_ad_banner_by_term( $term->term_id );
+  }
+?>
+<?php if ($banner_post): ?>
+<div class="mt-5">
+  <?php
+    global $post;
+    $post = $banner_post;
+    setup_postdata($banner_post);
+    get_template_part( 'src/template-parts/common/content', 'ad-banner' );
+    wp_reset_postdata();
+  ?>
+</div>
+<?php endif; ?>
