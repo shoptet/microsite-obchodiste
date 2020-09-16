@@ -44,6 +44,7 @@ $includes = [
 	'src/lib/acf/acf-wholesaler.php',
 	'src/lib/acf/acf-product.php',
 	'src/lib/acf/acf-message.php',
+	'src/lib/acf/acf-ad-banner.php',
 	'src/lib/acf/acf-options.php',
 	'src/lib/filters.php',
   'src/lib/helpers.php',
