@@ -346,16 +346,22 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
 /**
  * Show parent terms in product taxonomy ACF field
  */
-add_filter( 'acf/fields/taxonomy/result/name=product_category', 'handle_product_category_acf_field', 10, 4 );
-add_filter( 'acf/fields/taxonomy/result/name=category', 'handle_product_category_acf_field', 10, 4 );
-function handle_product_category_acf_field ( $title, $term, $field, $post_id ) {
-  if ( 'producttaxonomy' !== $term->taxonomy ) return $title;
+add_filter( 'acf/fields/taxonomy/result/name=product_category', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=category', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=wholesaler_tax_terms', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=product_tax_terms', 'handle_category_acf_field', 10, 4 );
+function handle_category_acf_field ( $title, $term, $field, $post_id ) {
+  $allowed_taxonomies = [
+    'producttaxonomy',
+    'customtaxonomy',
+  ];
+  if ( ! in_array( $term->taxonomy, $allowed_taxonomies ) ) return $title;
   $args = [
     'link' => false,
     'separator' => ' > ',
     'inclusive' => false,
   ];
-  $parent_terms = get_term_parents_list( $term->term_id, 'producttaxonomy', $args );
+  $parent_terms = get_term_parents_list( $term->term_id, $term->taxonomy, $args );
   $title = sprintf( '<span style="opacity:.5">%s</span><strong>%s</strong>', $parent_terms, $term->name );
   return $title;
 };
