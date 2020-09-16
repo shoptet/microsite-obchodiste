@@ -732,8 +732,8 @@ function get_ad_banner_by_term( $term_id ) {
   $wp_query = new WP_Query( [
     'post_type' => 'ad_banner',
     'posts_per_page' => 1,
+    'no_found_rows' => true,
     'orderby' => 'rand',
-    'ep_integrate' => true,
     'meta_query' => $meta_query,
   ] );
 
