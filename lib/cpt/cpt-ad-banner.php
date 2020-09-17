@@ -40,7 +40,7 @@ function get_cpt_ad_banner_args(): array
     'rewrite' => false,
     'query_var' => true,
     'menu_icon' => 'dashicons-megaphone',
-    'supports' => [ 'title' ],
+    'supports' => [ 'title', 'author' ],
   ];
   return $args;
 }
