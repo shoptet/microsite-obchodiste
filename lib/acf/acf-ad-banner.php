@@ -124,7 +124,7 @@ if( function_exists('acf_add_local_field_group') ):
         'label' => 'Banner mobil',
         'name' => 'banner_mobile',
         'type' => 'image',
-        'instructions' => '',
+        'instructions' => '740x450px, JPG, max. 250 KB',
         'required' => 0,
         'conditional_logic' => 0,
         'wrapper' => array(
@@ -148,7 +148,7 @@ if( function_exists('acf_add_local_field_group') ):
         'label' => 'Banner desktop',
         'name' => 'banner_desktop',
         'type' => 'image',
-        'instructions' => '',
+        'instructions' => '810x100px, JPG, max. 250 KB',
         'required' => 0,
         'conditional_logic' => 0,
         'wrapper' => array(
