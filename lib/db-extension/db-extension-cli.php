@@ -236,6 +236,11 @@ class DBXCli {
     if ( !empty($assoc_args['dry-run']) && 'true' == $assoc_args['dry-run'] ) {
       $dry_run = true;
     }
+
+    $force = false;
+    if ( !empty($assoc_args['force']) && 'true' == $assoc_args['force'] ) {
+      $force = true;
+    }
     
     if ( empty($args[0]) ) {
       \WP_CLI::error( 'Post type is required!' );
@@ -289,7 +294,7 @@ class DBXCli {
 
       foreach ( $query->posts as $post_id ) {
         if ( ! $dry_run ) {
-          DBXUtility::delete_original_meta_data($post_id, $meta_keys_to_remove);
+          DBXUtility::delete_original_meta_data( $post_id, $meta_keys_to_remove, $force );
         }
         $cleaned_posts++;
       }

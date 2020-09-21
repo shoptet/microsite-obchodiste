@@ -25,17 +25,26 @@ class DBXUtility {
     return $original_meta;
   }
 
-  static function delete_original_meta_data( $post_id, array $meta_keys ) {
+  static function delete_original_meta_data( $post_id, array $meta_keys, $force = false ) {
 
     global $wpdb;
     
     foreach ( $meta_keys as $key ) {
-      $wpdb->query( $wpdb->prepare( "
-        UPDATE $wpdb->postmeta
-        SET meta_key = %s
-        WHERE post_id = %d
-        AND meta_key = %s
-      ", $key . '_dbx_deleted', $post_id, $key ) );
+      if ( $force ) {
+        $prepared_query = $wpdb->prepare( "
+          DELETE FROM $wpdb->postmeta
+          WHERE post_id = %d
+          AND meta_key = %s
+        ", $post_id, $key . '_dbx_deleted' );
+      } else {
+        $prepared_query = $wpdb->prepare( "
+          UPDATE $wpdb->postmeta
+          SET meta_key = %s
+          WHERE post_id = %d
+          AND meta_key = %s
+        ", $key . '_dbx_deleted', $post_id, $key );
+      }
+      $wpdb->query($prepared_query);
     }
   }
 }
