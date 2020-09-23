@@ -259,6 +259,10 @@ class DBXCli {
       \WP_CLI::log( 'We\'re doing it live!' );
     }
 
+    if ( $force ) {
+      \WP_CLI::log( 'Force mode!' );
+    }
+
     $dbx_post_type = $dbx->get_registered_post_type($post_type);
     $extended_meta_keys = $dbx_post_type->get_extended_meta_keys($post_type);
     $static_meta_data = $dbx_post_type->get_static_meta_data($post_type);
