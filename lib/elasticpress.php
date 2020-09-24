@@ -3,19 +3,11 @@
 class ElasticPressSettings {
 
   static function init() {
-    add_filter( 'ep_index_name', [ get_called_class(), 'set_index_name' ], 10, 3 );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'add_analysis_default_analyzer' ] );
     add_filter( 'ep_post_mapping', [ get_called_class(), 'add_analysis_filter' ] );
     add_filter( 'ep_formatted_args', [ get_called_class(), 'unlimit_track_total_hits' ] );
     add_filter( 'ep_prepare_meta_excluded_public_keys', [ get_called_class(), 'exclude_meta_public_keys' ], 10, 2 );
     add_filter( 'ep_prepared_post_meta', [ get_called_class(), 'html_trim_meta' ] );
-  }
-
-  /**
-	 * Change index name
-	 */
-  static function set_index_name( $index_name, $blog_id, $indexable ) {
-    return 'obchodiste-cz-' . $indexable->slug;
   }
 
   /**

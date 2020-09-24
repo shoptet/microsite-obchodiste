@@ -683,3 +683,63 @@ function end_bulk_operation(){
 		ES_WP_Indexing_Trigger::get_instance()->trigger_bulk_index( get_current_blog_id(), 'bulk_operation' ); //queues async indexing job to be sent on wp shutdown hook, this will re-index the site inside Elasticsearch
 	}
 }
+
+function get_ad_banner_by_term( $term_id ) {
+
+  $term = get_term( $term_id );
+  $ad_banner_post = false;
+  $current_date = current_time( 'Ymd', 1 );
+  $tax_to_meta_key = [
+    'customtaxonomy' => 'wholesaler_tax_terms',
+    'producttaxonomy' => 'product_tax_terms',
+  ];
+  if ( ! isset($tax_to_meta_key[$term->taxonomy]) ) {
+    return false;
+  }
+  $terms_meta_key = $tax_to_meta_key[$term->taxonomy];
+
+  // Generate terms meta query
+  $all_term_ids = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
+  $all_term_ids[] = $term->term_id;
+  $terms_meta_query = [ 'relation' => 'OR' ];
+  foreach( $all_term_ids as $term_id ) {
+    $terms_meta_query[] = [
+      'key' => $terms_meta_key,
+      'value' => serialize(strval($term_id)),
+      'compare' => 'LIKE',
+    ];
+  }
+
+  $meta_query = [
+    [
+      'key' => 'is_disabled',
+      'value' => 1,
+      'compare' => '!=',
+    ],
+    [
+      'key' => 'date_from',
+      'value' => intval($current_date),
+      'compare' => '<=',
+    ],
+    [
+      'key' => 'date_to',
+      'value' => intval($current_date),
+      'compare' => '>=',
+    ],
+  ];
+  $meta_query[] = $terms_meta_query;
+
+  $wp_query = new WP_Query( [
+    'post_type' => 'ad_banner',
+    'posts_per_page' => 1,
+    'no_found_rows' => true,
+    'orderby' => 'rand',
+    'meta_query' => $meta_query,
+  ] );
+
+  if ( count($wp_query->posts) > 0 ) {
+    $ad_banner_post = $wp_query->posts[0];
+  }
+
+  return $ad_banner_post;
+}

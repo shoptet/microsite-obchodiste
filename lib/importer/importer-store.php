@@ -9,7 +9,7 @@ class ImporterStore {
   const DB_VERSION_OPTION = 'importer_store_db_version';
 
   static function init() {
-    add_action( 'init', [ get_called_class(), 'check_db_version' ] );
+    //add_action( 'init', [ get_called_class(), 'check_db_version' ] ); TODO: better approach to checking table
     add_action( 'action_scheduler_deleted_action', [ get_called_class(), 'delete_by_action_id' ] );
   }
 
@@ -56,9 +56,6 @@ class ImporterStore {
     global $wpdb;
     $table_name = self::get_table_name();
     $deleted = $wpdb->delete( $table_name, [ 'action_id' => $action_id ], [ '%d' ] );
-		if ( empty( $deleted ) ) {
-			throw new \InvalidArgumentException( sprintf( __( 'Unidentified action ID %s', 'action-scheduler-long-args' ), $action_id ) );
-		}
   }
 
   static function install_db() {

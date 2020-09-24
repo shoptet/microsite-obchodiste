@@ -9,6 +9,7 @@ $the_query = new WP_Query( [
   'posts_per_page' => 2,
   'post_status' => 'publish',
   'post__not_in' => [ $post->ID ], // exclude current post
+  'ep_integrate' => true,
   'tax_query' => [ [
     'taxonomy' => 'customtaxonomy',
     'field' => 'term_id',

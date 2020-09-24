@@ -1,5 +1,9 @@
 <?php
 
+add_filter( 'action_scheduler_queue_runner_concurrent_batches', function() {
+  return 2;
+} );
+
 add_filter( 'action_scheduler_queue_runner_time_limit', function() {
   return 3600;
 } );

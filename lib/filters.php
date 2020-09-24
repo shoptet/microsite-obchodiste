@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Disable slow unused queries on single page
+ */
+add_filter( 'get_previous_post_where', 'handle_get_prev_next_post_where' );
+add_filter( 'get_next_post_where', 'handle_get_prev_next_post_where' );
+function handle_get_prev_next_post_where () {
+  return 'WHERE 0';
+}
+
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
 /**
@@ -218,45 +227,6 @@ add_filter('init', function () {
 }, 0);
 
 /**
- * Join posts and postmeta tables for searching
- */
-add_filter( 'posts_join', function( $join ) {
-  global $wpdb;
-  if ( ! is_admin() && is_archive() ) {
-    $join .= ' LEFT JOIN ' . $wpdb->postmeta . ' AS mt0 ON ' . $wpdb->posts . '.ID = mt0.post_id ';
-  }
-  return $join;
-} );
-
-/**
- * Modify the search query with posts_where
- */
-add_filter( 'posts_where', function( $where ) {
-  global $wpdb;
-  if ( ! is_admin() && is_archive() ) {
-    $where = preg_replace(
-      "/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-      "(" . $wpdb->posts . ".post_title LIKE $1)
-      OR (
-				(mt0.meta_key = 'short_about' OR mt0.meta_key = 'about_company' OR mt0.meta_key = 'about_products')
-        AND
-        (mt0.meta_value LIKE $1)
-      )", $where );
-  }
-  return $where;
-});
-
-/**
- * Prevent duplicates in the search
- */
-add_filter( 'posts_distinct', function( $where ) {
-  if ( ! is_admin() && is_archive() ) {
-    $where = 'DISTINCT';
-  }
-  return $where;
-});
-
-/**
  * Remove wholesaler and product list views for subscriber
  */
 function remove_list_view_for_subscribers($views) {
@@ -376,16 +346,22 @@ add_filter('acf/load_value/name=related_wholesaler', function( $value ) {
 /**
  * Show parent terms in product taxonomy ACF field
  */
-add_filter( 'acf/fields/taxonomy/result/name=product_category', 'handle_product_category_acf_field', 10, 4 );
-add_filter( 'acf/fields/taxonomy/result/name=category', 'handle_product_category_acf_field', 10, 4 );
-function handle_product_category_acf_field ( $title, $term, $field, $post_id ) {
-  if ( 'producttaxonomy' !== $term->taxonomy ) return $title;
+add_filter( 'acf/fields/taxonomy/result/name=product_category', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=category', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=wholesaler_tax_terms', 'handle_category_acf_field', 10, 4 );
+add_filter( 'acf/fields/taxonomy/result/name=product_tax_terms', 'handle_category_acf_field', 10, 4 );
+function handle_category_acf_field ( $title, $term, $field, $post_id ) {
+  $allowed_taxonomies = [
+    'producttaxonomy',
+    'customtaxonomy',
+  ];
+  if ( ! in_array( $term->taxonomy, $allowed_taxonomies ) ) return $title;
   $args = [
     'link' => false,
     'separator' => ' > ',
     'inclusive' => false,
   ];
-  $parent_terms = get_term_parents_list( $term->term_id, 'producttaxonomy', $args );
+  $parent_terms = get_term_parents_list( $term->term_id, $term->taxonomy, $args );
   $title = sprintf( '<span style="opacity:.5">%s</span><strong>%s</strong>', $parent_terms, $term->name );
   return $title;
 };

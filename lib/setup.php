@@ -9,6 +9,7 @@ add_action( 'init', function() {
   register_post_type( 'product', get_cpt_product_args() );
   register_taxonomy( 'producttaxonomy', 'product', get_cpt_product_taxonomy_args() );
   register_post_type( 'wholesaler_message', get_cpt_wholesaler_message_args() );
+  register_post_type( 'ad_banner', get_cpt_ad_banner_args() );
 } );
 
 /**
@@ -1382,3 +1383,119 @@ add_action( 'move_post_to_trash_job', function( $post_id ) {
 define( 'CUSTOM_PART_OF_HEADER', TRUE );
 define( 'CUSTOM_SEARCH_ACTION', TRUE );
 define( 'CUSTOM_SEARCH_HEADER', TRUE );
+define( 'DBX_TEST', FALSE );
+
+add_action( 'dbx/init', function() {
+  global $dbx;
+
+  $dbx->add_post_type('attachment');
+  $dbx->set_extended_meta_keys( 'attachment', [
+    '_wp_attachment_metadata',
+    '_wp_attached_file',
+  ] );
+  $dbx->add_post_type('product');
+  $dbx->set_extended_meta_keys( 'product', [
+    'short_description',
+    'price',
+    'minimal_order',
+    'ean',
+    'category',
+    'description',
+    //'related_wholesaler',
+    'thumbnail',
+    'gallery',
+    'sync_success',
+    '_thumbnail_id',
+    'code',
+  ] );
+  $dbx->set_static_meta_data( 'product', [
+    '_short_description' => 'field_5c7d1d41a01b2',
+    '_price' => 'field_5c7d1d6aa01b3',
+    '_minimal_order' => 'field_5c7d1f09c3f47',
+    '_ean' => 'field_5cbf069f3ae2d',
+    '_category' => 'field_5cc6fbe565ff6',
+    '_description' => 'field_5c7d1db9a01b4',
+    '_related_wholesaler' => 'field_5c7d1fbf2e01c',
+    '_thumbnail' => 'field_5c7d203dd6c7b',
+    '_gallery' => 'field_5c7d1f71c3f48',
+  ] );
+  // $dbx->add_post_type('wholesaler_message');
+  // $dbx->set_extended_meta_keys( 'wholesaler_message', [
+  //   'email',
+  //   'message',
+  //   'wholesaler',
+  //   'product',
+  //   'ip',
+  //   'spam',
+  //   'sent_message',
+  // ] );
+  // $dbx->set_static_meta_data( 'wholesaler_message', [
+  //   '_email' => 'field_5b6c3e6e57fe7',
+  //   '_message' => 'field_5b6c3e8657fe8',
+  //   '_wholesaler' => 'field_5b6c3e9f57fe9',
+  //   '_product' => 'field_5ccd577bb0243',
+  //   '_ip' => 'field_5c89340ea4520',
+  //   '_spam' => 'field_5c896e68b2155',
+  //   '_sent_message' => 'field_5ccd5792b0244',
+  // ] );
+  // $dbx->add_post_type('custom');
+  // $dbx->set_extended_meta_keys( 'custom', [
+  //   'country',
+  //   'in',
+  //   'tin',
+  //   'street',
+  //   'city',
+  //   'zip',
+  //   'region',
+  //   'website',
+  //   'facebook',
+  //   'twitter',
+  //   'instagram',
+  //   'logo',
+  //   'is_shoptet',
+  //   'project_title',
+  //   'contact_full_name',
+  //   'contact_email',
+  //   'contact_tel',
+  //   'contact_photo',
+  //   'category',
+  //   'minor_category_1',
+  //   'minor_category_2',
+  //   'short_about',
+  //   'services',
+  //   'about_company',
+  //   'about_products',
+  //   'gallery',
+  //   'video',
+  // ] );
+  // $dbx->set_static_meta_data( 'custom', [
+  //   '_country' => 'field_5bbdc26030686',
+  //   '_in' => 'field_5b5ecaf4052fb',
+  //   '_tin' => 'field_5b5ecc9d052fc',
+  //   '_street' => 'field_5b5ec9b4052f8',
+  //   '_city' => 'field_5b5eca63052f9',
+  //   '_zip' => 'field_5b5eca9d052fa',
+  //   '_region' => 'field_5b5ed2ca0a22d',
+  //   '_website' => 'field_5b5eccbb052fd',
+  //   '_facebook' => 'field_5b5ecd01052fe',
+  //   '_twitter' => 'field_5b5ecd0f052ff',
+  //   '_instagram' => 'field_5b854f2feaf16',
+  //   '_logo' => 'field_5b5ed8dcce814',
+  //   '_is_shoptet' => 'field_5b86c6c02b205',
+  //   '_project_title' => 'field_5d39e3b8467ea',
+  //   '_contact_full_name' => 'field_5b5ed477147d7',
+  //   '_contact_email' => 'field_5b5ed49d147d8',
+  //   '_contact_tel' => 'field_5b5ed4d3147d9',
+  //   '_contact_photo' => 'field_5b5ed50b147da',
+  //   '_category' => 'field_5b5ed5a9ddd56',
+  //   '_minor_category_1' => 'field_5bff0ff2793a9',
+  //   '_minor_category_2' => 'field_5bff1029793aa',
+  //   '_short_about' => 'field_5b5ed640ddd57',
+  //   '_services' => 'field_5b5ed686ddd58',
+  //   '_about_company' => 'field_5b5ed759ddd59',
+  //   '_about_products' => 'field_5b5ed775ddd5a',
+  //   '_gallery' => 'field_5b5f0597506c8',
+  //   '_video' => 'field_5b5f05c8506c9',
+  // ] );
+  $dbx->init();
+} );

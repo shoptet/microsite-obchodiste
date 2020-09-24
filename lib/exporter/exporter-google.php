@@ -4,17 +4,8 @@ namespace Shoptet;
 
 class ExporterGoogle {
 
-  const ACTION_HOOK = 'exporter_google/cache_csv';
-  const RECURRENCE = 'daily';
-
   static function init() {
-
     add_action( 'wp' , [ get_called_class(), 'handle_data_feed' ] );
-    add_action( self::ACTION_HOOK, [ get_called_class(), 'cache_all_csv_feeds' ] );
-
-    if ( ! wp_next_scheduled( self::ACTION_HOOK ) ) {
-      wp_schedule_event( time(), self::RECURRENCE, self::ACTION_HOOK );
-    }
   }
   
   static function get_post_term_breadcrumbs( $post_id, $taxonomy ) {
@@ -151,7 +142,7 @@ class ExporterGoogle {
     }
   
     if ( ! file_exists( $file_name ) ) {
-      do_action( self::ACTION_HOOK );
+      die();
     }
   
     $csv = file_get_contents( $file_name );

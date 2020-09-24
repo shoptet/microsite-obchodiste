@@ -8,9 +8,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once 'wp-cli/class-update-attachment-author-cli.php';
 	require_once 'wp-cli/class-update-product-thumbnails-cli.php';
 	require_once 'wp-cli/class-clean-postmeta-cli.php';
+	require_once 'wp-cli/class-cache-csv-feed-cli.php';
+	require_once 'wp-cli/class-clean-as-logs-cli.php';
 }
 
 $includes = [
+	'src/lib/db-extension/db-extension.php',
 	'src/lib/action_scheduler.php',
   'src/lib/elasticpress.php',
 	'src/lib/counter-cache.php',
@@ -22,6 +25,7 @@ $includes = [
 	'src/lib/admin/admin-product-list.php',
 	'src/lib/admin/admin-detail.php',
 	'src/lib/admin/admin-detail-wholesaler.php',
+	'src/lib/admin/admin-ad-banner-list.php',
 	'src/lib/attachment.php',
 	'src/lib/importer/importer.php',
 	'src/lib/importer/importer-product.php',
@@ -33,9 +37,16 @@ $includes = [
 	'src/lib/importer/parser/importer-parser-csv.php',
 	'src/lib/importer/parser/importer-parser-xml.php',
 	'src/lib/setup.php',
-	'src/lib/cpt.php',
-	'src/lib/acf/field-group.php',
-	'src/lib/acf/options-page.php',
+	'src/lib/cpt/cpt-wholesaler.php',
+	'src/lib/cpt/cpt-product.php',
+	'src/lib/cpt/cpt-message.php',
+	'src/lib/cpt/cpt-ad-banner.php',
+	'src/lib/acf/acf.php',
+	'src/lib/acf/acf-wholesaler.php',
+	'src/lib/acf/acf-product.php',
+	'src/lib/acf/acf-message.php',
+	'src/lib/acf/acf-ad-banner.php',
+	'src/lib/acf/acf-options.php',
 	'src/lib/filters.php',
   'src/lib/helpers.php',
   'src/lib/operator_form.php',
