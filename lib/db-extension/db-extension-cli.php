@@ -322,6 +322,38 @@ class DBXCli {
     }
 
   }
+
+  public function removealloriginal( $args, $assoc_args ) {
+
+    start_bulk_operation();
+
+    wp_cache_flush();
+
+    $dry_run = false;
+    if ( !empty($assoc_args['dry-run']) && 'true' == $assoc_args['dry-run'] ) {
+      $dry_run = true;
+    }
+
+    // Let the user know in what mode the command runs.
+    if ( $dry_run ) {
+      \WP_CLI::log( 'Running in dry-run mode.' );
+    } else {
+      \WP_CLI::log( 'We\'re doing it live!' );
+    }
+
+    if ( ! $dry_run ) {
+      DBXUtility::delete_all_original_meta_data();
+    }
+
+    start_bulk_operation();
+
+    if ( $dry_run ) {
+      \WP_CLI::success( 'All original meta data will be cleaned' );
+    } else {
+      \WP_CLI::success( 'All original meta data have been cleaned' );
+    }
+
+  }
 }
 
 \WP_CLI::add_command( 'dbx', 'Shoptet\DBXCli' );

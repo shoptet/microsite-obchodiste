@@ -47,4 +47,14 @@ class DBXUtility {
       $wpdb->query($prepared_query);
     }
   }
+
+  static function delete_all_original_meta_data() {
+
+    global $wpdb;
+
+    $wpdb->query( "
+      DELETE FROM $wpdb->postmeta
+      WHERE meta_key LIKE '%_dbx_deleted'
+    ");
+  }
 }
