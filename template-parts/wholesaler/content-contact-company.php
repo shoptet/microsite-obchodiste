@@ -15,7 +15,7 @@
   </div>
   <?php endif; ?>
 
-<address <?php if ( is_singular('custom') ): ?>itemprop="address" itemscope itemtype="http://schema.org/PostalAddress"<?php endif; ?>>
+  <address <?php if ( is_singular('custom') ): ?>itemprop="address" itemscope itemtype="http://schema.org/PostalAddress"<?php endif; ?>>
     <?php if ( ! is_singular( 'custom' ) ): ?>
       <a href="<?php the_permalink(); ?>">
         <?php echo esc_html( get_the_title() ); ?>
@@ -127,6 +127,13 @@
     </li>
     <?php endif; ?>
   </ul>
+  <?php endif; ?>
+
+  <?php if ( is_premium_wholesaler() ): ?>
+    <div class="wholesaler-premium mb-3">
+      <i class="fas fa-star mr-2"></i>
+      <span><?php _e( 'Doporučený dodavatel', 'shp-obchodiste' ); ?>
+    </div>
   <?php endif; ?>
 
   <?php if ( get_post_meta( $post->ID, 'location' ) ): ?>

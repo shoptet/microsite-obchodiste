@@ -70,6 +70,26 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
         <?php get_template_part( 'src/template-parts/wholesaler/content', 'archive-sort' ); ?>
 
         <div class="row row-bordered row-bordered-2-columns no-gutters">
+
+          <?php
+          $premium_wholesalers = [];
+          if ( $term ) {
+            $premium_wholesalers = get_premium_wholesalers( $term );
+          } else {
+            $premium_wholesalers = get_premium_wholesalers();
+          }
+          foreach ( $premium_wholesalers as $premium_wholesaler_post ) : ?>
+            <div class="col-12 col-lg-6">
+              <?php
+                global $post;
+                $post = $premium_wholesaler_post;
+                setup_postdata($premium_wholesaler_post);
+                get_template_part( 'src/template-parts/wholesaler/content', 'tease', [ 'is_premium' => true ] );
+                wp_reset_postdata();
+              ?>
+            </div>
+          <?php endforeach; ?>
+
           <?php $loop_index = 0; ?>
           <?php while ( have_posts() ) : the_post(); ?>
             <div class="col-12 col-lg-6">
@@ -78,7 +98,7 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
 
             </div>
 
-            <?php if ( $loop_index === 5 && $options[ 'archive_post' ] ): ?>
+            <?php if ( ( $loop_index - (count($premium_wholesalers) % 2) ) == 5 && $options[ 'archive_post' ] ): ?>
               </div>
               <div class="row">
                 <div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 py-4">

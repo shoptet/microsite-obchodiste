@@ -63,6 +63,14 @@
   }
 }
 
+.wholesaler-tease-premium {
+  background-color: $gold-light;
+
+  @include hover-focus {
+    background-color: lighten($gold-light, 2.5%);
+  }
+}
+
 .wholesaler-archive {
   .breadcrumb {
     margin-top: 0;
@@ -107,6 +115,12 @@
   }
 }
 
+.wholesaler-tease-icons {
+  position: absolute;
+  top: .3rem;
+  right: .4rem;
+}
+
 .wholesaler-tease-description {
   font-weight: 300;
   color: $body-color;
@@ -119,5 +133,18 @@
   img {
     max-width: none;
     vertical-align: baseline;
+  }
+}
+
+.wholesaler-premium {
+  padding: .5rem 1rem;
+  color: $gold;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: $font-weight-bold;
+  background-color: $gold-light;
+
+  @include media-breakpoint-up(sm) {
+    font-size: 120%;
   }
 }

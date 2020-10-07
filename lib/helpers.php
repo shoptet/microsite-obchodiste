@@ -756,6 +756,77 @@ function get_ad_banner_by_term( $term_id ) {
   return $ad_banner_post;
 }
 
+function get_premium_wholesalers( $term = null ) {
+  $result = [];
+  $current_date = current_time( 'Ymd', 1 );
+
+  $args = [
+    'post_type' => 'custom',
+    'post_status' => 'publish',
+    'posts_per_page' => $count,
+    'no_found_rows' => true,
+    'orderby' => 'rand',
+    'meta_query' => [
+      'relation' => 'AND',
+      [
+        'key' => 'is_premium',
+        'value' => 1,
+        'compare' => '=',
+      ],
+      [
+        'key' => 'premium_date_from',
+        'value' => intval($current_date),
+        'compare' => '<=',
+      ],
+      [
+        'key' => 'premium_date_to',
+        'value' => intval($current_date),
+        'compare' => '>=',
+      ],
+    ],
+  ];
+
+  // Add a tax query if a term exists
+  if ( $term ) {
+    $args['tax_query'] = [
+      [
+        'taxonomy' => 'customtaxonomy',
+        'terms' => $term->term_id,
+      ],
+    ];
+  }
+
+  $wp_query = new WP_Query( $args );
+  $result = $wp_query->posts;
+
+  // Make an inverse query when slots are not filled yet
+  if ( $term && count($result) < $count ) {
+    $args['tax_query'][0]['operator'] = 'NOT IN';
+    $args['posts_per_page'] = ( $count - count($result) );
+    $wp_query = new WP_Query( $args );
+    $result = array_merge( $result, $wp_query->posts );
+  }
+
+  return $result;
+}
+
+function is_premium_wholesaler( $post = null ) {
+
+  if ( $post === null ) {
+    global $post;
+  }
+
+  $current_date = intval( current_time( 'Ymd', 1 ) );
+  $is_premium = boolval( get_post_meta( $post->ID, 'is_premium', true ) );
+  $date_from = intval( get_post_meta( $post->ID, 'premium_date_from', true )) ;
+  $date_to = intval( get_post_meta( $post->ID, 'premium_date_to', true ) );
+
+  return (
+    $is_premium &&
+    $date_from <= $current_date &&
+    $date_to >= $current_date
+  );
+}
 function is_current_user_admin() {
   $user = wp_get_current_user();
   $admin_roles = [ 'administrator', 'shoptet_administrator' ];

@@ -1,9 +1,15 @@
 <?php
 $logo_url = get_wholesaler_logo_url();
+$args = wp_parse_args( $args, [
+  'is_premium' => false,
+] );
 ?>
 
 <a
-  class="wholesaler-tease"
+  class="
+    wholesaler-tease
+    <?php if ( $args['is_premium'] ) echo 'wholesaler-tease-premium'; ?>
+  "
   href="<?php the_permalink(); ?>"
   title="<?php _e( 'Zobrazit profil', 'shp-obchodiste' ); ?>"
 >
@@ -77,6 +83,12 @@ $logo_url = get_wholesaler_logo_url();
       </span>
     <?php endif; ?>
 
+  </div>
+
+  <div class="wholesaler-tease-icons">
+    <?php if ( $args['is_premium'] ): ?>
+      <i class="fas fa-star text-gold" title="<?php _e( 'Doporučený dodavatel', 'shp-obchodiste' ); ?>"></i>
+    <?php endif; ?>
   </div>
 
 </a>
