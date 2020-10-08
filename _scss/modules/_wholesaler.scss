@@ -143,6 +143,7 @@
   text-align: center;
   font-weight: $font-weight-bold;
   background-color: $gold-light;
+  border: 2px solid lighten($gold, 32%);
 
   @include media-breakpoint-up(sm) {
     font-size: 120%;
