@@ -1,6 +1,9 @@
 <?php
 
-if( function_exists('acf_add_local_field_group') ):
+add_action( 'acf/init', function () {
+
+  global $current_user;
+  wp_get_current_user(); // Make sure global $current_user is set, if not set it
 
   acf_add_local_field_group(array(
     'key' => 'group_5b5ec83fc69b8',
@@ -736,81 +739,85 @@ if( function_exists('acf_add_local_field_group') ):
     'description' => '',
   ));
 
-  acf_add_local_field_group(array(
-    'key' => 'group_5f7d8d0ccba2c',
-    'title' => 'Prémiový zápis',
-    'fields' => array(
-      array(
-        'key' => 'field_5f7d8d129849b',
-        'label' => 'Prémiový zápis',
-        'name' => 'is_premium',
-        'type' => 'true_false',
-        'instructions' => '',
-        'required' => 0,
-        'conditional_logic' => 0,
-        'wrapper' => array(
-          'width' => '',
-          'class' => '',
-          'id' => '',
-        ),
-        'message' => 'Aktivovat prémiový zápis dle data',
-        'default_value' => 0,
-        'ui' => 0,
-        'ui_on_text' => '',
-        'ui_off_text' => '',
-      ),
-      array(
-        'key' => 'field_5f7d8e319849c',
-        'label' => 'Prémiový zápis od',
-        'name' => 'premium_date_from',
-        'type' => 'date_picker',
-        'instructions' => '',
-        'required' => 0,
-        'conditional_logic' => 0,
-        'wrapper' => array(
-          'width' => '',
-          'class' => '',
-          'id' => '',
-        ),
-        'display_format' => 'F j, Y',
-        'return_format' => 'Ymd',
-        'first_day' => 1,
-      ),
-      array(
-        'key' => 'field_5f7d8e6e9849d',
-        'label' => 'Prémiový zápis do',
-        'name' => 'premium_date_to',
-        'type' => 'date_picker',
-        'instructions' => '',
-        'required' => 0,
-        'conditional_logic' => 0,
-        'wrapper' => array(
-          'width' => '',
-          'class' => '',
-          'id' => '',
-        ),
-        'display_format' => 'F j, Y',
-        'return_format' => 'Ymd',
-        'first_day' => 1,
-      ),
-    ),
-    'location' => array(
-      array(
+  if ( user_can( $current_user, 'administrator' ) ):
+      
+    acf_add_local_field_group(array(
+      'key' => 'group_5f7d8d0ccba2c',
+      'title' => 'Prémiový zápis',
+      'fields' => array(
         array(
-          'param' => 'post_type',
-          'operator' => '==',
-          'value' => 'custom',
+          'key' => 'field_5f7d8d129849b',
+          'label' => 'Prémiový zápis',
+          'name' => 'is_premium',
+          'type' => 'true_false',
+          'instructions' => '',
+          'required' => 0,
+          'conditional_logic' => 0,
+          'wrapper' => array(
+            'width' => '',
+            'class' => '',
+            'id' => '',
+          ),
+          'message' => 'Aktivovat prémiový zápis dle data',
+          'default_value' => 0,
+          'ui' => 0,
+          'ui_on_text' => '',
+          'ui_off_text' => '',
+        ),
+        array(
+          'key' => 'field_5f7d8e319849c',
+          'label' => 'Prémiový zápis od',
+          'name' => 'premium_date_from',
+          'type' => 'date_picker',
+          'instructions' => '',
+          'required' => 0,
+          'conditional_logic' => 0,
+          'wrapper' => array(
+            'width' => '',
+            'class' => '',
+            'id' => '',
+          ),
+          'display_format' => 'F j, Y',
+          'return_format' => 'Ymd',
+          'first_day' => 1,
+        ),
+        array(
+          'key' => 'field_5f7d8e6e9849d',
+          'label' => 'Prémiový zápis do',
+          'name' => 'premium_date_to',
+          'type' => 'date_picker',
+          'instructions' => '',
+          'required' => 0,
+          'conditional_logic' => 0,
+          'wrapper' => array(
+            'width' => '',
+            'class' => '',
+            'id' => '',
+          ),
+          'display_format' => 'F j, Y',
+          'return_format' => 'Ymd',
+          'first_day' => 1,
         ),
       ),
-    ),
-    'menu_order' => 0,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => '',
-  ));
+      'location' => array(
+        array(
+          array(
+            'param' => 'post_type',
+            'operator' => '==',
+            'value' => 'custom',
+          ),
+        ),
+      ),
+      'menu_order' => 0,
+      'position' => 'normal',
+      'style' => 'default',
+      'label_placement' => 'top',
+      'instruction_placement' => 'label',
+      'hide_on_screen' => '',
+      'active' => true,
+      'description' => '',
+    ));
 
-endif;
+  endif;
+
+} );
