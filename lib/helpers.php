@@ -756,7 +756,7 @@ function get_ad_banner_by_term( $term_id ) {
   return $ad_banner_post;
 }
 
-function get_premium_wholesalers( $term = null ) {
+function get_premium_wholesalers( $term = null, $count = 6 ) {
   $result = [];
   $current_date = current_time( 'Ymd', 1 );
 
@@ -766,6 +766,7 @@ function get_premium_wholesalers( $term = null ) {
     'posts_per_page' => $count,
     'no_found_rows' => true,
     'orderby' => 'rand',
+    'ep_integrate' => true,
     'meta_query' => [
       'relation' => 'AND',
       [

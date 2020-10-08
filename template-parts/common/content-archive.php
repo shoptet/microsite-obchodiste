@@ -73,7 +73,7 @@ $add_url = is_user_logged_in() ? $admin_new_post_url : wp_login_url( $admin_new_
 
           <?php
           $premium_wholesalers = [];
-          if ( $term ) {
+          if ( isset($term) ) {
             $premium_wholesalers = get_premium_wholesalers( $term );
           } else {
             $premium_wholesalers = get_premium_wholesalers();
