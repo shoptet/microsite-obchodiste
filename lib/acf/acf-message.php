@@ -1,6 +1,6 @@
 <?php
 
-if( function_exists('acf_add_local_field_group') ):
+add_action( 'acf/init', function () {
 
   acf_add_local_field_group(array(
     'key' => 'group_5b6c3e4e8cff0',
@@ -166,4 +166,4 @@ if( function_exists('acf_add_local_field_group') ):
     'description' => '',
   ));
 
-endif;
+} );
