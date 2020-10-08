@@ -27,6 +27,7 @@ $includes = [
 	'src/lib/admin/admin-detail.php',
 	'src/lib/admin/admin-detail-wholesaler.php',
 	'src/lib/admin/admin-ad-banner-list.php',
+	'src/lib/admin/admin-wholesaler-list.php',
 	'src/lib/attachment.php',
 	'src/lib/importer/importer.php',
 	'src/lib/importer/importer-product.php',

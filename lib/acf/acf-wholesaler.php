@@ -753,7 +753,7 @@ if( function_exists('acf_add_local_field_group') ):
           'class' => '',
           'id' => '',
         ),
-        'message' => 'Aktivovat prémiový zápis',
+        'message' => 'Aktivovat prémiový zápis dle data',
         'default_value' => 0,
         'ui' => 0,
         'ui_on_text' => '',
