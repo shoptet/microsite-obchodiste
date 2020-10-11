@@ -41,18 +41,18 @@ class Clean_Posts_Command {
 
       $posts_per_page = 350;
       $paged = 1;
-      $count = 0;
+      $to_delete = [];
       $deleted_posts = 0;
 
       $args = [
         'post_type' => $post_type,
-        'post_status' => 'any',
+        'post_status' => [ 'any', 'trash' ],
         'posts_per_page' => $posts_per_page,
       ];
 
       $query = new WP_Query( $args );
 
-      $progress = \WP_CLI\Utils\make_progress_bar( 'Cleaning posts', $query->found_posts );
+      $progress = \WP_CLI\Utils\make_progress_bar( 'Collecting posts', $query->found_posts );
 
       do {
         $args['paged'] = $paged;
@@ -60,10 +60,7 @@ class Clean_Posts_Command {
 
         foreach ( $query->posts as $post ) {
           if ( $post->post_title != '' ) continue;
-          if ( !$dry_run ) {
-            wp_delete_post( $post->ID, $force_delete );
-          }
-          $deleted_posts++;
+          $to_delete[] = $post->ID;
         }
 
         // Free up memory.
@@ -73,6 +70,22 @@ class Clean_Posts_Command {
         $paged++;
 
       } while ( count($query->posts) );
+
+      $progress->finish();
+
+      $progress = \WP_CLI\Utils\make_progress_bar( 'Cleaning posts', count($to_delete) );
+
+      for ( $i = 0; $i < count($to_delete); $i++ ) {
+        if ( !$dry_run ) {
+          wp_delete_post( $to_delete[$i], $force_delete );
+        }
+        $deleted_posts++;
+        
+        if ( ($i % $posts_per_page ) == 0) {
+          $progress->tick($posts_per_page);
+          stop_the_insanity();
+        }
+      }
 
       $progress->finish();
 
