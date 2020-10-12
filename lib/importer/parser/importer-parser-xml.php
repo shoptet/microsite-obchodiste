@@ -14,9 +14,8 @@ class ImporterParserXML extends ImporterParser {
       $product = $this->get_product_base();
       $product->import_xml_collection( $product_collection );
 
-      Importer::enqueue_product($product);
+      $this->maybe_enqueue($product);
       
-      $this->products_imported++;
     });
   }
 

@@ -50,4 +50,13 @@ abstract class ImporterParser {
     );
   }
 
+  function maybe_enqueue( $product ) {
+    if( $product->is_valid() ) {
+      Importer::enqueue_product($product);
+      $this->products_imported++;
+    } else {
+      // Skip invalid product
+    }
+  }
+
 }

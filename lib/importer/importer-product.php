@@ -70,6 +70,15 @@ class ImporterProduct {
     }
   }
 
+  public function is_valid() {
+    return (
+      ! empty($this->name) &&
+      ! empty($this->short_description) &&
+      ! empty($this->description) &&
+      ! empty($this->images[0])
+    );
+  }
+
   public function get_wholesaler() {
     return $this->wholesaler;
   }

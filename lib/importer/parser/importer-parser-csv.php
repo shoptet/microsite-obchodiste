@@ -23,9 +23,8 @@ class ImporterParserCSV extends ImporterParser {
       $product = $this->get_product_base();
       $product->import_csv_array($product_array);
 
-      Importer::enqueue_product($product);
-  
-      $this->products_imported++;
+      $this->maybe_enqueue($product);
+
     }
   
     fclose($fp);
