@@ -61,7 +61,7 @@ $args = wp_parse_args( $args, [
 
       <?php if ( get_field( "short_about" ) ): ?>
       <p class="wholesaler-tease-description fs-90 fs-lg-100 mt-2 mb-0">
-        <?php echo truncate( strip_tags( get_field( "short_about" ) ), 110 ); ?>
+        <?php echo truncate( strip_tags( get_field( "short_about" ) ), $args['is_premium'] ? 220 : 110 ); ?>
       </p>
       <?php endif; ?>
 
