@@ -29,24 +29,26 @@
     </p>
     <?php endif; ?>
 
-    <ul class="list-unstyled mb-0">
-      <?php if ( get_field( "contact_email" ) ): ?>
-      <li class="text-truncate">
-        <a href="mailto:<?php echo sanitize_email( get_field( "contact_email" ) ); ?>">
-          <?php echo sanitize_email( get_field( "contact_email" ) ); ?> 
-        </a>
-        <?php if ( is_singular('custom') ): ?><meta itemprop="email" content="<?php echo sanitize_email( get_field( "contact_email" ) ); ?>"><?php endif; ?>
-      </li>
-      <?php endif; ?>
-      <?php if ( get_field( "contact_tel" ) ): ?>
-      <li class="text-truncate">
-        <a href="tel:<?php echo esc_html( get_field( "contact_tel" ) ); ?>">
-          <?php echo esc_html( get_field( "contact_tel" ) ); ?>
-        </a>
-        <?php if ( is_singular('custom') ): ?><meta itemprop="telephone" content="<?php echo esc_html( get_field( "contact_tel" ) ); ?>"><?php endif; ?>
-      </li>
-      <?php endif; ?>
-    </ul>
+    <?php if ( is_premium_wholesaler() ): ?>
+      <ul class="list-unstyled mb-0">
+        <?php if ( get_field( "contact_email" ) ): ?>
+        <li class="text-truncate">
+          <a href="mailto:<?php echo sanitize_email( get_field( "contact_email" ) ); ?>">
+            <?php echo sanitize_email( get_field( "contact_email" ) ); ?> 
+          </a>
+          <?php if ( is_singular('custom') ): ?><meta itemprop="email" content="<?php echo sanitize_email( get_field( "contact_email" ) ); ?>"><?php endif; ?>
+        </li>
+        <?php endif; ?>
+        <?php if ( get_field( "contact_tel" ) ): ?>
+        <li class="text-truncate">
+          <a href="tel:<?php echo esc_html( get_field( "contact_tel" ) ); ?>">
+            <?php echo esc_html( get_field( "contact_tel" ) ); ?>
+          </a>
+          <?php if ( is_singular('custom') ): ?><meta itemprop="telephone" content="<?php echo esc_html( get_field( "contact_tel" ) ); ?>"><?php endif; ?>
+        </li>
+        <?php endif; ?>
+      </ul>
+    <?php endif; ?>
 
   </div>
 </div>
