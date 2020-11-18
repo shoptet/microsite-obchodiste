@@ -254,8 +254,13 @@ add_filter( 'login_redirect', function( $redirect_to, $request, $user ) {
  * Edit new user notification e-mail
  */
 add_filter( 'wp_new_user_notification_email', function( $email, $user ) {
-  preg_match( '/<http(.*?)>/', $email[ 'message' ], $match ); // Get password url from message
-  $set_password_url = substr( $match[ '0' ], 1, -1 ); // Remove '<' and '>' from match string
+  preg_match( '~[a-z]+://\S+~', $email[ 'message' ], $match ); // Get password url from message
+  if ( empty( $match ) ) {
+    capture_sentry_message( 'Cannot get password url from the new user notification e-mail' );
+    $set_password_url = __( 'Kontaktuje nás prosím', 'shp-obchodiste' );
+  } else {
+    $set_password_url = $match[0];
+  }
 
   $options = get_fields( 'options' );
 
