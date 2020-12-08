@@ -1,23 +1,27 @@
 <?php
-$options = get_fields( 'options' );
-$age_test_product_categories = $options['age_test_product_categories'];
-$the_query = new WP_Query( [
-  'post_type' => 'product',
-  'posts_per_page' => 18,
-  'post_status' => 'publish',
-  'ep_integrate' => true,
-  'orderby'      => 'rand',
-  'tax_query' => [
-    [
-      'taxonomy' => 'producttaxonomy',
-			'field' => 'term_id',
-			'terms' => $age_test_product_categories,
-			'operator' => 'NOT IN',
+if ( false === ( $product_query = get_transient( 'homepage_product_query' ) ) ) {
+  $options = get_fields( 'options' );
+  $age_test_product_categories = $options['age_test_product_categories'];
+  $product_query = new WP_Query( [
+    'post_type' => 'product',
+    'posts_per_page' => 18,
+    'post_status' => 'publish',
+    'ep_integrate' => true,
+    'orderby'      => 'rand',
+    'tax_query' => [
+      [
+        'taxonomy' => 'producttaxonomy',
+        'field' => 'term_id',
+        'terms' => $age_test_product_categories,
+        'operator' => 'NOT IN',
+      ],
     ],
-  ],
-] );
+  ] );
+  set_transient( 'homepage_product_query', $product_query, 6 * HOUR_IN_SECONDS );
+}
+
 ?>
-<?php if ( $the_query->have_posts() ) : ?>
+<?php if ( $product_query->have_posts() ) : ?>
   <section class="section section-secondary bg-secondary-light py-5">
     <div class="section-inner container">
 
@@ -27,7 +31,7 @@ $the_query = new WP_Query( [
 
       <div class="row row-bordered row-bordered-3-columns no-gutters">
         <?php $GLOBALS[ 'is_product_on_homepage' ] = true; ?>
-        <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
+        <?php while ( $product_query->have_posts() ) : $product_query->the_post(); ?>
           <div class="col-12 col-md-6 col-xl-4">
 
             <?php get_template_part( 'src/template-parts/product/content', 'tease' ); ?>
