@@ -35,6 +35,18 @@ function display_url( $url, $display_www = true ): string
 }
 
 /**
+ * Ensure protocol in url
+ */
+function ensure_protocol( $url ): string
+{
+  $url_with_protocol = $url;
+  if ( ! preg_match( '/^(http:|https:)?\/\//i', $url ) ) {
+    $url_with_protocol = 'http://' . $url_with_protocol;
+  }
+  return $url_with_protocol;
+}
+
+/**
  * Get post count by meta key and value
  */
 function get_post_count_by_meta( $meta_key, $meta_value, $post_type, $compare = '=' ): int

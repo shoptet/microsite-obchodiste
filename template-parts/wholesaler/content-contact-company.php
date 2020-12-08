@@ -97,8 +97,8 @@
 
   <?php if ( get_field( "website" ) ): ?>
   <p>
-    <a href="<?php echo esc_html( get_field( "website" ) ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="url"<?php endif; ?>>
-      <?php echo display_url( get_field( "website" ) ); ?>
+    <a href="<?php echo esc_html( ensure_protocol( get_field( "website" ) ) ); ?>" target="_blank" <?php if ( is_singular('custom') ): ?>itemprop="url"<?php endif; ?>>
+      <?php echo esc_html( display_url( get_field( "website" ) ) ); ?>
     </a>
   </p>
   <?php endif; ?>
