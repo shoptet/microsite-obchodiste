@@ -11,6 +11,23 @@ function handle_get_prev_next_post_where () {
 
 require_once( ABSPATH . 'wp-admin/includes/screen.php' );
 
+add_filter( 'shoptet_post_count_query_args', function($query_args) {
+  return [
+    'obchodisteLeadsCount' => [
+      'post_type' => 'wholesaler_message',
+      'post_status' => 'publish',
+    ],
+    'obchodisteProductsCount' => [
+      'post_type' => 'product',
+      'post_status' => 'publish',
+    ],
+    'obchodisteProjectsCount' => [
+      'post_type' => 'custom',
+      'post_status' => 'publish',
+    ],
+  ];
+} );
+
 /**
  * Remove Yoast page analysis columns from post lists
  */
