@@ -1304,11 +1304,9 @@ add_action( 'wp_footer', function () {
  * Disable admin for users when read only mode is enabled
  */
 add_action( 'admin_init', function () {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
   $options = get_fields( 'options' );
   $disable_admin = $options[ 'disable_admin' ];
-  if ( $disable_admin && ! user_can( $current_user, 'administrator' ) && ! wp_doing_ajax() ) {
+  if ( $disable_admin && ! is_current_user_admin() && ! wp_doing_ajax() ) {
     wp_die(
       __( 'Přístup do administrace je dočasně omezen vzhledem k probíhající aktualizaci webu. Zkuste to prosím zachvíli.', 'shp-obchodiste' ),
       __( 'Probíhá aktualizace webu', 'shp-obchodiste' ),

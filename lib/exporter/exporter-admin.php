@@ -30,9 +30,7 @@ class ExporterAdmin {
   }
 
   static function handle_wholesaler_export () {
-    global $current_user;
-    wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    if ( user_can( $current_user, 'administrator' ) ) {
+    if ( is_current_user_admin() ) {
       self::export_wholesalers();
     }
   }

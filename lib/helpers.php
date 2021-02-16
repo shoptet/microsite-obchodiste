@@ -755,3 +755,14 @@ function get_ad_banner_by_term( $term_id ) {
 
   return $ad_banner_post;
 }
+
+function is_current_user_admin() {
+  $user = wp_get_current_user();
+  $admin_roles = [ 'administrator', 'shoptet_administrator' ];
+
+  if ( ! $user || ! $user->roles ) {
+    return false;
+  }
+
+  return array_intersect( $admin_roles, $user->roles );
+}

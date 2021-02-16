@@ -225,9 +225,7 @@ class AdminProductList {
   }
 
   static function handleQuickEdit () {
-    global $current_user;
-    wp_get_current_user(); // Make sure global $current_user is set, if not set it
-    if ( ! user_can( $current_user, 'administrator' ) ) return;
+    if ( ! is_current_user_admin() ) return;
     
     if ( ! isset($_POST['post_ID']) ) {
       return;
