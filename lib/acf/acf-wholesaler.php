@@ -739,7 +739,7 @@ add_action( 'acf/init', function () {
     'description' => '',
   ));
 
-  if ( user_can( $current_user, 'administrator' ) ):
+  if ( is_current_user_admin() ):
       
     acf_add_local_field_group(array(
       'key' => 'group_5f7d8d0ccba2c',
