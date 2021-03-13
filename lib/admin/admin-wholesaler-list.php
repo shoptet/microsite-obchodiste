@@ -59,7 +59,7 @@ class AdminWholesalerList {
           $color,
           $state,
           date_i18n( $date_format, strtotime($date_from), true ),
-          date_i18n( $date_format, strtotime($date_to), true ),
+          date_i18n( $date_format, strtotime($date_to), true )
         );
       break;
     }
