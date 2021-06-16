@@ -230,7 +230,7 @@ class ImporterFormCSV extends ImporterForm {
             'return_format' => 'array',
             'library' => 'uploadedTo',
             'min_size' => '',
-            'max_size' => 2,
+            'max_size' => 16,
             'mime_types' => 'csv',
           ),
           array(
