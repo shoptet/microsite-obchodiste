@@ -178,8 +178,14 @@ class ImporterProduct {
     if ( $images = $product_collection->get('IMAGES') ) {
       $images = $images->toArray();
       foreach( $images as $img ) {
-        if ( empty($img['IMAGE']) ) continue;
-        $this->images[] = filter_var($img['IMAGE'], FILTER_SANITIZE_URL);
+        if ( !empty($img['IMAGE']) ) {
+          $image_url = $img['IMAGE'];
+        } elseif ( !empty($img['0']) ) {
+          $image_url = $img['0'];
+        } else {
+          continue;
+        }
+        $this->images[] = filter_var($image_url, FILTER_SANITIZE_URL);
       }
     }
   }
