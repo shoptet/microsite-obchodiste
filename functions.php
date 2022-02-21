@@ -32,6 +32,7 @@ $includes = [
 	'src/lib/importer/importer.php',
 	'src/lib/importer/importer-product.php',
 	'src/lib/importer/importer-store.php',
+	'src/lib/importer/importer-notifications.php',
 	'src/lib/importer/form/importer-form.php',
 	'src/lib/importer/form/importer-form-csv.php',
 	'src/lib/importer/form/importer-form-xml.php',

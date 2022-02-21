@@ -24,6 +24,7 @@ class Importer {
       $args,
       'importer_import_' . $source_type . '_' . $wholesaler
     );
+    update_post_meta( $wholesaler, 'is_importing', 1 );
   }
 
   public static function enqueue_product( ImporterProduct $product ) {
