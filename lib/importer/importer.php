@@ -24,7 +24,7 @@ class Importer {
       $args,
       'importer_import_' . $source_type . '_' . $wholesaler
     );
-    update_post_meta( $wholesaler, 'is_importing', 1 );
+    update_post_meta( $wholesaler, 'importer_importing', 1 );
   }
 
   public static function enqueue_product( ImporterProduct $product ) {
@@ -205,6 +205,9 @@ class Importer {
         'post_status' => 'pending',
       ] );
     }
+
+    $products_imported = intval( get_post_meta( $product->get_wholesaler(), 'importer_products_imported', true ) );
+    update_post_meta( $product->get_wholesaler(), 'importer_products_imported', $products_imported+1 );
 
     error_log(sprintf('Product (%s) inserted', $post_product_id));
   }

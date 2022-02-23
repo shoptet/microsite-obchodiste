@@ -11,6 +11,7 @@ abstract class ImporterParser {
   protected $user_id;
   protected $products_left;
   protected $products_imported = 0;
+  protected $products_invalid = 0;
 
   function __construct( $source, $wholesaler, $default_category = null, $set_pending_status = false, $user_id = 0 ) {
     $this->source = $source;
@@ -55,7 +56,8 @@ abstract class ImporterParser {
       Importer::enqueue_product($product);
       $this->products_imported++;
     } else {
-      // Skip invalid product
+      $this->products_invalid++;
+      update_post_meta( $this->wholesaler, 'importer_products_invalid', $this->products_invalid );
     }
   }
 

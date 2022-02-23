@@ -39,7 +39,7 @@ class ImporterNotifications {
       'fields' => 'ids',
       'meta_query' => [
         [
-          'key' => 'is_importing',
+          'key' => 'importer_importing',
           'value' => 1,
         ],
       ],
@@ -51,27 +51,63 @@ class ImporterNotifications {
     $unfinished_wholesalers = self::get_unfinished_wholesalers();
     foreach( $unfinished_wholesalers as $wholesaler_id ) {
       if (self::is_completed($wholesaler_id)) {
-        update_post_meta( $wholesaler_id, 'is_importing', 0 );
         self::notify($wholesaler_id);
+        self::clean($wholesaler_id);
       }
     }
   }
 
-  static function notify($wholesaler_id) {
-    $options = get_fields( 'options' );
-    $email_from = $options[ 'email_from' ];
+  static function get_mail($wholesaler_id) {
+    $products_imported = intval( get_post_meta( $wholesaler_id, 'importer_products_imported', true ) );
+    $products_invalid = intval( get_post_meta( $wholesaler_id, 'importer_products_invalid', true ) );
 
+    $mail = [];
+
+    if (!$products_invalid) {
+      $mail['subject'] = 'Import úspěšně dokončen!';
+      $mail['message'] = 'Děkujeme,<br><br>všechny vaše produkty byly úspěšně importovány na Obchodiště.';
+    } else {
+      $mail['subject'] = 'Import dokončen s chybami';
+      $mail['message'] = 'Některé vaše produkty obsahují chybu a nebyly tak importovány na Obchodiště.';
+    }
+
+    if ($products_imported) {
+      $mail['message'] .= '<br><br>';
+      $mail['message'] .= 'Úspěšně importovanýn produktům se právě stahují obrázky a produkty čekají na schválení.';
+    }
+
+    $mail['message'] .= '<br><br>';
+
+    $mail['message'] .= "Úspěšně importováno produktů: $products_imported<br>";
+    $mail['message'] .= "Neúspěšně importováno produktů: $products_invalid";
+
+    $mail['message'] .= '<br><br>';
+
+    $mail['message'] .= 'S pozdravem,<br>Tým Obchodiiště';
+
+    return $mail;
+  }
+
+  static function notify($wholesaler_id) {
+    $mail = self::get_mail($wholesaler_id);
+    $email_from = get_fields( 'options' )[ 'email_from' ];
     $wholesaler_contact_email = get_field( 'contact_email', $wholesaler_id, false );
 
     wp_mail(
       $wholesaler_contact_email,
-      'Váš import na Obchodiště.cz byl dokončen!',
-      'Váš import na Obchodiště.cz byl dokončen!',
+      $mail['subject'],
+      $mail['message'],
       [
         'From: ' . $email_from,
         'Content-Type: text/html; charset=UTF-8',
       ]
     );
+  }
+
+  static function clean($wholesaler_id) {
+    delete_post_meta( $wholesaler_id, 'importer_products_imported' );
+    delete_post_meta( $wholesaler_id, 'importer_products_invalid' );
+    delete_post_meta( $wholesaler_id, 'importer_importing' );
   }
 
 }
