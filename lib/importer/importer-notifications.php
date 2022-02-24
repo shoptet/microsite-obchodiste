@@ -7,10 +7,6 @@ class ImporterNotifications {
   static function init() {
 
     add_action( 'check_finished_imports', [ get_called_class(), 'check_finished_imports' ] );
-    
-    add_action('init', function() {
-      //do_action('check_finished_imports');
-    });
 
     if ( ! wp_next_scheduled( 'check_finished_imports' ) ) {
       wp_schedule_event( time(), 'five_minutes', 'check_finished_imports' );
@@ -63,26 +59,30 @@ class ImporterNotifications {
 
     $mail = [];
 
-    if (!$products_invalid) {
+    if ($products_imported && !$products_invalid) {
       $mail['subject'] = 'Import úspěšně dokončen!';
       $mail['message'] = 'Děkujeme,<br><br>všechny vaše produkty byly úspěšně importovány na Obchodiště.';
+    } elseif ($products_invalid) {
+      $mail['subject'] = "Import dokončen s chybami ($products_invalid)";
+      $mail['message'] = 'Některé vaše produkty obsahují chybu a nebyly tak importovány na Obchodiště.<br>';
+      $mail['message'] .= 'U všech produktů je nutné mít uvedeno: název, krátký popis, popis a alespoň jeden obrázek.';
     } else {
-      $mail['subject'] = 'Import dokončen s chybami';
-      $mail['message'] = 'Některé vaše produkty obsahují chybu a nebyly tak importovány na Obchodiště.';
+      $mail['subject'] = "Import nedokončen";
+      $mail['message'] = 'Import produktů, který jste zadali, nebyl dokončen, protože neobsahuje žádné produkty.';
     }
 
     if ($products_imported) {
       $mail['message'] .= '<br><br>';
-      $mail['message'] .= 'Úspěšně importovanýn produktům se právě stahují obrázky a produkty čekají na schválení.';
+      $mail['message'] .= 'Úspěšně importovaným produktům se právě stahují obrázky a produkty čekají na schválení.';
     }
 
+    if ($products_imported || $products_invalid) {
+      $mail['message'] .= '<br><br>';
+      $mail['message'] .= "Úspěšně importováno produktů: $products_imported<br>";
+      $mail['message'] .= "Neúspěšně importováno produktů: $products_invalid";
+    }
+    
     $mail['message'] .= '<br><br>';
-
-    $mail['message'] .= "Úspěšně importováno produktů: $products_imported<br>";
-    $mail['message'] .= "Neúspěšně importováno produktů: $products_invalid";
-
-    $mail['message'] .= '<br><br>';
-
     $mail['message'] .= 'S pozdravem,<br>Tým Obchodiiště';
 
     return $mail;
@@ -92,6 +92,7 @@ class ImporterNotifications {
     $mail = self::get_mail($wholesaler_id);
     $email_from = get_fields( 'options' )[ 'email_from' ];
     $wholesaler_contact_email = get_field( 'contact_email', $wholesaler_id, false );
+    $wholesaler_contact_email = 'jakubkolar23@gmail.com';
 
     wp_mail(
       $wholesaler_contact_email,
