@@ -68,7 +68,7 @@ class ImporterNotifications {
       $mail['message'] .= 'U všech produktů je nutné mít uvedeno: název, krátký popis, popis a alespoň jeden obrázek.';
     } else {
       $mail['subject'] = "Import nedokončen";
-      $mail['message'] = 'Import produktů, který jste zadali, nebyl dokončen, protože neobsahuje žádné validní produkty.';
+      $mail['message'] = 'Import produktů, který jste zadali, nebyl dokončen, protože neobsahuje žádné produkty.';
     }
 
     if ($products_imported) {
