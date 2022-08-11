@@ -92,7 +92,6 @@ class ImporterNotifications {
     $mail = self::get_mail($wholesaler_id);
     $email_from = get_fields( 'options' )[ 'email_from' ];
     $wholesaler_contact_email = get_field( 'contact_email', $wholesaler_id, false );
-    $wholesaler_contact_email = 'jakubkolar23@gmail.com';
 
     wp_mail(
       $wholesaler_contact_email,
