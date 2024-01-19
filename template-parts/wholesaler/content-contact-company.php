@@ -61,7 +61,7 @@
           <?php echo esc_html( get_field( "in" ) ); ?>
         </a>
       <?php else: ?>
-        <a href="http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_res.cgi?odp=html&ICO=<?php echo esc_html( get_field( "in" ) ); ?>" target="_blank">
+        <a href="https://ares.gov.cz/ekonomicke-subjekty?ico=<?php echo esc_html( get_field( "in" ) ); ?>" target="_blank">
           <?php echo esc_html( get_field( "in" ) ); ?>
         </a>
       <?php endif; ?>
