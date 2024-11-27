@@ -87,7 +87,6 @@ class ElasticPressSettings {
       case 'custom':
         $excluded_meta = [
           'contact_count',
-          'website',
           'facebook',
           'twitter',
           'instagram',

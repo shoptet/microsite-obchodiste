@@ -288,6 +288,7 @@ add_action('pre_get_posts', function( $wp_query ) {
       'short_about',
       'about_company',
       'about_products',
+      'website',
     ],
   ] );
 
@@ -1124,25 +1125,25 @@ add_action( 'admin_menu', function () {
 /**
  * Add filtering by user to admin post list
  */
-add_action( 'restrict_manage_posts', function ( $post_type ) {
-  global $current_user;
-  wp_get_current_user(); // Make sure global $current_user is set, if not set it
-  if ( user_can( $current_user, 'subscriber' ) ) return;
+// add_action( 'restrict_manage_posts', function ( $post_type ) {
+//   global $current_user;
+//   wp_get_current_user(); // Make sure global $current_user is set, if not set it
+//   if ( user_can( $current_user, 'subscriber' ) ) return;
 
-  if ( ! in_array( $post_type, [ 'custom', 'product' ] ) ) return;
+//   if ( ! in_array( $post_type, [ 'custom', 'product' ] ) ) return;
   
-  $params = [
-    'name' => 'author',
-		'show_option_all' => __( '— Autor —', 'shp-obchodiste' ),
-  ];
+//   $params = [
+//     'name' => 'author',
+// 		'show_option_all' => __( '— Autor —', 'shp-obchodiste' ),
+//   ];
   
-  $request_attr = 'user';
-	if ( isset( $_REQUEST[ $request_attr ] ) )
-		$params['selected'] = $_REQUEST[ $request_attr ];
+//   $request_attr = 'user';
+// 	if ( isset( $_REQUEST[ $request_attr ] ) )
+// 		$params['selected'] = $_REQUEST[ $request_attr ];
  
-	wp_dropdown_users( $params );
+// 	wp_dropdown_users( $params );
 
-} );
+// } );
 
 /**
  * Filter products by wholesalers in admin
@@ -1497,3 +1498,13 @@ add_action( 'dbx/init', function() {
   // ] );
   $dbx->init();
 } );
+
+
+add_filter('post_row_actions', function ($actions, $post) {
+  if ($post->post_type === 'custom') {
+    $actions['show_all_products'] = '<a href="' . admin_url('edit.php?post_type=product&wholesaler=' . $post->ID) . '">Show products</a>';
+  } else if ($post->post_type === 'product' && $related_wholesaler = get_field( 'related_wholesaler' )) {
+    $actions['show_all_products'] = '<a href="' . admin_url('edit.php?post_type=product&wholesaler=' . $related_wholesaler->ID) . '">Show all products</a>';
+  }
+  return $actions;
+}, 10, 2);
