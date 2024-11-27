@@ -39,6 +39,7 @@ class ImporterFormXML extends ImporterForm {
           $default_category = intval($value);
         break;
         case self::ACF_XML_FEED_URL_FIELD:
+          $value = htmlspecialchars_decode($value);
           $xml_feed_url = filter_var($value, FILTER_SANITIZE_URL);
         break;
         case 'set_pending_status':
