@@ -4,35 +4,46 @@ namespace Shoptet;
 
 class IdentificationNumberApiCz extends IdentificationNumberApi {
 
-  const URL_BASE = 'http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi';
+  const URL_BASE = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
 
   function is_valid() {
     return preg_match('/^[0-9]+$/', $this->in );
   }
 
   function get_company() {
+    $api_url = self::URL_BASE . $this->in;
 
-    $api_url = self::URL_BASE . "?ico=" . $this->in;
-    $xml = $this->create_request($api_url);
+    // Odeslání požadavku
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-    $ns = $xml->getDocNamespaces();
-    $data = $xml->children($ns['are']);
-    $el = $data->children($ns['D'])->VBAS;
+    // Zkontroluj HTTP kód a odpověď
+    if ($http_code !== 200 || !$response) {
+        return false;
+    }
 
-    if (strval($el->ICO) == $this->in) {
-      return [
-        'in' => (string) $el->ICO,
-        'tin' => (string) $el->DIC,
-        'name' => (string) $el->OF,
-        'street' => (string) ($el->AA->NU ?: $el->AA->N) . ' ' . (($el->AA->CO == '') ? $el->AA->CD : $el->AA->CD . '/' . $el->AA->CO),
-        'city' => (string) $el->AA->N . (($el->AA->NCO && strval($el->AA->NCO) != strval($el->AA->N)) ? (' – ' . $el->AA->NCO) : '' ),
-        'zip' => (string) $el->AA->PSC,
-        'region' => $this->convert_region_code((string) $el->AA->AU->children($ns['U'])->KK),
-      ];
+    // Zpracování odpovědi
+    $data = json_decode($response, true);
+
+    if (isset($data['ico']) && $data['ico'] == $this->in) {
+        return [
+            'in' => $data['ico'],
+            'tin' => $data['dic'] ?? null,
+            'name' => $data['obchodniJmeno'],
+            'street' => trim($data['sidlo']['nazevUlice'] . ' ' . $data['sidlo']['cisloDomovni'] . (isset($data['sidlo']['cisloOrientacni']) ? '/' . $data['sidlo']['cisloOrientacni'] : '')),
+            'city' => $data['sidlo']['nazevObce'] . (isset($data['sidlo']['nazevCastiObce']) && $data['sidlo']['nazevCastiObce'] != $data['sidlo']['nazevObce'] ? ' – ' . $data['sidlo']['nazevCastiObce'] : ''),
+            'zip' => $data['sidlo']['psc'],
+            'region' => $this->convert_region_code($data['sidlo']['kodKraje']),
+        ];
     }
 
     return false;
-
   }
 
   private function convert_region_code( string $code ) {
