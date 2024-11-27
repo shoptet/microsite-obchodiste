@@ -322,7 +322,7 @@ function remove_bulk_actions_for_subscribers( $actions ) {
   return $actions;
 }
 add_filter( 'bulk_actions-edit-custom', 'remove_bulk_actions_for_subscribers' );
-add_filter( 'bulk_actions-edit-product', 'remove_bulk_actions_for_subscribers' );
+// add_filter( 'bulk_actions-edit-product', 'remove_bulk_actions_for_subscribers' );
 
 /**
  * Show only publish owner wholesalers in product edit page
