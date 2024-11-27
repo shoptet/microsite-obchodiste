@@ -136,7 +136,7 @@
     </div>
   <?php endif; ?>
 
-  <?php if ( get_post_meta( $post->ID, 'location' ) ): ?>
+  <?php if ( false && get_post_meta( $post->ID, 'location' ) ): ?>
     <div class="wholesaler-map" id="wholesalerMap"></div>
   <?php endif; ?>
 
