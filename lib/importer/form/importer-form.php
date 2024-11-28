@@ -49,7 +49,7 @@ abstract class ImporterForm {
         history.pushState({}, null, newUrl);
       </script>
       <div class="notice notice-success">
-        <p><?php _e( 'Import zařazen do fronty ke zpracování', 'shp-obchodiste' ); ?></p>
+        <p><?php _e( 'Import zařazen do fronty ke zpracování. Pokud se produkty nenahrají do 10 minut, je pravděpodobné, že XML feed není validní. Využijte formát CSV nebo nás kontaktujte na info@obchodiste.cz', 'shp-obchodiste' ); ?></p>
       </div>
     <?php endif;
   }
